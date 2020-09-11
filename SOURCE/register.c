@@ -39,24 +39,24 @@ int register_()
 			getch();
 		}//防止缓冲区中有内容影响输入
 	
-		if(mouse_press(0, 0, 50, 50) == 1)//返回主页面
+		if(mouse_press(0, 0, 50, 50) == MOUSE_IN_L)//返回主页面
 		{
 			return HOMEPAGE;
 		}
 		
-		if(flag == 0 && mouse_press(256-15, 390-15, 384+15, 422+15) == 2)	//高亮注册键
+		if(flag == 0 && mouse_press(256-15, 390-15, 384+15, 422+15) == MOUSE_IN)	//高亮注册键
 		{
 			flag = 1;
 			frame(256-15, 390-15, 384+15, 422+15, 65535);
 			Outtext(256, 380,"注册", 48, 80, 30513);
 		}
-		if(flag == 1 && mouse_press(256-15, 390-15, 384+15, 422+15) == 0)	//取消高亮
+		if(flag == 1 && mouse_press(256-15, 390-15, 384+15, 422+15) == MOUSE_OUT)	//取消高亮
 		{
 			flag = 0;
 			shadow_l(256-15, 390-15, 384+15, 422+15, 65535);
 			Outtext(256, 380,"注册", 48, 80, 30513);
 		}
-		if(mouse_press(256-15, 390-15, 384+15, 422+15) == 1)	//点击注册键
+		if(mouse_press(256-15, 390-15, 384+15, 422+15) == MOUSE_IN_L)	//点击注册键
 		{
 			if(regis_check(user, password, password_r))
 			{
@@ -80,15 +80,15 @@ int register_()
 			return REGIS;
 		}
 		
-		if(mouse_press(180, 165, 180+370, 165+50) == 1)					//输入用户名
+		if(mouse_press(180, 165, 180+370, 165+50) == MOUSE_IN_L)					//输入用户名
 		{
 			kbinput(180, 165, 180+370, 165+50, user, 1);
 		}
-		if(mouse_press(180, 165+70, 180+370, 165+50+70) == 1)					//输入密码
+		if(mouse_press(180, 165+70, 180+370, 165+50+70) == MOUSE_IN_L)					//输入密码
 		{
 			kbinput(180, 165+70, 180+370, 165+50+70, password, 0);
 		}
-		if(mouse_press(180, 165+140, 180+370, 165+50+140) == 1)					//再次输入密码
+		if(mouse_press(180, 165+140, 180+370, 165+50+140) == MOUSE_IN_L)					//再次输入密码
 		{
 			kbinput(180, 165+140, 180+370, 165+50+140, password_r, 0);
 		}

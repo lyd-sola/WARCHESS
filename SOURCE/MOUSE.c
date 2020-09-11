@@ -1,27 +1,28 @@
 /**********************************************************
 	2020 刘云笛、陈旭桐 WARCHESS战棋
-	本文件来自两位学长（孙兆锦&郭浩南）的工作，不计入总代码量
+	本文件来自是两份学长的鼠标的结合（vga和svga），经lyd魔改整合，不计入总代码量
+			（肝到大半夜，还不计入工程量QAQ）
 	
 	经lyd魔改：（其实是将两份鼠标的优点结合）
 		1.重新绘制了鼠标（使用了证券投资魏靖旻和邓述民函数，转成SVGA模式，增加了不同鼠标形态）
 		2.修改了存鼠标背景的mouse_sq数组大小，以及存储范围（根据重新绘制的大小调整）
-		3.增加了解决鼠标留痕问题函数clrmous(MouseX, MouseY);
-*********************************************************/
+		3.重写了大量函数，增加了解决鼠标留痕问题函数clrmous(MouseX, MouseY)，以及页面切换鼠标不立刻显示（Newxy修改）
 
+	使用方法：
+		所有可能被鼠标遮挡的绘图函数前，增加clrmous(MouseX, MouseY)
+		进入图形界面时必须点击一次鼠标
+*********************************************************/
+#include"common.h"
 
 /*******************************         MOUSE.C         ********************************/ 
 /*本函数库记载有关鼠标实现及相关操作          
     不计入总代码量              */ 
-
-#include"common.h"
-
 
 union REGS regs; 
 
 int MouseX = 0, MouseY = 0, press = 0, MouseS = 0;
 int Mouse_flag = 1; 
 int mouse_sq[16][20] = {0}; 
-
 
 /*画鼠标函数*/ 
 void Cursor(int x,int y)
@@ -155,7 +156,6 @@ int Readmouse(void)
     return  0; 
 }
 
-
 /*存鼠标覆盖背景函数*/ 
 void Mouse_savebk(int x, int y)
 {
@@ -165,7 +165,7 @@ void Mouse_savebk(int x, int y)
     mouse_sq[i][j] = Getpixel64k(x + i - 1, y + j - 2); 
 }
 
-/*单独存鼠标覆盖背景函数*/ 
+/*去参数存鼠标覆盖背景函数*/ 
 void Mouse_savebk2(void)
 {
     Mouse_savebk(MouseX, MouseY); 
@@ -204,7 +204,6 @@ int Mouse_above(int x1, int y1, int x2, int y2)
     else
 	  return 0; 
 }
-
 /*判断鼠标是否位于某区域外*/ 
 int Mouse_aboveother(int x1, int y1, int x2, int y2)
 {
@@ -265,7 +264,7 @@ int mouse_press(int x1, int y1, int x2, int y2)
 		return 0;
 	}
 }
-
+/*清除鼠标函数，解决留痕问题*/
 void clrmous(int nx,int ny)//清除鼠标
 {
 	press = 0;
@@ -277,7 +276,7 @@ void clrmous(int nx,int ny)//清除鼠标
 		Mouse_flag=0;
 	}
 }
-
+/*绘制鼠标函数，与flag相关*/
 void drawmous(int nx,int ny)
 {
 	if(Mouse_flag==0)
@@ -287,9 +286,7 @@ void drawmous(int nx,int ny)
 	}
 }
 
-
 /*更新鼠标位置函数*/ 
-
 void Newxy(void)
 {
 	int xx0 = MouseX, yy0 = MouseY; 

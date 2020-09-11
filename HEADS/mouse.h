@@ -15,8 +15,6 @@
 #define _MOUSE_H_
 
 int Initmouse(int xmi,int xma,int ymi,int yma);		//初始化鼠标
-
-void Cursor(int x,int y);
 int Readmouse(void);
 void Mouse_savebk(int x,int y);
 void Mouse_savebk2(void);
@@ -26,11 +24,16 @@ int Mouse_pressother(int x1, int y1, int x2, int y2);
 int Mouse_above(int x1,int y1,int x2,int y2);
 int Mouse_aboveother(int x1, int y1, int x2, int y2);
 
-int mouse_press(int x1, int y1, int x2, int y2);//如果在框中点击，则返回1；在框中未点击，则返回2；在框外点击，则返回3；不在框中则返回0
+void Cursor(int x,int y);
+int mouse_press(int x1, int y1, int x2, int y2);//如果在框中点击，则返回1；在框中未点击，则返回2；在框外点击，则返回3;在框中右击，则返回4；不在框中则返回0
 void clrmous(int nx,int ny);//清除鼠标
 void drawmous(int nx,int ny);//绘制鼠标，结合flag
 void Newxy(void);//更新鼠标
 
 extern int MouseX, MouseY, press, MouseS;
 extern int Mouse_flag; 
+enum MOUSE
+{
+	MOUSE_OUT, MOUSE_IN_L, MOUSE_IN, MOUSE_OUT_L, MOUSE_IN_R
+};
 #endif

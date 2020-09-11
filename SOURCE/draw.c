@@ -9,6 +9,8 @@ date:2020/9/8
 更新日志
 9.8		增加了阴影、边框自定义绘图函数
 9.9		增加了绘制文档图形
+9.10	升级为svga
+9.11	增加了抠图贴图函数
 
 函数目录
 1.shadow/shadow_l: 			绘制带（大）阴影的文本框
@@ -30,7 +32,6 @@ void shadow(int x1, int y1, int x2, int y2, int color1, int color2)
 	Bar64k(x1 + 5, y1 + 5, x2 + 5, y2 + 5, 33808);
 	Bar64k(x1, y1, x2, y2, color1);
 	Bar64k(x1+2, y1+2, x2, y2, color2);
-	
 }
 
 void shadow_l(int x1, int y1, int x2, int y2, int color)
@@ -83,7 +84,6 @@ int Outtextxx(int x1, int y, int x2, char *s,int flag, int color)
 Author：刘云笛
 buffer为存储的数组
 *****************************************/
-
 void GetBackground(int left, int top, int right, int bottom, short *buffer)//获取背景
 {
     int i, j;

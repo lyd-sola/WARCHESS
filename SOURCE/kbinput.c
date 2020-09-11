@@ -12,6 +12,8 @@ date:2020/9/9
 		实现输入满后仍能退格和回车
 		两个函数合并为一个！！！
 
+9.10	mode==1时不再可以输入小写字母
+
 函数目录
 1.kbinput:	键盘输入并显示原文
 2.kbinput:	键盘输入并显示星号
@@ -40,7 +42,7 @@ void kbinput(int x1, int y1, int x2, int y2, char *s, int mode)
 	{
 		Newxy();
 		
-		if(mouse_press(x1, y1, x2, y2) == 3)//在界面外点击，退出输入
+		if(mouse_press(x1, y1, x2, y2) == MOUSE_OUT_L)//在界面外点击，退出输入
 		{
 			Line64k(x1+5+i*KB_SIZE, y2-5-KB_SIZE, x1+5+i*KB_SIZE, y2-5, 65535);
 			return ;
@@ -51,9 +53,15 @@ void kbinput(int x1, int y1, int x2, int y2, char *s, int mode)
 			*ch = bioskey(0);
 			if(isalnum(*ch) && i < length)//输入
 			{
+				if (mode)
+				{
+					*ch = toupper(*ch);
+				}//输入用户名时，只支持大写
+				
 				s[i] = *ch;
 				s[i+1] = 0;
 				*ch = mode * ch[0] + !mode * '*';		//两个函数合并为一个的核心语句
+				clrmous(MouseX, MouseY);
 				Line64k(x1+5+i*KB_SIZE, y2-5-KB_SIZE, x1+5+i*KB_SIZE, y2-5, 65535);
 				Outtext(x1+5+i*KB_SIZE, y2-5-KB_SIZE, ch, KB_SIZE, 40, 44373);
 				i++;
@@ -68,6 +76,7 @@ void kbinput(int x1, int y1, int x2, int y2, char *s, int mode)
 			
 			else if(*ch == '\b' && i)//退格
 			{
+				clrmous(MouseX, MouseY);
 				Line64k(x1+5+i*KB_SIZE, y2-5-KB_SIZE, x1+5+i*KB_SIZE, y2-5, 65535);
 				i--;
 				Bar64k(x1+5+i*KB_SIZE, y2-5-KB_SIZE, x1+5+i*KB_SIZE+KB_SIZE, y2-5-KB_SIZE+KB_SIZE, 65535);

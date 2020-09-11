@@ -24,7 +24,7 @@ int test(void)
 	while(1)
 	{
 		Newxy();
-		if(mouse_press(1000, 0, 1024, 20) == 1)
+		if(mouse_press(1000, 0, 1024, 20) == MOUSE_IN_L)
 		{
 			return EXIT;
 		}

@@ -26,7 +26,7 @@ int /*name_of_page*/(parameter)
 	while(1)
 	{
 		Newxy();
-		if(mouse_press(/*叉叉的位置*/) == 1)
+		if(mouse_press(/*叉叉的位置*/) == MOUSE_IN_L)
 		{
 			return EXIT;
 		}

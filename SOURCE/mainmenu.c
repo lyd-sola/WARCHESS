@@ -23,12 +23,12 @@ int mainmenu(char *user)
 	{
 		Newxy();
 		
-		if(mouse_press(0, 0, 50, 50) == 1)
+		if(mouse_press(0, 0, 50, 50) == MOUSE_IN_L)
 		{
 			return 1;
 		}
 		
-		if(mouse_press(330, 140+85, 330+250, 140+85+55) == 1)
+		if(mouse_press(330, 140+85, 330+250, 140+85+55) == MOUSE_IN_L)
 		{
 			/******************* µ÷ÊÔ ¼ÇµÃÉ¾³ý********************/
 			if(savefile_creat(user) == 0)
@@ -43,10 +43,10 @@ int mainmenu(char *user)
 			return MAINMENU;
 		}
 		
-		if(mouse_press(330, 140+85, 330+250, 140+85+55))
+		/*if(mouse_press(330, 140+85, 330+250, 140+85+55))
 		{
 			;
-		}
+		}*/
 	}
 }
 

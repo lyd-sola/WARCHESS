@@ -36,12 +36,12 @@ int login(char *username)
 			getch();
 		}//防止缓冲区中有内容影响输入
 		
-		if(mouse_press(0, 0, 80, 80) == 1)
+		if(mouse_press(0, 0, 80, 80) == MOUSE_IN_L)
 		{
 			return 1;
 		}
 		
-		if(flag == 0 && mouse_press(385, 600, 640, 700) == 2)	//高亮登录键
+		if(flag == 0 && mouse_press(385, 600, 640, 700) == MOUSE_IN)	//高亮登录键
 		{
 			flag = 1;
 			frame(385, 600, 640, 700, 65535);
@@ -49,24 +49,24 @@ int login(char *username)
 			Mouse_savebk2();//更新鼠标状态，防止留痕
 		}
 		
-		if(flag == 1 && mouse_press(385, 600, 640, 700) == 0)	//取消高亮	
+		if(flag == 1 && mouse_press(385, 600, 640, 700) == MOUSE_OUT)	//取消高亮	
 		{
 			flag = 0;
 			shadow_l(385, 600, 640, 700, 65535);
 			Outtext(410, 608,"登录", 48, 80, 63488);
 		}	
 		
-		if(mouse_press(180, 180,180+370, 180+50) == 1)						//输入用户名
+		if(mouse_press(180, 180,180+370, 180+50) == MOUSE_IN_L)						//输入用户名
 		{
 			kbinput(180, 180,180+370, 180+50, username, 1);
 		}
 		
-		if(mouse_press(180, 180+100, 180+370, 180+50+100) == 1)				//输入密码
+		if(mouse_press(180, 180+100, 180+370, 180+50+100) == MOUSE_IN_L)				//输入密码
 		{
 			kbinput(180, 180+100, 180+370, 180+50+100, password, 0);
 		}
 		
-		if(mouse_press(256-15, 390-15, 384+15, 422+15) == 1)				//点击登录键
+		if(mouse_press(256-15, 390-15, 384+15, 422+15) == MOUSE_IN_L)				//点击登录键
 		{
 			if(login_check(username, password) == 1)						//判断是否与文件匹配
 			{
