@@ -35,6 +35,7 @@ Description: 头文件及定义结构、枚举
 #include "login.h"		//登录界面
 #include "register.h"	//注册界面
 #include "mainmenu.h"	//主菜单界面
+#include "save.h"		//对战信息存档存取
 
 enum MENU
 {
