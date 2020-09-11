@@ -12,7 +12,7 @@ date:2020/9/9
 1.mainmenu:		主菜单函数
 2.mmenu_draw:	绘制主菜单函数
 ******************************************************************/
-#include "common.h"
+//#include "common.h"
 
 int mainmenu(char *user)
 {
