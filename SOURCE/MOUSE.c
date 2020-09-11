@@ -268,6 +268,8 @@ int mouse_press(int x1, int y1, int x2, int y2)
 
 void clrmous(int nx,int ny)//清除鼠标
 {
+	press = 0;
+	MouseS = 0;
 	if(Mouse_flag==1)
 	{
 		//Cursor(nx,ny);
@@ -281,7 +283,7 @@ void drawmous(int nx,int ny)
 	if(Mouse_flag==0)
 	{
 	    Cursor(nx,ny);
-		Mouse_flag=1;
+		Mouse_flag = 1;
 	}
 }
 
@@ -290,22 +292,12 @@ void drawmous(int nx,int ny)
 
 void Newxy(void)
 {
-    int xx0 = MouseX, yy0 = MouseY; 
+	int xx0 = MouseX, yy0 = MouseY; 
+
 	Readmouse(); 
-	if (MouseX == xx0 && MouseY == yy0) return; 
+	if (MouseX == xx0 && MouseY == yy0 && Mouse_flag == 1) //鼠标没动不重复画
+		return; 
     clrmous(xx0, yy0); 
 	Mouse_savebk(MouseX, MouseY); 
 	drawmous(MouseX,MouseY);
 }
-
-// void Newxy(void)
-// {
-    // int xx0 = MouseX, yy0 = MouseY, x, y; 
-	// Readmouse(); 
-	// if (MouseX == xx0 && MouseY == yy0) return; 
-	// if(Mouse_flag)
-    // Mouse_putbk(xx0, yy0); 
-	// Mouse_savebk(MouseX, MouseY); 
-	// Cursor(MouseX, MouseY); 
-	// Mouse_flag = 1; 
-// }

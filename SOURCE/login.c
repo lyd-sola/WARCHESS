@@ -143,7 +143,7 @@ int login_check(char *username, char *password)
 	}
 	
 	//√‹¬Î≈–∂œ
-	fscanf(fp, "%lld%lld", &pw, &pwt);
+	fscanf(fp, "%llu%llu", &pw, &pwt);
 	if(pw == password_classified(password, 67) && pwt == password_classified(password, 71) )
 	{
 		fclose(fp);

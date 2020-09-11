@@ -31,8 +31,7 @@ void kbinput(int x1, int y1, int x2, int y2, char *s, int mode)
 	int length = (x2 - x1) / KB_SIZE;//最大字数
 	char ch[2] = {0, 0};
 	
-	Mouse_savebk2();
-	
+	clrmous(MouseX, MouseY);//更新鼠标状态，防止留痕
 	frame(x1, y1, x2, y2, 65535);	//覆盖原先文字
 	s[0] = 0;				//清空原先内容
 	Line64k(x1+5, y2-5-KB_SIZE, x1+5, y2-5, 44373);
