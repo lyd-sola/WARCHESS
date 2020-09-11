@@ -83,7 +83,7 @@ int login(char *username)
 				shadow_l(320-200, 240-100, 320+200, 240+100, 5);
 				Outtextxx(150, 240-32, 150+340, "登录成功！", 32, 2463);
 				delay(1000);
-				return LOGIN;
+				return MAINMENU;
 			}
 			Outtext(120+92, 340-60,"正在返回登录界面", 16, 25, 65535);
 			delay(1000);
