@@ -147,7 +147,8 @@ int homepage()
 
 void draw_h_page()
 {
-	Bar64k(0, 0, 1024, 768, 29186);
+	//Bar64k(0, 0, 1024, 768, 29186);
+	Putbmp64k(0, 0, "BMP//homepage.bmp");
 	Bar64k(590, 0, 640, 50,65535);
 	Outtext(599, 9,"ÍË", 32, 0, RED);
 	
