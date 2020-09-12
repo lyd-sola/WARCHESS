@@ -38,16 +38,9 @@ void test_draw()
 {
 	short s[101*101];
 	
-	Bar64k_radial(0, 0, 1024, 768, 65535, 0);
 	//画页面
-	Putbmp64k(0, 0, "BMP//tst1.bmp");
-	GetBackground(200,200,300,300,s);
-	delay(1000);
-	
-	Bar64k(200,200,400,400,0);
-	delay(1000);
-	PutBackground(200,200,300,300,s);
-	
+	Putbmp64k(0, 0, "BMP//map.bmp");
+
 	//记得画右上角的叉叉
 	
 }
