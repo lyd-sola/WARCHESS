@@ -10,7 +10,7 @@ date:2020/9/8
 9.8		增加了阴影、边框自定义绘图函数
 9.9		增加了绘制文档图形
 9.10	升级为svga
-9.11	增加了抠图贴图函数
+9.11	lyd增加了抠图贴图函数
 
 函数目录
 1.shadow/shadow_l: 			绘制带（大）阴影的文本框
@@ -115,4 +115,174 @@ void PutBackground(int left, int top, int right, int bottom, short *buffer)//贴
             Putpixel64k(left + i, top + j, buffer[i*Width + j]);
         }   
     }    
+}
+
+/*****************************************
+屏幕上一点的增加亮度函数（实际是同步增加各点rgb的值，不如说是白度？）
+drgb的值为变白比例
+Author：刘云笛
+*****************************************/
+void Lightpixel(int x, int y, float drgb)//若drgb过大反而会变暗
+{
+	unsigned int rbf, gbf, bbf, colorbf;
+	/*计算RGB值*/
+	colorbf = Getpixel64k(x, y);
+	rbf = colorbf / (1 << 11);
+	gbf = colorbf % (1 << 11) / (1 << 5);
+	bbf = colorbf % (1 << 5);
+	/*如果rgb中带有0则不改变该点*/
+	if (rbf * gbf * bbf == 0)
+	{
+		return;
+	}
+	/*如果drgb过大*/
+	if (drgb * rbf > 31)
+	{
+		drgb = (31.0 / rbf);
+	}
+	if (drgb * bbf > 31) 
+	{
+		drgb = (31.0 / bbf);
+	}
+	if (drgb * gbf > 62)
+	{
+		drgb = (62.0 / gbf);
+	}
+
+	/*核心：每个点rgb值乘以相同倍数，可以实现变白*/
+	rbf = drgb * rbf;
+	gbf = drgb * gbf;
+	bbf = drgb * bbf;
+	//同步color值
+	colorbf = rbf * (1 << 11) + gbf * (1 << 5) + bbf;
+	Putpixel64k(x, y, colorbf);
+}
+/*****************************************
+以下为线、bar的增加亮度函数
+实际来自SVGAmode.c中各函数函数修改得到，不计入代码量
+Author：刘云笛
+*****************************************/
+void Lightline(int x1, int y1, int x2, int y2, float drgb)
+{
+	int	dx, dy;			/*直线x、y坐标差值*/
+	int dx2, dy2;		/*加快运算速度的中间值*/
+	int xinc, yinc;		/*判断想、y增加方向的符号值*/
+	int d, dxy;			/*决策变量*/
+	int i;
+	dx = abs(x2 - x1);
+	dx2 = dx << 1;
+	dy = abs(y2 - y1);
+	dy2 = dy << 1;
+	if (x2 > x1)
+	{
+		xinc = 1;
+	}
+	else if (x2 == x1)
+	{
+		if (y1 > y2)
+		{
+			dx = y1;
+			y1 = y2;
+			y2 = dx;
+		}
+		for (dx = y1; dx <= y2; dx++)
+		{
+			Lightpixel(x1, dx, drgb);
+		}
+		return;
+	}
+	else
+	{
+		xinc = -1;
+	}
+	if (y2 > y1)
+	{
+		yinc = 1;
+	}
+	else if (y2 == y1)
+	{
+		for (i = x1; i <= x2; i++)
+		{
+			Lightpixel(i, y1, drgb);
+		}
+		return;
+	}
+	else
+	{
+		yinc = -1;
+	}
+	Lightpixel(x1, y1, drgb);
+	if (dx >= dy)
+	{
+		d = dy2 - dx;
+		dxy = dy2 - dx2;
+
+		while (dx--)
+		{
+			if (d <= 0)
+			{
+				d += dy2;
+			}
+			else
+			{
+				d += dxy;
+				y1 += yinc;
+			}
+			x1 += xinc;
+			Lightpixel(x1, y1, drgb);
+		}
+	}
+	else
+	{
+		d = dx2 - dy;
+		dxy = dx2 - dy2;
+		while (dy--)
+		{
+			if (d <= 0)
+			{
+				d += dx2;
+			}
+			else
+			{
+				d += dxy;
+				x1 += xinc;
+				y1 += yinc;
+				Lightpixel(x1, y1, drgb);
+			}
+		}
+	}
+}
+
+void Lightbar(int x1, int y1, int x2, int y2, float drgb)
+{
+	/*temp为临时变量和循环变量*/
+	/*width为矩形长*/
+	int temp, width;
+	int i, j;
+	/*x坐标排序*/
+	if (x1 > x2)
+	{
+		temp = x1;
+		x1 = x2;
+		x2 = temp;
+	}
+
+	/*y坐标排序*/
+	if (y1 > y2)
+	{
+		temp = y1;
+		y1 = y2;
+		y2 = temp;
+	}
+
+
+	/*逐行扫描画出矩形*/
+	for (i = x1; i <= x2; i++)
+	{
+		Lightline(i, y1, i, y2, drgb);
+		/*for(j=y1;j<=y2;j++)
+		{
+				Putpixel64k(i,j,color);
+		}*/
+	}
 }

@@ -41,6 +41,9 @@ void test_draw()
 	//画页面
 	Putbmp64k(0, 0, "BMP//map.bmp");
 
+	Lightbar(0, 0, 512, 768, 1.1);
+	Lightbar(0, 0, 512, 768, 1.0/1.05);
+
 	//记得画右上角的叉叉
 	
 }
