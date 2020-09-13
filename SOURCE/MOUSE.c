@@ -50,29 +50,29 @@ void Cursor(int x,int y)
 				Line64k(x+10,y+6,x+10,y+16,65503);
 				Line64k(x+11,y+7,x+11,y+13,65503);
 
-				Line64k(x-1,y+9,x-1,y+8,44373);
-				Line64k(x-1,y+8,x+1,y+6,44373);
-				Line64k(x+1,y+6,x+3,y+10,44373);
-				Line64k(x+3,y+10,x+3,y-1,44373);
-				Circleup64k(x+4,y-1,1,44373);
-				Line64k(x+5,y-1,x+5,y+5,44373);
-				Circleup64k(x+6,y+3,1,44373);
-				Line64k(x+7,y+3,x+7,y+7,44373);
-				Circleup64k(x+8,y+5,1,44373);
-				Line64k(x+9,y+5,x+9,y+9,44373);
-				Circleup64k(x+10,y+7,1,44373);
-				Line64k(x+11,y+7,x+11,y+13,44373);
-				Circlerd64k(x+7,y+13,4,44373);
-				Line64k(x+7,y+17,x+3,y+15,44373);
-				Line64k(x+3,y+15,x+1,y+13,44373);
-				Line64k(x+1,y+13,x-1,y+9,44373);
+				Line64k(x-1,y+9,x-1,y+8,0);
+				Line64k(x-1,y+8,x+1,y+6,0);
+				Line64k(x+1,y+6,x+3,y+10,0);
+				Line64k(x+3,y+10,x+3,y-1,0);
+				Circleup64k(x+4,y-1,1,0);
+				Line64k(x+5,y-1,x+5,y+5,0);
+				Circleup64k(x+6,y+3,1,0);
+				Line64k(x+7,y+3,x+7,y+7,0);
+				Circleup64k(x+8,y+5,1,0);
+				Line64k(x+9,y+5,x+9,y+9,0);
+				Circleup64k(x+10,y+7,1,0);
+				Line64k(x+11,y+7,x+11,y+13,0);
+				Circlerd64k(x+7,y+13,4,0);
+				Line64k(x+7,y+17,x+3,y+15,0);
+				Line64k(x+3,y+15,x+1,y+13,0);
+				Line64k(x+1,y+13,x-1,y+9,0);
 		}
 			break;
 		case 2:                        //光标
 		{
-			Line64k(x+1,y-1,x+9,y-1,44373);
-			Line64k(x+1,y+15,x+9,y+15,44373);
-			Line64k(x+5,y-1,x+5,y+15,44373);
+			Line64k(x+1,y-1,x+9,y-1,0);
+			Line64k(x+1,y+15,x+9,y+15,0);
+			Line64k(x+5,y-1,x+5,y+15,0);
 		}
 			break;
 		case 3:                        //十字
@@ -96,18 +96,18 @@ void Cursor(int x,int y)
 			Line64k(x+8,y+8,x+8,y+9,65503);
 			Line64k(x+9,y+9,x+9,y+9,65503);
 			
-			Line64k(x-1,y-1,x-1,y+14,44373);
-			Line64k(x-1,y+14,x+3,y+11,44373);
-			Line64k(x+3,y+11,x+3,y+12,44373);
-			Line64k(x+3,y+12,x+4,y+13,44373);
-			Line64k(x+4,y+13,x+4,y+14,44373);
-			Line64k(x+4,y+14,x+7,y+17,44373);
-			Line64k(x+7,y+17,x+7,y+13,44373);
-			Line64k(x+7,y+13,x+6,y+12,44373);
-			Line64k(x+6,y+12,x+6,y+11,44373);
-			Line64k(x+6,y+11,x+5,y+10,44373);
-			Line64k(x+5,y+10,x+11,y+10,44373);
-			Line64k(x+11,y+10,x-1,y-2,44373);
+			Line64k(x-1,y-1,x-1,y+14,0);
+			Line64k(x-1,y+14,x+3,y+11,0);
+			Line64k(x+3,y+11,x+3,y+12,0);
+			Line64k(x+3,y+12,x+4,y+13,0);
+			Line64k(x+4,y+13,x+4,y+14,0);
+			Line64k(x+4,y+14,x+7,y+17,0);
+			Line64k(x+7,y+17,x+7,y+13,0);
+			Line64k(x+7,y+13,x+6,y+12,0);
+			Line64k(x+6,y+12,x+6,y+11,0);
+			Line64k(x+6,y+11,x+5,y+10,0);
+			Line64k(x+5,y+10,x+11,y+10,0);
+			Line64k(x+11,y+10,x-1,y-2,0);
 		}
 		break;
 	}
@@ -268,7 +268,6 @@ int mouse_press(int x1, int y1, int x2, int y2)
 void clrmous(int nx,int ny)//清除鼠标
 {
 	press = 0;
-	MouseS = 0;
 	if(Mouse_flag==1)
 	{
 		//Cursor(nx,ny);
@@ -297,4 +296,10 @@ void Newxy(void)
     clrmous(xx0, yy0); 
 	Mouse_savebk(MouseX, MouseY); 
 	drawmous(MouseX,MouseY);
+}
+
+/*快捷清除鼠标函数*/
+void Clrmous(void)
+{
+	clrmous(MouseX, MouseY);
 }

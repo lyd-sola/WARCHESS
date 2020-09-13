@@ -35,9 +35,9 @@ int test(void)
 	while(1)
 	{
 		Newxy();
-		if(mouse_press(1000, 0, 1024, 20) == MOUSE_IN_L)
+		if(mouse_press(950, 0, 1024, 74) == MOUSE_IN_L)
 		{
-			return EXIT;
+			return HOMEPAGE;
 		}
 		//以下是此页面核心函数
 		
@@ -66,6 +66,12 @@ void test_draw()
 	//画页面
 	Putbmp64k(0, 0, "BMP//map.bmp");
 
+	show_error("没问题，我就试试", 0);
+	delay(1000);
+	show_error("没问题，我还试试", 1);
+
+	//Lightbar(0, 0, 512, 768, 1.1);
+	//Lightbar(0, 0, 512, 768, 1.0/1.05);
 	//记得画右上角的叉叉
 	
 }

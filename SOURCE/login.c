@@ -94,7 +94,8 @@ int login(char *username)
 
 void drawlogin()
 {
-	Bar64k(0, 0, 1024, 768, 25290);
+	//Bar64k(0, 0, 1024, 768, 25290);
+	Putbmp64k(0, 0, "BMP//lng.bmp");
 	Bar64k(0, 0, 50, 50, 65535);
 	shadow_l(70, 50, 70+500, 50+90, 65535); 
 	shadow_l(256-15, 390-15, 384+15, 422+15, 65535);
