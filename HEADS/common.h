@@ -16,7 +16,7 @@ Description: 头文件及定义结构、枚举
 #include <conio.h>     /**getch()函数头文件**/
 #include <stdlib.h>	   /**rand()、exit()等函数头文件**/
 #include <malloc.h>    /**动态分配内存头文件**/
-#include <graphics.h>  /**自带图像处理头文件**/
+//#include <graphics.h>  /**自带图像处理头文件**/
 #include <string.h>    /**字符串处理函数头文件**/
 #include <bios.h> 	   /**bioskey()函数头文件**/
 #include <dos.h>       /**int86()等关于中断的头文件**/
@@ -30,6 +30,7 @@ Description: 头文件及定义结构、枚举
 #include "mouse.h"		//鼠标
 
 #include "draw.h"		//自定义画图函数
+#include "struct.h"		//各种结构体定义
 #include "kbinput.h"	//键盘输入显示
 #include "homepage.h"	//主页
 #include "login.h"		//登录界面
@@ -37,7 +38,7 @@ Description: 头文件及定义结构、枚举
 #include "mainmenu.h"	//主菜单界面
 #include "save.h"		//对战信息存档存取
 #include "functions.h"	//各种函数
-#include "map.h"		//对战地图相关函数
+#include "map.h"
 enum MENU
 {
 	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT

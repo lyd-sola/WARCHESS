@@ -36,8 +36,6 @@ int test(void)
 		for (j = 1; j <= 13; j++)
 		{
 			xy(i, j, &x_tmp, &y_tmp);
-			y_tmp -= ((j - 1) / 3);   //哈哈哈哈我真特酿是个天才， 老赌狗了
-			x_tmp -= ((i - 1) / 3);
 			rectangle64k(x_tmp - 10, y_tmp - 10, x_tmp + 10, y_tmp + 10, 0);
 			/*itoa(x_tmp, str1, 10);
 			itoa(y_tmp, str2, 10);
@@ -61,7 +59,7 @@ int test(void)
 		Newxy();
 		if(mouse_press(950, 0, 1024, 74) == MOUSE_IN_L)
 		{
-			return HOMEPAGE;
+			return EXIT;
 		}
 		//以下是此页面核心函数
 		
@@ -118,89 +116,13 @@ int test(void)
 void test_draw()
 {
 	short s[101*101];
+	POS p = { 584,418 };
 	
 	//画页面
+	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);
 	Putbmp64k(0, 0, "BMP//map.bmp");
-
-	/*show_error("没问题，我就试试", 0);
-	delay(1000);
-	show_error("没问题，我还试试", 1);
+	Icon_builder(p, 1);
 
 	//Lightbar(0, 0, 512, 768, 1.1);
 	//Lightbar(0, 0, 512, 768, 1.0/1.05);
-	//记得画右上角的叉叉*/
 }
-
-/**********************测试坐标转换 记得删除********************************
-
-
-void xy_tran(float x, float y, int *n_1, int *n_2)
-{
-	float x2, y2, a, b, tmp;
-	int n1, n2;
-	x2 = x - X0; //换坐标系后的MouseX
-	y2 = y - Y0; //换坐标系后的MouseY
-	n1 = x2 / WIDTH + 1; //神秘方格横坐标，第几个
-	n2 = y2 / LENGTH + 1; //神秘方格纵坐标，第几排
-	a = n1 * WIDTH - WIDTH / 2; //神秘方格中点横坐标
-	b = n2 * LENGTH - LENGTH / 2; //神秘方格中点纵坐标
-	tmp = f(x2, a, b, n1, n2);
-	if (y2 < tmp)
-	{
-		*n_2 = n2;
-	}
-	else
-	{
-		*n_2 = n2 + 1;
-	}
-
-	if (n1 % 2 == 1)
-	{
-		*n_1 = (n1 + 1) / 2;
-	}
-	else
-	{
-		if (n2 % 2 == 1)
-		{
-			if (y2 > tmp)
-			{
-				*n_1 = n1 / 2 + 1;
-			}
-			else
-			{
-				*n_1 = n1 / 2;
-			}
-		}
-
-		else
-		{
-			if (y2 > tmp)
-			{
-				*n_1 = n1 / 2 ;
-			}
-			else
-			{
-				*n_1 = n1 / 2 + 1;
-			}
-		}
-	}
-	//search(x2, y2, n1, n2);
-}
-
-float f(float x, float a, float b, int n1, int n2)
-{
-	if (n1 % 2 == 1)
-	{
-		if (n2 % 2 == 1)
-			return -K * (x - a) + b;
-		else
-			return K * (x - a) + b;
-	}
-	else
-	{
-		if (n2 % 2 == 1)
-			return K * (x - a) + b;
-		else
-			return -K * (x - a) + b;
-	}	
-}*/

@@ -62,6 +62,8 @@ void xy(int n1, int n2, int *x, int *y)
 		*x = 69 + (n1 - 1) * 69;
 	}
 	*y = 54 + (n2 - 1) * 46;
+	*y -= (n2 - 1) / 3;   //哈哈哈哈我真特酿是个天才， 老赌狗了
+	*x -= (n1 - 1) / 3;
 }
 /*struct POS xy(int n1, int n2)
 {

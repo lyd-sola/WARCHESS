@@ -1177,6 +1177,61 @@ int Liney(int x1, int y1, int x2, int y2, int color)
   Putpixel64k(x1, i, color); 
   return 0; 
 }
+/*区域伸展法填充算法
+Author:郭浩南
+Date:2019.10.28*/
+void Floodfill(int x, int y, int fillcolor, int borcolor)
+{
+	if (x >= 0 && x < 1024 && y >= 0 && y <= 768 && Getpixel64k(x, y) != borcolor && Getpixel64k(x, y) != fillcolor)
+	{
+		Putpixel64k(x, y, fillcolor);
+		Floodfill(x + 1, y, fillcolor, borcolor);
+		Floodfill(x - 1, y, fillcolor, borcolor);
+		Floodfill(x, y + 1, fillcolor, borcolor);
+		Floodfill(x, y - 1, fillcolor, borcolor);
+	}
+	return;
+}
+/*任意平底三角形算法。拥有该算法
+几乎所有的不规则多边形作图问题将迎刃而解
+Author:孙兆锦
+Date:2019.10.27*/
+void Filltriangle(int x0, int y0, int x1, int y1, int x2, int y2, int color)
+{
+	//y0，y2底边，y1是顶点
+
+	int i;
+	double h = y1 - y0;
+
+	double dL = (x1 - x0) / h;
+	double dR = (x1 - x2) / h;
+
+	double xL = x0, xR = x2;
+
+	if (y2 != y0)
+	{
+		return;
+	}
+
+	if (y0 < y1)
+	{
+		for (i = y0; i <= y1; ++i)
+		{
+			Line64k(xL, i, xR, i, color); //A Simple Function That Just Draw A Line
+			xL += dL;
+			xR += dR;
+		}
+	}
+	else
+	{
+		for (i = y0; i >= y1; --i)
+		{
+			Line64k(xL, i, xR, i, color); //A Simple Function That Just Draw A Line
+			xL -= dL;
+			xR -= dR;
+		}
+	}
+}
 
 /*******以下函数来自刘云笛对前代码的修改，不计入总代码量*******/
 //用于绘制鼠标
@@ -1255,63 +1310,4 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color)
 			y--;
 		}
 	}
-}
-
-/**********************************************************
-Function：		Bar64k_radial_re
-Description：	反向放射性画出矩形框，使用方法同Bar64k，最后一个参数为总延迟时间（单位mm）
-
-Calls：			rectangle64k
-
-Author：		刘云笛
-**********************************************************/
-void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color,int fill_time)
-{
-	int n, t, i;
-	
-	if(x2-x1 > y2-y1)
-	{
-		n = ceil( ((float)y2-y1)/2 );//向上取整
-	}
-	else
-	{
-		n = ceil( ((float)y2-y1)/2 );//向上取整
-	}
-	t = fill_time / (n+1);
-	
-	for(i = 0;i <= n; i++)
-	{
-		rectangle64k(x1 + i, y1 + i, x2 - i, y2 - i, color);
-		delay(t);//可能还需要调整
-	}
-}
-
-/**********************************************************
-Function：		Bar64k_radial
-Description：	正向放射性画出矩形框，使用方法同Bar64k，最后一个参数为总延迟时间（单位mm）
-
-Calls：			rectangle64k
-
-Author：		刘云笛
-**********************************************************/
-void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time)
-{
-	int n, t;
-	
-	if(x2-x1 > y2-y1)
-	{
-		n = ceil( ((float)y2-y1)/2 );//向上取整
-	}
-	else
-	{
-		n = ceil( ((float)y2-y1)/2 );//向上取整
-	}
-	t = fill_time / (n+1);
-	
-	for(;n >= 0; n --)
-	{
-		rectangle64k(x1 + n, y1 + n, x2 - n, y2 - n, color);
-		delay(t);//可能还需要调整
-	}
-	
 }
