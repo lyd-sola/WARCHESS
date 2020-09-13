@@ -355,7 +355,7 @@ Author：		刘云笛
 **********************************************************/
 void Button(int y1,char *s, int color, int color2)
 {
-	int x1 = 780, x2 = 1024;
+	int x1 = 750, x2 = 1024;
 	int height = 30, i;
 	for (i = x2; i >= x1; i--)
 	{
@@ -373,5 +373,95 @@ void Button(int y1,char *s, int color, int color2)
 		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
 	}
 	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
-	Outtext(1024 - 4 * 55, y1 - 16, s, 32, 55, 0);
+	Outtext(1024 - 4 * 55 - 20, y1 - 16, s, 32, 55, 0);
+}
+/**********************************************************
+Function：		Line45
+Description：	画45度角斜线，可以满足所有45度直线情况
+Input:			x1,y1,起始点,x2终点x坐标
+				color颜色
+
+Author：		刘云笛
+**********************************************************/
+void Line45(int x1, int y1, int x2, int y2, unsigned int color)
+{
+	int i, sign, num;
+	if (x1 > x2)
+	{
+		i = x1;
+		x1 = x2;
+		x2 = i;
+		i = y1;
+		y1 = y2;
+		y2 = i;
+	}
+	sign = (y2 - y1) / abs(y2 - y1);//为正则往右下画
+	num = x2 - x1;
+	for (i = 0; i <= num; i++)
+	{
+		Putpixel64k(x1 + i, y1 + sign * i, color);
+	}
+}
+
+/**********************************************************
+Function：		Icon_draw
+Description：	画图标边框
+Input:			pos格子中心点坐标
+				color颜色
+
+Author：		刘云笛
+**********************************************************/
+#define bl_side 0
+#define rd_side 1
+void Icon_draw(POS pos, int side)
+{
+	unsigned int color1, color2, color2c;	//yello 65385, red 49540, blue 8912
+
+	color2 = 63207;
+	color2c = 50347;
+	color1 = (side == bl_side) ? 8912 : 49540;
+
+	Bar64k(-18 + pos.x, -15 + pos.y, -6 + pos.x, -14 + pos.y, color1);
+	Bar64k(18 + pos.x, -15 + pos.y, 6 + pos.x, -14 + pos.y, color1);
+	Bar64k(-7 + pos.x, -17 + pos.y, -3 + pos.x, -16 + pos.y, color1);
+	Bar64k(7 + pos.x, -17 + pos.y, 3 + pos.x, -16 + pos.y, color1);
+	Bar64k(-2 + pos.x, -18 + pos.y, 2 + pos.x, -17 + pos.y, color1);
+	Bar64k(-18 + pos.x, -15 + pos.y, -17 + pos.x, 8 + pos.y, color1);
+	Bar64k(18 + pos.x, -15 + pos.y, 17 + pos.x, 8 + pos.y, color1);
+	Line45(-18 + pos.x, 8 + pos.y, -3 + pos.x, 23 + pos.y, color1);
+	Line45(-17 + pos.x, 8 + pos.y, -2 + pos.x, 23 + pos.y, color1);
+	Line45(18 + pos.x, 8 + pos.y, 3 + pos.x, 23 + pos.y, color1);
+	Line45(17 + pos.x, 8 + pos.y, 2 + pos.x, 23 + pos.y, color1);
+	Bar64k(-2 + pos.x, 22 + pos.y, 2 + pos.x, 23 + pos.y, color1);
+
+	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color1);
+	Floodfill(pos.x - 1, pos.y, color2, color1);
+	Floodfill(pos.x + 1, pos.y, color2c, color1);
+	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color2);
+}
+
+/**********************************************************
+Function：		Icon_builder
+Description：	画个锤子（工兵图标）
+Input:			pos格子中心点坐标
+				color颜色
+
+Author：		刘云笛
+**********************************************************/
+#define bl_side 0
+#define rd_side 1
+void Icon_builder(POS pos, int side)
+{
+	unsigned int color1;	
+	color1 = (side == bl_side) ? 8912 : 49540;
+
+	Icon_draw(pos, side);
+	Filltriangle(-7 + pos.x, -2 + pos.y, 1 + pos.x, -10 + pos.y, 1 + pos.x, -2 + pos.y, color1);
+	Filltriangle(4 + pos.x, 1 + pos.y, 4 + pos.x, 9 + pos.y, 12 + pos.x, 1 + pos.y, color1);
+	Bar64k(0 + pos.x, -3 + pos.y, 5 + pos.x, 2 + pos.y, color1);
+	Line45(-1 + pos.x, 1 + pos.y, -9 + pos.x, 9 + pos.y, color1);
+	Line45(pos.x, 2 + pos.y, -8 + pos.x, 10 + pos.y, color1);
+	Line45(1 + pos.x, 3 + pos.y, -7 + pos.x, 11 + pos.y, color1);
+	Line45(-1 + pos.x, 2 + pos.y, -9 + pos.x, 10 + pos.y, color1);
+	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//画个锤子
 }

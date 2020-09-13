@@ -74,17 +74,23 @@ Function List：
 
 	24.int Liney(int x1, int y1, int x2, int y2, int color);
 		画垂直直线
+
+	25.void Floodfill(int x, int y, int fillcolor, int borcolor);
+		区域填充
+
+	26.void Filltriangle(int x0, int y0, int x1, int y1, int x2, int y2, int color);
+		平底实心三角形（y0=y2）
 		
-	25.void Circleup64k(int xc, int yc, int radius, unsigned int color);
+	27.void Circleup64k(int xc, int yc, int radius, unsigned int color);
 		画上半圆弧
 		
-	26.void Circlerd64k(int xc, int yc, int radius, unsigned int color);
+	28.void Circlerd64k(int xc, int yc, int radius, unsigned int color);
 		画右下半圆弧
 		
-	27.void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
+	29.void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 		从外到内放射状填充bar，最后一个参数为总延迟时间，可以为0（单位ms）
 		
-	28.void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
+	30.void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 		从内到外放射状填充bar，最后一个参数为总延迟时间，可以为0（单位ms）
 **********************************************************/
 #ifndef	SVGA_H
@@ -179,8 +185,12 @@ int Liney(int x1, int y1, int x2, int y2, int color);
 
 void Floodfill(int x, int y, int fillcolor, int borcolor);
 
+void Filltriangle(int x0, int y0, int x1, int y1, int x2, int y2, int color);
+
 void Circleup64k(int xc, int yc, int radius, unsigned int color);
 
 void Circlerd64k(int xc, int yc, int radius, unsigned int color);
+
+
 
 #endif

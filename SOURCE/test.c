@@ -37,14 +37,15 @@ int test(void)
 void test_draw()
 {
 	short s[101*101];
+	POS p = { 584,418 };
 	
 	//画页面
-	Bar64k_radial(0, 0, 1024, 768, 65535, 0);
-	//Putbmp64k(0, 0, "BMP//map.bmp");
+	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);
+	Putbmp64k(0, 0, "BMP//map.bmp");
 
-	//Button(780, 150, 1024, 180, 60361, 65535);
-	//Outtext(1024 - 4 * 55, 150 - 16, "再续前程", 32, 55, 0);
-	Button(150, "再续前程", 60361, 65535);
+	//Button(150, "再续前程", 60361, 65535);
+
+	Icon_builder(p, 1);
 
 	//Lightbar(0, 0, 512, 768, 1.1);
 	//Lightbar(0, 0, 512, 768, 1.0/1.05);
