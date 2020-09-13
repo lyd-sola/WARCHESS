@@ -2,7 +2,7 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS
 file_name: draw.c
 author: 陈旭桐、刘云笛
-version: 1.2
+version: 1.5
 Description: 自定义绘图函数
 date:2020/9/8
 
@@ -10,7 +10,8 @@ date:2020/9/8
 9.8		增加了阴影、边框自定义绘图函数
 9.9		增加了绘制文档图形
 9.10	升级为svga
-9.11	lyd增加了抠图贴图函数
+9.11	lyd增加抠图贴图函数
+9.12	lyd增加改变亮度函数，删除outtextxyc函数
 
 函数目录
 1.shadow/shadow_l: 			绘制带（大）阴影的文本框
@@ -62,12 +63,6 @@ void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 不能是奇数
 	line(x1+60, y1, x1+80, y1);
 	setfillstyle(1, LIGHT33808);
 	floodfill((x2-x1)/2+x1,y1-(((x2-x1)/2-80)/2)-5,LIGHT33808);*/
-}
-
-void outtextxyc(int x1, int y1, char *s, int color)
-{
-	setcolor(color);
-	outtextxy(x1, y1, s);
 }
 
 //通过两点横坐标输出汉字省去计算part的时间，同时返回part值

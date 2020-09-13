@@ -268,7 +268,6 @@ int mouse_press(int x1, int y1, int x2, int y2)
 void clrmous(int nx,int ny)//清除鼠标
 {
 	press = 0;
-	MouseS = 0;
 	if(Mouse_flag==1)
 	{
 		//Cursor(nx,ny);
@@ -297,4 +296,10 @@ void Newxy(void)
     clrmous(xx0, yy0); 
 	Mouse_savebk(MouseX, MouseY); 
 	drawmous(MouseX,MouseY);
+}
+
+/*快捷清除鼠标函数*/
+void Clrmous(void)
+{
+	clrmous(MouseX, MouseY);
 }

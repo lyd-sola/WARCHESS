@@ -29,6 +29,7 @@ int mouse_press(int x1, int y1, int x2, int y2);//如果在框中点击，则返
 void clrmous(int nx,int ny);//清除鼠标
 void drawmous(int nx,int ny);//绘制鼠标，结合flag
 void Newxy(void);//更新鼠标
+void Clrmous(void);//快捷clrmous
 
 extern int MouseX, MouseY, press, MouseS;
 extern int Mouse_flag; 
