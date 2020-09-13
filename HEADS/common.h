@@ -37,6 +37,7 @@ Description: 头文件及定义结构、枚举
 #include "mainmenu.h"	//主菜单界面
 #include "save.h"		//对战信息存档存取
 #include "functions.h"	//各种函数
+#include "map.h"		//对战地图相关函数
 enum MENU
 {
 	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT
@@ -44,7 +45,4 @@ enum MENU
 /********************测试页面函数********************/
 int test(void);
 void test_draw(void);
-void xy_tran(int x, int y, int *n1, int *n2);
-void search(float x2, float y2, int *n1, int *n2);
-
 #endif
