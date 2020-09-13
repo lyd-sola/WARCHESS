@@ -50,7 +50,7 @@ int mainmenu(char *user)
 	}
 }
 
-void mmenu_draw(char *user)
+void mmenu_draw(char *user)//菜单：新的旅行，重回往昔，对战指导，鸣金收兵
 {
 	clrmous(MouseX, MouseY);
 	Bar64k_radial(0, 0, 1024, 768, 57638, 1000);

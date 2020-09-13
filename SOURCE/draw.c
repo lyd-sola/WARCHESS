@@ -117,25 +117,25 @@ void PutBackground(int left, int top, int right, int bottom, short *buffer)//贴
 drgb的值为变白比例
 Author：刘云笛
 *****************************************/
-void Lightpixel(int x, int y, float drgb)//若drgb过大反而会变暗
+
+unsigned int Lightcolor(unsigned int colorbf, float drgb)
 {
-	unsigned int rbf, gbf, bbf, colorbf;
+	unsigned int rbf, gbf, bbf;
 	/*计算RGB值*/
-	colorbf = Getpixel64k(x, y);
 	rbf = colorbf / (1 << 11);
 	gbf = colorbf % (1 << 11) / (1 << 5);
 	bbf = colorbf % (1 << 5);
-	/*如果rgb中带有0则不改变该点*/
+	/*如果rgb中带有0则无法改变改变该点*/
 	if (rbf * gbf * bbf == 0)
 	{
-		return;
+		return colorbf;
 	}
 	/*如果drgb过大*/
 	if (drgb * rbf > 31)
 	{
 		drgb = (31.0 / rbf);
 	}
-	if (drgb * bbf > 31) 
+	if (drgb * bbf > 31)
 	{
 		drgb = (31.0 / bbf);
 	}
@@ -143,13 +143,19 @@ void Lightpixel(int x, int y, float drgb)//若drgb过大反而会变暗
 	{
 		drgb = (62.0 / gbf);
 	}
-
 	/*核心：每个点rgb值乘以相同倍数，可以实现变白*/
 	rbf = drgb * rbf;
 	gbf = drgb * gbf;
 	bbf = drgb * bbf;
-	//同步color值
 	colorbf = rbf * (1 << 11) + gbf * (1 << 5) + bbf;
+	return colorbf;
+}
+
+void Lightpixel(int x, int y, float drgb)
+{
+	unsigned int colorbf;
+	colorbf = Getpixel64k(x, y);
+	colorbf = Lightcolor(colorbf, drgb);
 	Putpixel64k(x, y, colorbf);
 }
 /*****************************************
@@ -280,4 +286,92 @@ void Lightbar(int x1, int y1, int x2, int y2, float drgb)
 				Putpixel64k(i,j,color);
 		}*/
 	}
+}
+
+/**********************************************************
+Function：		Bar64k_radial_re
+Description：	反向放射性画出矩形框，使用方法同Bar64k，最后一个参数为总延迟时间（单位mm）
+
+Calls：			rectangle64k
+
+Author：		刘云笛
+**********************************************************/
+void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time)
+{
+	int n, t, i;
+
+	if (x2 - x1 > y2 - y1)
+	{
+		n = ceil(((float)y2 - y1) / 2);//向上取整
+	}
+	else
+	{
+		n = ceil(((float)y2 - y1) / 2);//向上取整
+	}
+	t = fill_time / (n + 1);
+
+	for (i = 0; i <= n; i++)
+	{
+		rectangle64k(x1 + i, y1 + i, x2 - i, y2 - i, color);
+		delay(t);//可能还需要调整
+	}
+}
+/**********************************************************
+Function：		Bar64k_radial
+Description：	正向放射性画出矩形框，使用方法同Bar64k，最后一个参数为总延迟时间（单位mm）
+
+Calls：			rectangle64k
+
+Author：		刘云笛
+**********************************************************/
+void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time)
+{
+	int n, t;
+
+	if (x2 - x1 > y2 - y1)
+	{
+		n = ceil(((float)y2 - y1) / 2);//向上取整
+	}
+	else
+	{
+		n = ceil(((float)y2 - y1) / 2);//向上取整
+	}
+	t = fill_time / (n + 1);
+
+	for (; n >= 0; n--)
+	{
+		rectangle64k(x1 + n, y1 + n, x2 - n, y2 - n, color);
+		delay(t);//可能还需要调整
+	}
+}
+/**********************************************************
+Function：		Bar64k_radial
+Description：	按钮绘制函数
+Calls：			Line64k
+Input:			x1,y1,x2,y2长方形区域范围
+				color颜色
+
+Author：		刘云笛
+**********************************************************/
+void Button(int y1,char *s, int color, int color2)
+{
+	int x1 = 780, x2 = 1024;
+	int height = 30, i;
+	for (i = x2; i >= x1; i--)
+	{
+		Line64k(i, y1, i, y1 + height, color);
+	}
+	for (i = 1; i <= height; i ++)
+	{
+		Line64k(x1 - i, y1, x1 - i, y1 + height - i, color);
+	}
+	for (i = 0; i <= height - 7; i++)
+	{
+		Putpixel64k(x1 - height + 10 + i, y1 + 4 + i, color2);
+		Putpixel64k(x1 - height + 11 + i, y1 + 4 + i, color2);
+		Putpixel64k(x1 - height + 12 + i, y1 + 4 + i, color2);
+		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
+	}
+	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
+	Outtext(1024 - 4 * 55, y1 - 16, s, 32, 55, 0);
 }

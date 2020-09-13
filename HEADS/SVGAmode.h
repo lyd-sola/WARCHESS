@@ -177,12 +177,10 @@ int Linex(int x1, int y1, int x2, int y2, int color);
 
 int Liney(int x1, int y1, int x2, int y2, int color);
 
+void Floodfill(int x, int y, int fillcolor, int borcolor);
+
 void Circleup64k(int xc, int yc, int radius, unsigned int color);
 
 void Circlerd64k(int xc, int yc, int radius, unsigned int color);
-
-void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
-
-void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 
 #endif
