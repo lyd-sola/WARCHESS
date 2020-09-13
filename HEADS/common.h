@@ -44,5 +44,7 @@ enum MENU
 /********************²âÊÔÒ³Ãæº¯Êı********************/
 int test(void);
 void test_draw(void);
+void xy_tran(int x, int y, int *n1, int *n2);
+void search(float x2, float y2, int *n1, int *n2);
 
 #endif
