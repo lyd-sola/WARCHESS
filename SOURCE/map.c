@@ -62,21 +62,22 @@ void xy(int n1, int n2, int *x, int *y)
 		*x = 69 + (n1 - 1) * 69;
 	}
 	*y = 54 + (n2 - 1) * 46;
-	*y -= (n2 - 1) / 3;   //哈哈哈哈我真特酿是个天才， 老赌狗了
+	*y -= (n2 - 1) / 3;   
 	*x -= (n1 - 1) / 3;
 }
-/*struct POS xy(int n1, int n2)
+ POS center_xy(int n1, int n2)
 {
-	struct POS centpos;
+	POS centpos;
 	if (n2 % 2 == 1)
 	{
-		centpos.x = 103 + (n1 - 1) * 68;
+		centpos.x = 103 + (n1 - 1) * 69;
 	}
 	else
 	{
-		centpos.x = 69 + (n1 - 1) * 68;
+		centpos.x = 69 + (n1 - 1) * 69;
 	}
-	
 	centpos.y = 54 + (n2 - 1) * 46;
+	centpos.y -= (n2 - 1) / 3;
+	centpos.x -= (n1 - 1) / 3;
 	return centpos;
-}*/
+}

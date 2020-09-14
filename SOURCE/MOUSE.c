@@ -302,4 +302,5 @@ void Newxy(void)
 void Clrmous(void)
 {
 	clrmous(MouseX, MouseY);
+	Mouse_savebk2();
 }

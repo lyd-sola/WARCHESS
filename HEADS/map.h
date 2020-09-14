@@ -12,4 +12,5 @@
 void xy_tran(float x, float y, int* n1, int* n2);
 float f(float x, float a, float b, int n1, int n2);
 void xy(int n1, int n2, int* x, int* y);
+POS center_xy(int n1, int n2);
 #endif

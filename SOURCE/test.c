@@ -28,31 +28,32 @@ int test(void)
 	char str3[10];
 	char str4[10];
 	char str5[10] = "(";
+	POS pos1;
 	/*******/
 	clrmous(MouseX, MouseY);
 	test_draw();
-	for (i = 1; i <= 13;i++)
-	{
-		for (j = 1; j <= 13; j++)
-		{
-			xy(i, j, &x_tmp, &y_tmp);
-			rectangle64k(x_tmp - 10, y_tmp - 10, x_tmp + 10, y_tmp + 10, 0);
-			/*itoa(x_tmp, str1, 10);
-			itoa(y_tmp, str2, 10);
-			strcat(str5, str1);
-			strcat(str5, " , ");
-			strcat(str5, str2);
-			strcat(str5, ")");
-			Outtextxx(x_tmp - 30, y_tmp, x_tmp + 30, str5, 16, 0);*/
-		}
-	}
-	for (i = 0; i <= 25;i++)
-	{
-		for (j = 0; j <= 13; j++)
-		{
-			rectangle64k(X0, Y0, X0 + i * WIDTH, Y0 + j * LENGTH, 0);
-		}
-	}
+	//for (i = 1; i <= 13;i++)
+	//{
+	//	for (j = 1; j <= 13; j++)
+	//	{
+	//		xy(i, j, &x_tmp, &y_tmp);
+	//		rectangle64k(x_tmp - 10, y_tmp - 10, x_tmp + 10, y_tmp + 10, 0);
+	//		/*itoa(x_tmp, str1, 10);
+	//		itoa(y_tmp, str2, 10);
+	//		strcat(str5, str1);
+	//		strcat(str5, " , ");
+	//		strcat(str5, str2);
+	//		strcat(str5, ")");
+	//		Outtextxx(x_tmp - 30, y_tmp, x_tmp + 30, str5, 16, 0);*/
+	//	}
+	//}
+	//for (i = 0; i <= 25;i++)
+	//{
+	//	for (j = 0; j <= 13; j++)
+	//	{
+	//		rectangle64k(X0, Y0, X0 + i * WIDTH, Y0 + j * LENGTH, 0);
+	//	}
+	//}
 	
 	while(1)
 	{
@@ -97,20 +98,22 @@ int test(void)
 
 		if(mouse_press(20, 20, 1024, 768) == 1)
 		{
+			//xy_tran((float)MouseX, (float)MouseY, &n1, &n2);
+			//itoa(n1, str1, 10);
+			//itoa(n2, str2, 10);
+			//itoa(MouseX, str3, 10);
+			//itoa(MouseY, str4, 10);
+			///*Outtext(10,0 , str1, 16, 30, 0);
+			//Outtext(10,30, str2, 16, 30, 0);
+			//Outtext(10,60 , str3, 16, 30, 0);
+			//Outtext(10,90, str4, 16, 30, 0);*/
 			xy_tran((float)MouseX, (float)MouseY, &n1, &n2);
-			itoa(n1, str1, 10);
-			itoa(n2, str2, 10);
-			itoa(MouseX, str3, 10);
-			itoa(MouseY, str4, 10);
-			Outtext(10,0 , str1, 16, 30, 0);
-			Outtext(10,30, str2, 16, 30, 0);
-			Outtext(10,60 , str3, 16, 30, 0);
-			Outtext(10,90, str4, 16, 30, 0);
+			pos1 = center_xy(n1, n2);
+			Clrmous();
+			Icon_builder(pos1, 1);
 			i += 30;
 		}
-		
-	}
-	
+	}	
 }
 
 void test_draw()
@@ -121,7 +124,7 @@ void test_draw()
 	//»­Ò³Ãæ
 	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);
 	Putbmp64k(0, 0, "BMP//map.bmp");
-	Icon_builder(p, 1);
+	//Icon_builder(p, 1);
 
 	//Lightbar(0, 0, 512, 768, 1.1);
 	//Lightbar(0, 0, 512, 768, 1.0/1.05);
