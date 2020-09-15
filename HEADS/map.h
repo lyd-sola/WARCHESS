@@ -1,8 +1,6 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
-
-
 #define X0 69			//原点x坐标
 #define Y0 54		//原点y坐标
 #define WIDTH 34.365	//一个神秘格子的y方向边长,六边形弦长一半

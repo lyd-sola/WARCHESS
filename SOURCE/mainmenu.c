@@ -18,6 +18,7 @@ int mainmenu(char *user)
 {
 	mmenu_draw(user); //绘制主菜单函数
 	clrmous(MouseX, MouseY);//更新鼠标状态，防止留痕
+	savefile_creat(user);
 	
 	while(1)
 	{
@@ -25,28 +26,8 @@ int mainmenu(char *user)
 		
 		if(mouse_press(0, 0, 50, 50) == MOUSE_IN_L)
 		{
-			return 1;
+			return HOMEPAGE;
 		}
-		
-		if(mouse_press(330, 140+85, 330+250, 140+85+55) == MOUSE_IN_L)
-		{
-			/******************* 调试 记得删除********************/
-			if(savefile_creat(user) == 0)
-			{
-				Outtext(0, 0, "存档文件损坏", 16, 20, 65535);
-				delay(1000);
-				exit(0);
-			}
-			
-			Outtext(0, 0, "成功创建存档", 16, 20, 65535);
-			delay(1000);
-			return MAINMENU;
-		}
-		
-		/*if(mouse_press(330, 140+85, 330+250, 140+85+55))
-		{
-			;
-		}*/
 	}
 }
 

@@ -117,7 +117,6 @@ int login_check(char *username, char *password)
 	char filename[30] = "users\\";
 	
 	strcat(filename, username);
-	strcat(filename, ".txt");
 	
 	if(*username == '\0')//未输入用户名
 	{
