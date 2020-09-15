@@ -24,6 +24,7 @@ int login(char *username)
 	char password[20] = "\0";	//初始化密码数组
 	int flag = 0;				//防止重复高亮
 	
+	Clrmous();
 	drawlogin();
 	Mouse_savebk2();//更新鼠标状态，防止留痕
 	

@@ -303,4 +303,5 @@ void Clrmous(void)
 {
 	clrmous(MouseX, MouseY);
 	Mouse_savebk2();
+	MouseS = 0;
 }

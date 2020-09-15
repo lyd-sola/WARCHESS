@@ -30,7 +30,7 @@ int test(void)
 	char str5[10] = "(";
 	POS pos1;
 	/*******/
-	clrmous(MouseX, MouseY);
+	Clrmous();
 	test_draw();
 	//for (i = 1; i <= 13;i++)
 	//{

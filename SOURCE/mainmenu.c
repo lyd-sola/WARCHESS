@@ -17,7 +17,7 @@ date:2020/9/9
 int mainmenu(char *user)
 {
 	mmenu_draw(user); //绘制主菜单函数
-	clrmous(MouseX, MouseY);//更新鼠标状态，防止留痕
+	Clrmous();//更新鼠标状态，防止留痕
 	savefile_creat(user);
 	
 	while(1)
