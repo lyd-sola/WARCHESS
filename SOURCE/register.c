@@ -27,7 +27,7 @@ int register_()
 	char user[10] = "", password[20] = "", password_r[20] = "";
 	int flag = 0;	//∑¿÷π÷ÿ∏¥∏ﬂ¡¡
 	
-	clrmous(MouseX, MouseY);
+	Clrmous();
 	drawregi();
 	
 	

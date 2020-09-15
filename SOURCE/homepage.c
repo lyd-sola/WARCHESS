@@ -21,7 +21,7 @@ int homepage()
 {
 	int flag1 = 0, flag2 = 0, flag3 = 0, flag4 = 0;	/***********防止重复标亮, 此处需要优化成一个flag****************/
 	
-	clrmous(MouseX, MouseY);//更新鼠标状态，防止留痕
+	Clrmous();//更新鼠标状态，防止留痕
 	draw_h_page(); //绘制主页函数
 
 	while(1)
