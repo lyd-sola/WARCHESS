@@ -127,16 +127,13 @@ void user_creat(char *username, char *password)
 {
 	FILE *fp;
 	char filename[30] = "USERS\\";
-	
+	int n = 0;
 	strcat(filename, username);
-	strcat(filename, ".txt");
 	
 	/***************创建用户名及密码保存文件（后续还可用于保存成就信息等）********************/
 	if((fp = fopen(filename, "w")) == NULL)
 	{
-		//outtextxyc(10,10,"Can NOT creat user file", RED);    ********************************看我，看我！！！！！！！！！****************
-		delay(6000);
-		exit(1);
+		show_error("无法创建用户存档", 1);
 	}
 	fprintf(fp, "%llu\n%llu", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
 	fclose(fp);
@@ -144,13 +141,11 @@ void user_creat(char *username, char *password)
 	/***********************创建对战信息文件，其实只有文件名和一个0***************************/
 	sprintf(filename, "SAVES");//教你怎么优美地改路径
 	filename[5] = '/';
-	if((fp = fopen(filename, "w")) == NULL)
+	if((fp = fopen(filename, "wb")) == NULL)
 	{
-		//outtextxyc(10,10,"Can NOT creat battle file", RED);	********************************看我，看我！！！！！！！！！****************
-		delay(6000);
-		exit(1);
+		show_error("无法创建用户战斗信息存档", 1);
 	}
-	fprintf(fp, "0\n");
+	fwrite(&n, 1, 1, fp);
 	fclose(fp);
 }
 
