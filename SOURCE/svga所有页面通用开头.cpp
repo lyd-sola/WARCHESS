@@ -20,7 +20,7 @@ int /*name_of_page*/(parameter)
 	//declare variables down here
 	
 	//initialize down here
-	clrmous(MouseX, MouseY);
+	Clrmous();
 	/*name_of_page*/_draw();
 
 	while(1)

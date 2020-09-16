@@ -30,8 +30,7 @@ Function List：
 		
 		
 	6.void Putpixel64k(int x, int y, unsigned int color);
-		画点函数，其他画图函数的基础，仅适用于0x117模式！
-		
+		画点函数，其他画图函数的基础，仅适用于0x117模式！		
 		
 	8.int Putbmp64k(int x, int y, const char * path);
 		24位非压缩bmp图定位显示函数
@@ -86,12 +85,6 @@ Function List：
 		
 	28.void Circlerd64k(int xc, int yc, int radius, unsigned int color);
 		画右下半圆弧
-		
-	29.void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
-		从外到内放射状填充bar，最后一个参数为总延迟时间，可以为0（单位ms）
-		
-	30.void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
-		从内到外放射状填充bar，最后一个参数为总延迟时间，可以为0（单位ms）
 **********************************************************/
 #ifndef	SVGA_H
 #define	SVGA_H

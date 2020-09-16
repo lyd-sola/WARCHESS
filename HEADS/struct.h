@@ -16,9 +16,16 @@ typedef struct _cell
 	unsigned health : 5;//兵种、大本营血量，高级资源占领回合数
 }CELL;
 
+typedef struct _Battleinfo
+{
+	unsigned round;
+	unsigned r_source;
+	unsigned b_source;
+}Battleinfo;
+
 enum _GEO
 {
-	OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC
+	OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC, OUT_MAP
 };//地形种类编号
 
 enum _KIND

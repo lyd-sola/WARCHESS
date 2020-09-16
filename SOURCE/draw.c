@@ -345,18 +345,20 @@ void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_
 	}
 }
 /**********************************************************
-Function：		Bar64k_radial
+Function：		Button
 Description：	按钮绘制函数
 Calls：			Line64k
-Input:			x1,y1,x2,y2长方形区域范围
-				color颜色
+Input:			y1按钮上沿y坐标，s按钮上汉字（四个字最佳）
+				color1底色，color2线颜色
 
 Author：		刘云笛
+ps 灵感来自Riddle Joker，柚子社天下第一！
+（大概不会有人看到这里）
 **********************************************************/
 void Button(int y1,char *s, int color, int color2)
 {
 	int x1 = 750, x2 = 1024;
-	int height = 30, i;
+	int height = 30, i;//bar大小274*30
 	for (i = x2; i >= x1; i--)
 	{
 		Line64k(i, y1, i, y1 + height, color);
@@ -364,20 +366,20 @@ void Button(int y1,char *s, int color, int color2)
 	for (i = 1; i <= height; i ++)
 	{
 		Line64k(x1 - i, y1, x1 - i, y1 + height - i, color);
-	}
+	}//从右向左扫描，减少卡顿效果
 	for (i = 0; i <= height - 7; i++)
 	{
 		Putpixel64k(x1 - height + 10 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 11 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 12 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
-	}
+	}//左下装饰花纹绘制
 	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
 	Outtext(1024 - 4 * 55 - 20, y1 - 16, s, 32, 55, 0);
 }
 /**********************************************************
 Function：		Line45
-Description：	画45度角斜线，可以满足所有45度直线情况
+Description：	画45度角斜线，输入可以交换两端点
 Input:			x1,y1,起始点,x2终点x坐标
 				color颜色
 
@@ -407,8 +409,7 @@ void Line45(int x1, int y1, int x2, int y2, unsigned int color)
 Function：		Icon_draw
 Description：	画图标边框
 Input:			pos格子中心点坐标
-				color颜色
-
+				side阵营
 Author：		刘云笛
 **********************************************************/
 #define bl_side 0

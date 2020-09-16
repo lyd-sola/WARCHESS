@@ -8,6 +8,7 @@ date:2020/9/13
 
 更新日志
 9.13	报错函数show_error
+9.14	按钮相关功能函数Light_button
 
 函数目录
 ******************************************************************/
@@ -84,4 +85,49 @@ void show_error(char* msg, int mode)
 		i ++;
 	}
 
+}
+/**********************************************************
+Function：		Light_button
+Description：	按钮标亮函数（包括点击功能，是不是该改个名呢，算了懒）
+				解决了页面函数一大堆鼠标判断问题
+				解决了每一个按钮都需要立一个flag问题
+Calls：			Button
+Input:			s原按钮文字，s_change标亮后按钮文字
+				yo，高度color1底色，color2线颜色（输入按钮绘制参数值）
+Output:			返回1时被点击
+Author：		刘云笛
+**********************************************************/
+int Light_button(int y0, char* s, char* s_change, int color, int color2)		/*本函数默认背景色为白色，后续修改*/
+{
+	if (MouseX >= MouseY - y0 + 720 && MouseY >= y0 && MouseY <= y0 + 30)//斜线也可以正常判断哦
+	{
+
+		Clrmous();
+		MouseS = 1;
+		Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);//遮挡按钮外汉字
+		Button(y0, s_change, 64800, 65535);
+		while (1)//标亮后生成新鼠标，解决flag问题，lyd原创 XD
+		{
+			Newxy();
+			if (MouseX >= MouseY - y0 + 720 && MouseY >= y0 && MouseY <= y0 + 30)
+			{
+				if (press == 1)
+				{
+					return 1;
+				}//若点击返回1
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);
+				Button(y0, s, color, color2);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
 }

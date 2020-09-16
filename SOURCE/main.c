@@ -39,6 +39,10 @@ int main(void)
 			case MAINMENU:			//主菜单
 				page = mainmenu(user);
 				break;
+
+			case BATTLE:			//对战界面
+				page = battle(user, 1);									/*这里需要传入存档号*/
+				break;
 				
 			case 233:
 				page = test();

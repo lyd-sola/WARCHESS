@@ -6,7 +6,7 @@
 	经lyd魔改：（其实是将两份鼠标的优点结合）
 		1.重新绘制了鼠标（使用了证券投资魏靖旻和邓述民函数，转成SVGA模式，增加了不同鼠标形态）
 		2.修改了存鼠标背景的mouse_sq数组大小，以及存储范围（根据重新绘制的大小调整）
-		3.重写了大量函数，增加了解决鼠标留痕问题函数clrmous(MouseX, MouseY)，以及页面切换鼠标不立刻显示（Newxy修改）
+		3.重写了大量函数，增加了解决鼠标留痕问题函数Clrmous()，以及页面切换鼠标不立刻显示（Newxy修改）
 
 	使用方法：
 		所有可能被鼠标遮挡的绘图函数前，增加clrmous(MouseX, MouseY)
@@ -304,4 +304,5 @@ void Clrmous(void)
 	clrmous(MouseX, MouseY);
 	Mouse_savebk2();
 	MouseS = 0;
+	press = 0;
 }

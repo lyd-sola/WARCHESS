@@ -91,9 +91,10 @@ void savefile_init(FILE *fp, short n)//n为当前存档号
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
 	fwrite(t, 2, 3, fp);
 	//初始化内容创建
-	fwrite(&i, 2, 1, fp);//回合数
 	fwrite(&i, 2, 1, fp);
-	fwrite(&i, 2, 1, fp);//双方资源数
+	fwrite(&i, 2, 1, fp);//双方资源数								/*要设置初始资源啊！！！！*/
+	i = 1;
+	fwrite(&i, 2, 1, fp);//回合数
 	
 	//地图初始化
 	if ((map = fopen("DATA//map.txt", "r")) == NULL)
@@ -140,6 +141,10 @@ void savefile_init(FILE *fp, short n)//n为当前存档号
 				cell.geo = HSORC;
 				cell.cost = 2;
 				break;
+			case OUT_MAP:
+				cell.geo = OUT_MAP;
+				cell.cost = 7;
+				break;
 			}
 			fwrite(&cell, 2, 1, fp);
 		}
@@ -151,22 +156,22 @@ void savefile_init(FILE *fp, short n)//n为当前存档号
 Function：seek_savinfo
 Author：刘云笛
 Description: 在对战信息文件中定位
-	将fp定位指向坐标pos的信息，注：输入坐标为双倍宽度
+	将fp定位指向坐标xy的信息，注：输入坐标为双倍宽度
 	若x*y == 0，将fp定位到第n个存档首
 *******************************************/
 
-void seek_savinfo(FILE* fp, short n, const POS pos)//fp 指向用户对战信息文件的指针
+void seek_savinfo(FILE* fp, short n, int x, int y)//fp 指向用户对战信息文件的指针
 {
 	fseek(fp, 1, SEEK_SET);//跳过开始数字
 	fseek(fp, (13 + 2 * MAP_SIZE * MAP_SIZE) * (n - 1), 1);//跳过n-1个存档
-	if (pos.x * pos.y == 0)
+	if (x * y == 0)
 	{
 		return;
 	}
 	fseek(fp, 13, SEEK_CUR);//跳过“存档头”
 	/* 存储行列与双倍宽度坐标的关系：row=y,column=(int)(x+1)/2 */
-	fseek(fp, 2 * MAP_SIZE * (pos.y - 1), SEEK_CUR);//跳过y-1行
-	fseek(fp, (pos.x - 1) / 2 * 2, SEEK_CUR);//跳过(x - 1) / 2列
+	fseek(fp, 2 * MAP_SIZE * (y - 1), SEEK_CUR);//跳过y-1行
+	fseek(fp, (x - 1) / 2 * 2, SEEK_CUR);//跳过(x - 1) / 2列
 }
 /*******************以下测试函数，记得删除********************/
 
