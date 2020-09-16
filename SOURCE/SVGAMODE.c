@@ -1311,3 +1311,83 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color)
 		}
 	}
 }
+
+/*仅贴一张图的部分，用于制作动画。速度较bar稍慢，但也可以接受
+lyd修改自Putbmp64k，仅能处理全屏大图（因为我们只需要这个）*/
+int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path)//前四个参数为贴图的矩形范围
+{
+	/*指向图片文件的文件指针*/
+	FILE* fpbmp;
+
+	/*行像素缓存指针*/
+	COLORS24* buffer;
+
+	/*图片的宽度、高度、一行像素所占字节数（含补齐空字节）*/
+	long int width, height, linebytes;
+
+	/*循环变量*/
+	int i, j;
+	long h = 3*(x2 - x1 + 1);
+
+	/*打开文件*/
+	if ((fpbmp = fopen(path, "rb")) == NULL)
+	{
+		return 0;
+	}
+
+	/*读取宽度、高度*/
+	fseek(fpbmp, 18L, 0);
+	fread(&width, 4, 1, fpbmp);
+	fread(&height, 4, 1, fpbmp);
+
+	/*宽度超限则退出*/
+	if (width > SCR_WIDTH)
+	{
+		return 0;
+	}
+
+	/*计算一行像素占字节数，包括补齐的空字节*/
+	linebytes = (3 * width) % 4;
+
+	if (!linebytes)
+	{
+		linebytes = 3 * width;
+	}
+	else
+	{
+		linebytes = 3 * width + 4 - linebytes;
+	}
+
+	if ((buffer = (COLORS24*)malloc(h)) == 0)
+	{
+		return 0;
+	}
+
+	/*行扫描形式读取图片数据并显示*/
+	fseek(fpbmp, 54L, 0);
+	fseek(fpbmp, (768 - y2) * linebytes, SEEK_CUR);
+	for (i = y2; i >= y1; i--)
+	{
+		fseek(fpbmp, (x1 - 1) * 3, SEEK_CUR);
+		fread(buffer, (x2-x1+1)*3, 1, fpbmp);	/*读取一行像素数据*/
+
+		/*一行像素的数据处理和画出*/
+		for (j = 0; j <= x2 - x1; j++)
+		{
+			/*0x117模式下，原图红绿蓝各8位分别近似为5位、6位、5位*/
+			buffer[j].R >>= 3;
+			buffer[j].G >>= 2;
+			buffer[j].B >>= 3;
+			Putpixel64k(j + x1, i + 0,
+				((((unsigned int)buffer[j].R) << 11)
+					| (((unsigned int)buffer[j].G) << 5)
+					| ((unsigned int)buffer[j].B)));	/*计算最终颜色，红绿蓝从高位到低位排列*/
+		}
+		fseek(fpbmp, linebytes - 3 * x2, SEEK_CUR);	//两个fseek+一个fread刚好linebytes
+	}
+
+	free(buffer);
+	fclose(fpbmp);
+
+	return 1;
+}
