@@ -184,6 +184,6 @@ void Circleup64k(int xc, int yc, int radius, unsigned int color);
 
 void Circlerd64k(int xc, int yc, int radius, unsigned int color);
 
-int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path);
+int Map_partial(int x1, int y1, int x2, int y2, FILE* fpbmp);
 
 #endif

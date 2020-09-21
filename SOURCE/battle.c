@@ -10,6 +10,7 @@ Date:
 
 函数目录
 ******************************************************************/
+
 #include "common.h"
 //战斗界面主函数
 int battle(char *user, short save_num)
@@ -18,9 +19,16 @@ int battle(char *user, short save_num)
 	CELL cl;
 	Battleinfo batinfo;
 	int clx, cly;
-	char s[10];
+	char s[20] = "SAVES//";
+	FILE* fp;
 	
-	batinfo = Battle_init(user, map, save_num);
+	strcat(s, user);
+	if ((fp = fopen(s, "rb+")) == NULL)
+	{
+		show_error("未找到用户存档文件", 1);
+	}
+
+	Battle_init(fp, &batinfo, map, save_num);
 	Clrmous();
 	battle_draw();
 	while(1)
@@ -30,16 +38,13 @@ int battle(char *user, short save_num)
 		{
 			return MAINMENU;
 		}
-		
-		if(mouse_press(69, 23, 959, 619) == MOUSE_IN_L)
-		{
-			xy_tran((float)MouseX, (float)MouseY, &clx, &cly);
+		//if(mouse_press(69, 23, 959, 619) == MOUSE_IN_L)
+		//{
+		//	xy_tran((float)MouseX, (float)MouseY, &clx, &cly);
 
-			cl = map[(clx + 1) / 2 - 1][cly - 1];
-		}
-		
+		//	cl = map[(clx + 1) / 2 - 1][cly - 1];
+		//}
 	}
-	
 }
 //绘制战斗界面函数
 void battle_draw()

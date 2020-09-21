@@ -75,7 +75,7 @@ Description: 对某一个存档进行覆盖式初始化
 
 void savefile_init(FILE *fp, short n)//n为当前存档号
 {
-	unsigned i = 0, j = 0, t[3];
+	unsigned i = 3, j = 0, t[3];
 	time_t rawtime;
     struct tm *info;
 	CELL cell;

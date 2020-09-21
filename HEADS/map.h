@@ -7,8 +7,8 @@
 #define LENGTH 45.75	//一个神秘格子的y方向边长
 #define K 0.5143		//直线斜率的绝对值
 
-void xy_tran(float x, float y, int* n1, int* n2);
+POS xy2cell(int x, int y);
 float f(float x, float a, float b, int n1, int n2);
 void xy(int n1, int n2, int* x, int* y);
-POS center_xy(int n1, int n2);
+POS center_xy(int row, int col);
 #endif

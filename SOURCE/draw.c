@@ -27,27 +27,6 @@ date:2020/9/8
 ******************************************************************/
 #include"common.h"
 
-//x1, y1, x2, y2为对角线两点坐标
-void shadow(int x1, int y1, int x2, int y2, int color1, int color2) 
-{
-	Bar64k(x1 + 5, y1 + 5, x2 + 5, y2 + 5, 33808);
-	Bar64k(x1, y1, x2, y2, color1);
-	Bar64k(x1+2, y1+2, x2, y2, color2);
-}
-
-void shadow_l(int x1, int y1, int x2, int y2, int color)
-{
-	Bar64k(x1 + 10, y1 + 10, x2 + 10, y2 + 10, 33808);
-	Bar64k(x1, y1, x2, y2, color);
-	rectangle64k(x1, y1, x2, y2, 33808);
-}
-
-void frame(int x1, int y1, int x2, int y2, int color)
-{
-	Bar64k(x1, y1, x2, y2, color);
-	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
-}
-
 void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 不能是奇数
 {
 	shadow_l(x1, y1, x2, y2, 65504);
@@ -465,4 +444,33 @@ void Icon_builder(POS pos, int side)
 	Line45(1 + pos.x, 3 + pos.y, -7 + pos.x, 11 + pos.y, color1);
 	Line45(-1 + pos.x, 2 + pos.y, -9 + pos.x, 10 + pos.y, color1);
 	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//画个锤子
+}
+
+//x1, y1, x2, y2为对角线两点坐标
+void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1和y2必须相同
+{
+	Filltriangle(x1, y1, x3, y3, x2, y2, color);
+	Filltriangle(x2, y2, x3, y3, 2 * x2 - x1, y2, color);
+	Filltriangle(x1, y1, x3, 2 * y1 - y3, x2, y2, color);
+	Filltriangle(x2, y2, x3, 2 * y1 - y3, 2 * x2 - x1, y2, color);
+}
+
+void shadow(int x1, int y1, int x2, int y2, int color1, int color2)
+{
+	Bar64k_radial(x1 + 5, y1 + 5, x2 + 5, y2 + 5, 33808, 0);
+	Bar64k_radial(x1, y1, x2, y2, color1, 0);
+	Bar64k_radial(x1 + 2, y1 + 2, x2, y2, color2, 0);
+}
+
+void shadow_l(int x1, int y1, int x2, int y2, int color)
+{
+	Bar64k_radial(x1 + 10, y1 + 10, x2 + 10, y2 + 10, 33808, 0);
+	Bar64k_radial(x1, y1, x2, y2, color, 0);
+	rectangle64k(x1, y1, x2, y2, 33808);
+}
+
+void frame(int x1, int y1, int x2, int y2, int color)
+{
+	Bar64k_radial(x1, y1, x2, y2, color, 0);
+	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
 }

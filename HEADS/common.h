@@ -37,7 +37,7 @@ Description: 头文件及定义结构、枚举
 #include "register.h"	//注册界面
 #include "mainmenu.h"	//主菜单界面
 #include "save.h"		//对战信息存档存取
-#include "functions.h"	//各种函数
+#include "func.h"	//各种函数
 #include "map.h"		//地图相关函数
 #include "battle.h"		//对战主函数
 enum MENU
@@ -47,4 +47,5 @@ enum MENU
 /********************测试页面函数********************/
 int test(void);
 void test_draw(void);
+void tank_draw(int x, int y);
 #endif
