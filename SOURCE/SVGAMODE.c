@@ -1313,7 +1313,7 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color)
 }
 
 /*仅贴一张图的部分，用于制作动画。速度较bar稍慢，但也可以接受
-lyd修改自Putbmp64k，仅能处理全屏大图（因为我们只需要这个）*/
+lyd修改自Putbmp64k，仅能处理全屏大图（因为我们只需要这个XD）*/
 int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path)//前四个参数为贴图的矩形范围
 {
 	/*指向图片文件的文件指针*/

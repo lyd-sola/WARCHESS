@@ -10,6 +10,7 @@ Date:
 
 º¯ÊýÄ¿Â¼
 ******************************************************************/
+
 #include "common.h"
 
 int battle(char *user, short save_num)
@@ -25,9 +26,7 @@ int battle(char *user, short save_num)
 		{
 			return MAINMENU;
 		}
-		
 	}
-	
 }
 
 void battle_draw()

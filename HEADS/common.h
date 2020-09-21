@@ -47,4 +47,5 @@ enum MENU
 /********************²âÊÔÒ³Ãæº¯Êı********************/
 int test(void);
 void test_draw(void);
+void tank_draw(int x, int y);
 #endif

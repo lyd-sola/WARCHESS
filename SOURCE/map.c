@@ -14,8 +14,9 @@ date:
 //ÉñÃØ¸ñ×Ó£ºÓÉÖĞĞÄÏßÍø¸ñÎ§³öµÄ¸ñ×Ó
 //xy_tranº¯Êı×¢ÊÍÖĞÎªµÚ¶şÖÖ½¨Ïµ·½Ê½
 
-void xy_tran(float x, float y, int* n_1, int* n_2) //ÕæÊµ×ø±êÓëÁù±ßĞÎ¸ñ×Ó×ø±ê×ª»»
+POS xy2cell(int x, int y) //ÕæÊµ×ø±êÓëÁù±ßĞÎ¸ñ×Ó×ø±ê×ª»»
 {
+	POS cell;
 	double x2, y2, a, b, tmp;
 	int n1, n2;
 	x2 = x - X0; //»»×ø±êÏµºóµÄMouseX
@@ -27,7 +28,7 @@ void xy_tran(float x, float y, int* n_1, int* n_2) //ÕæÊµ×ø±êÓëÁù±ßĞÎ¸ñ×Ó×ø±ê×ª»
 	tmp = f(x2, a, b, n1, n2);
 
 	/**¸ù¾İµã»÷Î»ÖÃÔÚÉñÃØ·½¸ñÖĞĞ±ÏßÉÏ·½»òÕßÏÂ·½È·¶¨¸ñ×Ó×İ×ø±ê**/
-		*n_2 = (y2 < tmp) ? n2 : (n2 + 1); 
+	cell.y = (y2 < tmp) ? n2 : (n2 + 1);
 
 	/**¸ù¾İµã»÷Î»ÖÃÔÚÉñÃØ·½¸ñÖĞĞ±ÏßÉÏ·½»òÕßÏÂ·½ÒÔ¼°ÉñÃØ·½¸ñĞĞÁĞÊıµÄÆæÅ¼ĞÔÈ·¶¨¸ñ×Óºá×ø±ê**/
 	/************  y2 < tmp ÅĞ¶ÏµÄÊÇÊó±êµã»÷µãÊÇ·ñÔÚĞ±ÏßÖ®ÉÏ¶ø·ÇÖ®ÏÂ£¬yÖáÕı·½ÏòÏòÏÂ*****************/
@@ -35,11 +36,11 @@ void xy_tran(float x, float y, int* n_1, int* n_2) //ÕæÊµ×ø±êÓëÁù±ßĞÎ¸ñ×Ó×ø±ê×ª»
 	{
 		if (n2 % 2 == 1)  //ÉñÃØ·½¸ñĞĞÊıÎªÆæÊı
 		{
-			*n_1 = (y2 < tmp) ? n1 : (n1 - 1);
+			cell.x = (y2 < tmp) ? n1 : (n1 - 1);
 		}
 		else  //ÉñÃØ·½¸ñĞĞÊıÎªÅ¼Êı
 		{
-			*n_1 = (y2 < tmp) ? (n1 - 1) : n1;
+			cell.x = (y2 < tmp) ? (n1 - 1) : n1;
 		}
 		//*n_1 = (n1 + 1) / 2;  //1£¬3£¬5...¶ÔÓ¦1. 2. 3;
 	}
@@ -47,15 +48,16 @@ void xy_tran(float x, float y, int* n_1, int* n_2) //ÕæÊµ×ø±êÓëÁù±ßĞÎ¸ñ×Ó×ø±ê×ª»
 	{
 		if (n2 % 2 == 1)  //ÉñÃØ·½¸ñĞĞÊıÎªÆæÊı
 		{
-			*n_1 = (y2 < tmp) ? (n1 - 1) : n1;
+			cell.x = (y2 < tmp) ? (n1 - 1) : n1;
 			//*n_1 = (y2 > tmp) ? (n1 / 2 + 1) : (n1 / 2);
 		}
 		else //ÉñÃØ·½¸ñĞĞÊıÎªÅ¼Êı
 		{
-			*n_1 = (y2 < tmp) ? n1 : (n1 - 1);
+			cell.x = (y2 < tmp) ? n1 : (n1 - 1);
 			//*n_1 = (y2 < tmp) ? (n1 / 2 + 1) : (n1 / 2);
 		}
 	}
+	return cell;
 }
 
 float f(float x, float a, float b, int n1, int n2)
@@ -76,34 +78,20 @@ float f(float x, float a, float b, int n1, int n2)
 	}
 }
 
-void xy(int n1, int n2, int *x, int *y) 
-{
-	if (n2 % 2 == 1)
-	{
-		*x = 103 + (n1 - 1) * 69;
-	}
-	else
-	{
-		*x = 139 + (n1 - 1) * 69;
-	}
-	*y = 54 + (n2 - 1) * 46;
-	*y -= (n2 - 1) / 3;   
-	*x -= (n1 - 1) / 3;
-}
- POS center_xy(int n1, int n2)
+ POS center_xy(int row, int col)
 {
 	POS centpos;
-	n1 = (n1 + 1) / 2;//¸Ä»Øµ¥±¶¿í¶È
-	if (n2 % 2 == 1)
+	row = (row + 1) / 2;//¸Ä»Øµ¥±¶¿í¶È
+	if (col % 2 == 1)
 	{
-		centpos.x = 103 + (n1 - 1) * 69;
+		centpos.x = 103 + (row - 1) * 69;
 	}
 	else
 	{
-		centpos.x = 139 + (n1 - 1) * 69;
+		centpos.x = 139 + (row - 1) * 69;
 	}
-	centpos.y = 54 + (n2 - 1) * 46;
-	centpos.y -= (n2 - 1) / 3;
-	centpos.x -= (n1 - 1) / 3;
+	centpos.y = 54 + (col - 1) * 46;
+	centpos.y -= (col - 1) / 3;
+	centpos.x -= (row - 1) / 3;
 	return centpos;
 }
