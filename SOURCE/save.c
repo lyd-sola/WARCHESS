@@ -91,10 +91,12 @@ void savefile_init(FILE *fp, short n)//n为当前存档号
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
 	fwrite(t, 2, 3, fp);
 	//初始化内容创建
-	fwrite(&i, 2, 1, fp);
-	fwrite(&i, 2, 1, fp);//双方资源数								/*要设置初始资源啊！！！！*/
 	i = 1;
 	fwrite(&i, 2, 1, fp);//回合数
+	i = 3;
+	fwrite(&i, 2, 1, fp);
+	fwrite(&i, 2, 1, fp);//双方资源数
+	
 	
 	//地图初始化
 	if ((map = fopen("DATA//map.txt", "r")) == NULL)

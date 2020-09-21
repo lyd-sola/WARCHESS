@@ -76,13 +76,13 @@ void test_draw()
 	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);
 	Putbmp64k(0, 0, "BMP//map.bmp");
 	
-	Bar64k(400, 300, 500, 400, 65535);
-	delay(1000);
-	Putbmp64k_partial(400, 300, 500, 400, "BMP//map.bmp");
-	delay(1000);
-	Bar64k(450, 350, 500, 400, 65535);
-	delay(1000);
-	Putbmp64k_partial(450, 350, 500, 400, "BMP//map.bmp");
+	//Bar64k(400, 300, 500, 400, 65535);
+	//delay(1000);
+	//Map_partial(400, 300, 500, 400);
+	//delay(1000);
+	//Bar64k(450, 350, 500, 400, 65535);
+	//delay(1000);
+	//Map_partial(450, 350, 500, 400);
 
 
 	//Lightbar(0, 0, 512, 768, 1.1);
