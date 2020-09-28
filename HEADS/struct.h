@@ -18,9 +18,9 @@ typedef struct _cell
 
 typedef struct _Battleinfo
 {
-	unsigned round;
-	unsigned r_source;
-	unsigned b_source;
+	unsigned round;//回合数，此处为双倍
+	unsigned r_source;//红方资源
+	unsigned b_source;//蓝方资源
 }Battleinfo;
 
 enum _GEO

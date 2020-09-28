@@ -11,9 +11,9 @@ Function List：
 		战斗界面主函数
 	2.void battle_draw(void);
 		战斗界面绘制函数
-	3.void Battle_init(FILE* fp, Battleinfo *info, CELL map[][13], short save_num);
+	3.void Battle_init(FILE* fp, Battleinfo* info, CELL map[][13]);
 		战斗信息初始化（文件读取）
-	4.void save_battle(FILE* fp, short save_num, Battleinfo* batinfo, CELL map[][13]);
+	4.void save_battle(FILE *fp, Battleinfo *batinfo, CELL map[][13]);
 		战斗信息存档
 **********************************************************/
 #ifndef	_BATTLE_H_
@@ -25,8 +25,8 @@ int battle(char* user, short save_num);
 
 void battle_draw(void);
 
-void Battle_init(FILE* fp, Battleinfo* info, CELL map[][13], short save_num);
+void Battle_init(FILE* fp, Battleinfo* info, CELL map[][13]);
 
-void save_battle(FILE* fp, short save_num, Battleinfo* batinfo, CELL map[][13]);
+void save_battle(FILE* fp, Battleinfo* batinfo, CELL map[][13]);
 
 #endif

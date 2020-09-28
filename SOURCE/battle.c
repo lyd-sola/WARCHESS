@@ -27,14 +27,14 @@ int battle(char *user, short save_num)
 	{
 		show_error("未找到用户存档文件", 1);
 	}
-
-	Battle_init(fp, &batinfo, map, save_num);
+	seek_savinfo(fp, save_num, 0, 0);
+	Battle_init(fp, &batinfo, map);
 	Clrmous();
 	battle_draw();
 	while(1)
 	{
 		Newxy();
-		if (Light_button(16, "注销账号", "注销账号", 60361, 65535))
+		if (Sharp_button(16, "注销账号", "注销账号", 60361, 65535))
 		{
 			return MAINMENU;
 		}
@@ -58,10 +58,10 @@ Description：	战斗初始化函数，读取存档
 Input:			fp用户存档文件指针，其他你一看就懂
 Author：		刘云笛
 **********************************************************/
-void Battle_init(FILE* fp, Battleinfo *info, CELL map[][13], short save_num)
+void Battle_init(FILE* fp, Battleinfo *info, CELL map[][13])
 {
 	int i, j;
-	seek_savinfo(fp, save_num, 0, 0);
+	
 	fseek(fp, 7, SEEK_CUR);//跳过日期
 	fread(&(info->round), 2, 1, fp);
 	fread(&(info->b_source), 2, 1, fp);
@@ -75,14 +75,12 @@ void Battle_init(FILE* fp, Battleinfo *info, CELL map[][13], short save_num)
 	}//读取地图信息
 }
 
-void save_battle(FILE *fp, short save_num, Battleinfo *batinfo, CELL map[][13])
+void save_battle(FILE *fp, Battleinfo *batinfo, CELL map[][13])
 {
 	unsigned t[3];
 	time_t rawtime;
 	struct tm* info;
 	int i, j;
-
-	seek_savinfo(fp, save_num, 0, 0);
 
 	fseek(fp, 1, SEEK_CUR);//跳过存档号
 	//当前时间输入
