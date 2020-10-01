@@ -119,10 +119,7 @@ int homepage()
 			rectangle64k(698, 588, 952, 662, 35362);
 		}
 		
-		if(mouse_press(70, 70, 70+500, 70+90) == MOUSE_IN_R)				//为了方便调试,右键点击标题直接跳过登录界面进入主菜单
-		{
-			return MAINMENU;
-		}
+
 		
 		if(mouse_press(700, 470, 950, 540) == MOUSE_IN_L)	//点击关于键
 		{
@@ -147,6 +144,11 @@ int homepage()
 		if(mouse_press(1024-100, 768-100, 1024, 768) == MOUSE_IN_R)
 		{
 			return 233;
+		}
+
+		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,主菜单左上角右键直接快速登录
+		{
+			return MAINMENU;
 		}
 	}
 }

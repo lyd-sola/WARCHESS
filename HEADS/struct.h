@@ -5,16 +5,17 @@ typedef struct _Position
 {
 	short x;
 	short y;
-}POS;
+}DBL_POS, OFF_POS, POS;//double width , offset, POS为世界坐标
 
 typedef struct _cell
 {
-	unsigned geo : 4;//地形，序号见_GEO
+	unsigned geo : 3;//地形，序号见_GEO
 	unsigned cost : 3;//移动消耗
 	unsigned side : 1;//阵营，蓝0红1
+	unsigned flag : 1;//标记是否操作过
 	unsigned kind : 3;//兵种种类，序号见_KIND，大本营和资源无需此项
 	unsigned health : 5;//兵种、大本营血量，高级资源占领回合数
-}CELL;
+}CELL, MAP[][13];
 
 typedef struct _Battleinfo
 {

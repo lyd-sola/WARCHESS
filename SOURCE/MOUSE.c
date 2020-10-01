@@ -180,14 +180,6 @@ void Mouse_putbk(int x, int y)
     Putpixel64k(x + i - 1, y + j - 2, mouse_sq[i][j]); 
 }
 
-/*判断鼠标是否在某区域按下*/ 
-int Mouse_press(int x1, int y1, int x2, int y2)
-{
-    if(MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2 && press)
-    return 1; 
-    else
-    return 0; 
-}
 /*判断鼠标是否在某区域以外按下*/ 
 int Mouse_pressother(int x1, int y1, int x2, int y2)
 {
