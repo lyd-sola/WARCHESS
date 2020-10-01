@@ -474,3 +474,49 @@ void frame(int x1, int y1, int x2, int y2, int color)
 	Bar64k_radial(x1, y1, x2, y2, color, 0);
 	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
 }
+
+void banner(int x1, int y1, int length) //x1, y1为矩形左上角坐标，length为矩形长度，均不包含两侧缎带
+{
+	/*左侧缎带*/
+	Bar64k(x1 - 25, y1 + 25, x1 + 50, y1 + 125, 62496);
+	Filltriangle(x1 - 75, y1 + 25, x1 - 25, y1 + 75, x1 - 25, y1 + 25, 62496);
+	Filltriangle(x1 - 75, y1 + 125, x1 - 25, y1 + 75, x1 - 25, y1 + 125, 62496);
+	Filltriangle(x1, y1 + 100, x1 + 50, y1 + 125, x1 + 50, y1 + 100, 54938);
+
+	/*右侧缎带*/
+	Bar64k(x1 + length - 50, y1 + 25, x1 + length + 25, y1 + 125, 62496);
+	Filltriangle(x1 + length + 25, y1 + 25, x1 + length + 25, y1 + 75, x1 + length + 75, y1 + 25, 62496);
+	Filltriangle(x1 + length + 25, y1 + 125, x1 + length + 25, y1 + 75, x1 + length + 75, y1 + 125, 62496);
+	Filltriangle(x1 + length - 50, y1 + 100, x1 + length - 50, y1 + 125, x1 + length, y1 + 100, 54938);
+
+	Bar64k(x1, y1, x1 + length, y1 + 100, 64608);
+}
+
+void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
+{
+	int x = (x1 + x2) / 2;
+	int y = (3 * y1 + y2) / 4;
+	Bar64k_radial(x1, y1, x2, y2, 59391, 0);
+	Circlefill64k(x, y, (x2 - x1) / 4, 29714);
+	Filltriangle(x1 + 10, y2 - 10, x, y, x2 - 10, y2 - 10, 29714);
+}
+
+void drawinf1(int x, int y)
+{	
+	int i = 0;
+	Circlehalf64k(x, y, 20, 49540);
+	Bar64k(x - 20, y, x + 20, y + 4, 49540);
+	Bar64k(x - 20, y + 4, x + 25, y + 8, 49540);
+	for (; i <= 8; i++)
+	{
+		Line64k(x - 20 - i, y + 8 + i, x - i, y + 8 + i, 49540);
+	}
+}
+
+void drawpan1(int x, int y)
+{
+	Bar64k(x, y + 20, x + 70, y + 40, 63488); //车身 
+	Bar64k(x + 35, y + 10, x + 65, y + 20, 64526); //炮塔
+	Bar64k(x + 65, y + 10, x + 100, y + 15, 63488); //炮管
+}
+

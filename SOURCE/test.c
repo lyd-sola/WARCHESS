@@ -28,7 +28,8 @@ int test(void)
 	Clrmous();
 	test_draw();
 	//tank_draw(200, 200);
-	
+	banner(200, 200, 200);
+	drawinf1(100,100);
 	//Filltriangle(100, 100, 200, 150, 200, 100, 35362);
 	//for (i = 1; i <= 13;i++)
 	//{
@@ -88,7 +89,7 @@ void test_draw()
 }
 
 void tank_draw(int x, int y)
-{
+{  
 	Bar64k(x - 100, y - 40, x + 100, y + 40, 65535); //一层车身
 	Filltriangle(x-100,y-40, x+100, y-50, x+100, y-40, 65535); //一层车身倾斜效果
 	Filltriangle(x - 110, y + 40, x - 100, y - 40, x - 100, y + 40, 65535);

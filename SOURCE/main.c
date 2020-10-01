@@ -15,7 +15,7 @@ int main(void)
 	SetSVGA64k(); 					//·Ö±æÂÊ1024*768
 	//Initmouse(1, 1023, 1, 767); 
 	Initmouse(0, 1024, 0, 768); 
-	
+
 	while(1)
 	{
 		switch(page)

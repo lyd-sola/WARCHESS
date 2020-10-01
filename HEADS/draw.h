@@ -23,4 +23,8 @@ void Line45(int x1, int y1, int x2, int y2, unsigned int color);
 void Icon_draw(POS pos, int side);
 void Icon_builder(POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
+void banner(int x1, int y1, int length);
+void photo(int x1, int y1, int x2, int y2);
+void drawinf1(int x, int y);
+void drawpan1(int x, int y);
 #endif

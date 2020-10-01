@@ -833,6 +833,7 @@ void Circlefill64k(int xc, int yc, int radius, unsigned int color)
         x++;
 	}
 }
+
 /**********************************************************
 Function£º		Getpixel64k
 
