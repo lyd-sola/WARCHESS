@@ -186,4 +186,9 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color);
 
 int Map_partial(int x1, int y1, int x2, int y2, FILE* fpbmp);
 
+void Circle_rd64k(int xc, int yc, int radius, unsigned int color);
+void Circle_ru64k(int xc, int yc, int radius, unsigned int color);
+void Circle_lu64k(int xc, int yc, int radius, unsigned int color);
+void Circle_ld64k(int xc, int yc, int radius, unsigned int color);
+
 #endif
