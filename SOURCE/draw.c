@@ -586,3 +586,38 @@ void Icon_tank(DBL_POS pos, int side)
 	Bar64k(pos.x, pos.y-4, pos.x + 25, pos.y+4, 63488);
 }
 
+void draw_saves(int x, int y, int color, FILE* fp, short save_num)
+{
+	char Buffer[20];
+	unsigned int t[3];//年 月日 时分
+	short mode;
+	
+	Bar64k_radial(x, y, x + 5 + 200, y + 25 + 40 + 16 + 5, color, 0);
+	seek_savinfo(fp, save_num, 0, 0);
+	//fseek(fp, 1, SEEK_CUR);//跳过存档号
+	fread(&mode, 1, 1, fp);
+
+	
+	sprintf(Buffer, "%d", save_num);
+	Outtext(x + 5 + 75, y + 25 - 20, "存档", 16, 19, 0);
+	Outtext(x + 5 + 75 + 19+16, y + 25 - 20, Buffer, 16, 19, 0);//存档序号
+
+	fread(t, 2, 3, fp);
+	sprintf(Buffer, "%4u/%02u/%02u %02u:%02u", t[0], t[1]/100, t[1]%100, t[2]/100, t[2]%100);
+	Outtext(x + 5 + 17, y + 25, Buffer, 16, 10, 0);
+
+	if (mode)
+	{
+		Outtext(x + 5, y + 25 + 20, "模式：决战智械", 16, 19, 0);
+	}
+	else
+	{
+		Outtext(x + 5, y + 25 + 20, "模式：红蓝对决", 16, 19, 0);
+	}
+
+	fread(t, 2, 1, fp);
+	sprintf(Buffer, "%u", (t[0]+1)/2);
+	Outtext(x + 5, y + 25 + 40, "回合数:", 16, 19, 0);
+	Outtext(x + 5 + 19 * 3 + 16, y + 25 + 40, Buffer, 16, 10, 0);
+}
+

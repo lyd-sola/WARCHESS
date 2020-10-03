@@ -21,12 +21,12 @@ Function List£º
 
 #include "struct.h"
 
-int battle(char* user, short save_num);
+int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);
 
-void Battle_init(FILE* fp, Battleinfo* info, CELL map[][13]);
+void Battle_init(FILE* fp, Battleinfo* info, MAP map);
 
-void save_battle(FILE* fp, Battleinfo* batinfo, CELL map[][13]);
+void save_battle(FILE* fp, Battleinfo* batinfo, MAP map);
 
 #endif

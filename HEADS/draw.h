@@ -33,4 +33,5 @@ void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void drawinf1(int x, int y);
 void Icon_tank(DBL_POS pos, int side);
+void draw_saves(int x, int y, int color, FILE* fp, short save_num);
 #endif

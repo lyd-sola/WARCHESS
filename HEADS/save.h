@@ -17,7 +17,7 @@ Function List：
 #ifndef __SAVE_H__
 #define __SAVE_H__
 
-int savefile_creat(char *user);
+int savefile_creat(char *user, short mode);
 void seek_savinfo(FILE* fp, short n, int x, int y);
 void savefile_init(FILE* fp, short n);									
 

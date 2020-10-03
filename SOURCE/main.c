@@ -11,6 +11,8 @@ int main(void)
 {
 	int page = HOMEPAGE;
 	char user[10] = "A";				//初始化用户名数组，系统限制，用户名仅为大写字母和数字，8位以内
+	short save_num = 1;
+	short mode = 0;//对战模式
 	
 	SetSVGA64k(); 					//分辨率1024*768
 	//Initmouse(1, 1023, 1, 767); 
@@ -39,11 +41,11 @@ int main(void)
 				break;
 				
 			case MAINMENU:			//主菜单
-				page = mainmenu(user);
+				page = mainmenu(user, &save_num, &mode);
 				break;
 
 			case BATTLE:			//对战界面
-				page = battle(user, 1);									/*这里需要传入存档号*/
+				page = battle(user, save_num, mode);									/*这里需要传入存档号*/
 				break;
 				
 			case 233:

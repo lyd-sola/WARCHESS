@@ -25,7 +25,7 @@ save文件设计：											位数表：自开头偏移量（字节）
 	
 	以下重复多个存档块的设计（注：short均为unsigned）
 	------------------------------------
-	存档序号short*1											0
+	模式short*1，0为双人，1为单人							0
 	日期 年unsigned*1，月日unsigned*1，时分unsigned*1		1
 	回合数 unsigned*1										7
 	蓝方、红方 资源 unsigned*2								9
@@ -41,7 +41,7 @@ Function：savefile_creat
 Author：刘云笛
 Description: 快速创建地图文件
 *******************************************/
-int savefile_creat(char *user)//如果返回1则存档满，快速创建失败
+int savefile_creat(char *user, short mode)//如果返回1则存档满，快速创建失败，成功创建返回0
 {
 	char filename[25] = "SAVES//";
 	FILE *fp;
@@ -62,9 +62,9 @@ int savefile_creat(char *user)//如果返回1则存档满，快速创建失败
 	//增加存档个数
 
 	fseek(fp, 0, SEEK_END);//移动到文件尾，开始存档创建
-	savefile_init(fp, n);//初始信息填写
+	savefile_init(fp, mode);//初始信息填写
 	fclose(fp);
-	return 2;
+	return 0;
 }
 
 /*******************************************
@@ -73,16 +73,16 @@ Author：刘云笛
 Description: 对某一个存档进行覆盖式初始化
 *******************************************/
 
-void savefile_init(FILE *fp, short n)//n为当前存档号
+void savefile_init(FILE *fp, short mode)
 {
-	unsigned i = 3, j = 0, t[3];
+	unsigned int i = 3, j = 0, t[3];
 	time_t rawtime;
     struct tm *info;
 	CELL cell;
 	FILE *map;
 	char geo;
 	//存档号
-	fwrite(&n, 1, 1, fp);
+	fwrite(&mode, 1, 1, fp);
 	//当前时间输入
 	time( &rawtime );
     info = localtime( &rawtime );
@@ -148,7 +148,7 @@ void savefile_init(FILE *fp, short n)//n为当前存档号
 				cell.cost = 7;
 				break;
 			}
-			fwrite(&cell, 2, 1, fp);
+			fwrite(&cell, sizeof(CELL), 1, fp);
 		}
 		fseek(map, 2, SEEK_CUR);
 	}
@@ -165,15 +165,15 @@ Description: 在对战信息文件中定位
 void seek_savinfo(FILE* fp, short n, int x, int y)//fp 指向用户对战信息文件的指针
 {
 	fseek(fp, 1, SEEK_SET);//跳过开始数字
-	fseek(fp, (13 + 2 * MAP_SIZE * MAP_SIZE) * (n - 1), 1);//跳过n-1个存档
+	fseek(fp, (13 + sizeof(CELL) * MAP_SIZE * MAP_SIZE) * (n - 1), 1);//跳过n-1个存档
 	if (x * y == 0)
 	{
 		return;
 	}
 	fseek(fp, 13, SEEK_CUR);//跳过“存档头”
 	/* 存储行列与双倍宽度坐标的关系：row=y,column=(int)(x+1)/2 */
-	fseek(fp, 2 * MAP_SIZE * (y - 1), SEEK_CUR);//跳过y-1行
-	fseek(fp, (x - 1) / 2 * 2, SEEK_CUR);//跳过(x - 1) / 2列
+	fseek(fp, sizeof(CELL) * MAP_SIZE * (y - 1), SEEK_CUR);//跳过y-1行
+	fseek(fp, (x - 1) / sizeof(CELL) * sizeof(CELL), SEEK_CUR);//跳过(x - 1) / 2列
 }
 /*******************以下测试函数，记得删除********************/
 

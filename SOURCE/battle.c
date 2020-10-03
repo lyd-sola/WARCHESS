@@ -1,4 +1,4 @@
-/********************************************************************
+	/********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: battle.c
 Author: 刘云笛、陈旭桐
@@ -13,7 +13,7 @@ Date:
 
 #include "common.h"
 //战斗界面主函数
-int battle(char *user, short save_num)
+int battle(char *user, short save_num, short mode)
 {
 	CELL map[13][13];//地图
 	DBL_POS pos, ptmp;
@@ -23,6 +23,8 @@ int battle(char *user, short save_num)
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
 	strcat(s, user);
+
+	savefile_creat(user, mode);
 
 	if ((fp = fopen(s, "rb+")) == NULL)
 	{
@@ -35,10 +37,12 @@ int battle(char *user, short save_num)
 	battle_draw();
 
 
+
 	map[6][6].kind = BUILDER;
 	pos.x = 13; pos.y = 7;
 	Icon_builder(pos, 1);
-	savefile_creat(user);
+	draw_saves(0, 0, 10000, fp, save_num);
+
 
 	while(1)
 	{
@@ -128,7 +132,12 @@ void Battle_init(FILE* fp, Battleinfo *info, MAP map)
 		}
 	}//读取地图信息
 }
-
+/**********************************************************
+Function：		save_battle
+Description：	保存存档
+Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
+Author：		刘云笛
+**********************************************************/
 void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 {
 	unsigned t[3];
