@@ -32,5 +32,5 @@ void nextr_button(int color);//下一回合按钮
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void drawinf1(int x, int y);
-void drawpan1(int x, int y);
+void Icon_tank(DBL_POS pos, int side);
 #endif

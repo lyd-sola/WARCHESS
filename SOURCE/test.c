@@ -28,30 +28,9 @@ int test(void)
 	//tank_draw(200, 200);
 	banner(200, 200, 200);
 	drawinf1(100,100);
-	//Filltriangle(100, 100, 200, 150, 200, 100, 35362);
-	//for (i = 1; i <= 13;i++)
-	//{
-	//	for (j = 1; j <= 13; j++)
-	//	{
-	//		xy(i, j, &x_tmp, &y_tmp);
-	//		rectangle64k(x_tmp - 10, y_tmp - 10, x_tmp + 10, y_tmp + 10, 0);
-	//		/*itoa(x_tmp, str1, 10);
-	//		itoa(y_tmp, str2, 10);
-	//		strcat(str5, str1);
-	//		strcat(str5, " , ");
-	//		strcat(str5, str2);
-	//		strcat(str5, ")");
-	//		Outtextxx(x_tmp - 30, y_tmp, x_tmp + 30, str5, 16, 0);*/
-	//	}
-	//}
-	/*for (i = 0; i <= 25;i++)
-	{
-		for (j = 0; j <= 13; j++)
-		{
-			rectangle64k(X0, Y0, X0 + i * WIDTH, Y0 + j * LENGTH, 0);
-		}
-	}
-	*/
+	pos.x = 400;
+	pos.y = 200;
+	Icon_tank(pos, 1);
 	while(1)
 	{
 		Newxy();

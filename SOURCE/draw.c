@@ -564,6 +564,7 @@ void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
 	Filltriangle(x1 + 10, y2 - 10, x, y, x2 - 10, y2 - 10, 29714);
 }
 
+/**************画个头（步兵图标）************/
 void drawinf1(int x, int y)
 {	
 	int i = 0;
@@ -576,10 +577,12 @@ void drawinf1(int x, int y)
 	}
 }
 
-void drawpan1(int x, int y)
+void Icon_tank(DBL_POS pos, int side)
 {
-	Bar64k(x, y + 20, x + 70, y + 40, 63488); //车身 
-	Bar64k(x + 35, y + 10, x + 65, y + 20, 64526); //炮塔
-	Bar64k(x + 65, y + 10, x + 100, y + 15, 63488); //炮管
+	Icon_draw(pos, side);
+	Bar64k(pos.x-20, pos.y-10, pos.x+20, pos.y+10, 63488); //车身 
+	Bar64k(pos.x-20, pos.y-5, pos.x+20, pos.y+5, 64526); //炮塔
+	Circlefill64k(pos.x, pos.y, 8, 63488); //炮管
+	Bar64k(pos.x, pos.y-4, pos.x + 25, pos.y+4, 63488);
 }
 
