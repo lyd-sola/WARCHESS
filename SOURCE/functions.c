@@ -13,10 +13,14 @@ date:2020/9/13
 函数目录
 ******************************************************************/
 #include "common.h"
-
-//框240,225  785,567
-/*显示错误信息函数，s为报错信息，mode为1 exit，为0 仅返回*/
-void show_error(char* msg, int mode)
+FILE* FBMP;
+/**********************************************************
+Function：		show_error
+Description：	错误信息显示函数
+Input:			msg为报错信息，mode为1 exit，为0 仅返回
+Author：		刘云笛
+**********************************************************/
+void show_error(char* msg, int mode)//提示框240,225  785,567
 {
 	unsigned int i = 0;//防止有人懒得点确认
 	int  flag = 0;
@@ -69,7 +73,7 @@ void show_error(char* msg, int mode)
 			Outtext(701, 524, "确定", 24, 26, 0);//取消标亮确定键
 			flag = 0;
 		}
-		if (Mouse_press(678, 520, 773, 549) == MOUSE_IN_L || i >= 800)
+		if (mouse_press(678, 520, 773, 549) == MOUSE_IN_L || i >= 800)
 		{
 			if (mode)
 			{
@@ -84,10 +88,21 @@ void show_error(char* msg, int mode)
 		}
 		i ++;
 	}
-
+}
+//在对战界面信息框显示信息
+void show_msg(char* msg, char *msg2)
+{
+	static char* lastmsg;
+	if (strcmp(msg, lastmsg) == 0)	//保证了不会连续输出同样的文字导致闪烁
+		return;
+	Map_partial(340, 666, 720, 666+17, FBMP);
+	Outtext(340, 666, msg, 16, 23, 0);
+	Map_partial(340, 705, 720, 705 + 17, FBMP);
+	Outtext(340, 705, msg2, 16, 23, 0);
+	lastmsg = msg;
 }
 /**********************************************************
-Function：		Light_button
+Function：		Sharp_button
 Description：	按钮标亮函数（包括点击功能，是不是该改个名呢，算了懒）
 				解决了页面函数一大堆鼠标判断问题
 				解决了每一个按钮都需要立一个flag问题
@@ -97,16 +112,15 @@ Input:			s原按钮文字，s_change标亮后按钮文字
 Output:			返回1时被点击
 Author：		刘云笛
 **********************************************************/
-int Light_button(int y0, char* s, char* s_change, int color, int color2)		/*本函数默认背景色为白色，后续修改*/
+int Sharp_button(int y0, char* s, char* s_change, int color, int color2)		/*本函数默认背景色为白色，后续修改*/
 {
-	if (MouseX >= MouseY - y0 + 720 && MouseY >= y0 && MouseY <= y0 + 30)//斜线也可以正常判断哦
+	if (MouseX >= MouseY - y0 + 720 && MouseY >= y0 && MouseY <= y0 + 30)//三角区域也可以正常判断哦
 	{
-
 		Clrmous();
 		MouseS = 1;
 		Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);//遮挡按钮外汉字
 		Button(y0, s_change, 64800, 65535);
-		while (1)//标亮后生成新鼠标，解决flag问题，lyd原创 XD
+		while (1)//标亮后生成新鼠标，解决反复标亮问题（避免使用多个状态记录变量），lyd原创 XD
 		{
 			Newxy();
 			if (MouseX >= MouseY - y0 + 720 && MouseY >= y0 && MouseY <= y0 + 30)
@@ -122,6 +136,110 @@ int Light_button(int y0, char* s, char* s_change, int color, int color2)		/*本函
 				MouseS = 0;
 				Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);
 				Button(y0, s, color, color2);
+				return 0;
+			}//离开区域
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int atk_btn_fun(char *s, int color, int color_c)
+{
+	if (MouseX >= 20 && MouseY <= 524 && MouseY >= MouseX + 387)//三角区域也可以正常判断哦
+	{
+		Clrmous();
+		MouseS = 1;
+		attack_button(s, color_c);
+		while (1)
+		{
+			Newxy();
+			if (MouseX >= 20 && MouseY <= 524 && MouseY >= MouseX + 387)
+			{
+				if (press == 1)
+				{
+					MouseS = 0;
+					return 1;
+				}//若点击返回1
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				attack_button(s, color);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int stay_btn_fun(char* s, int color, int color_c)
+{
+	if (MouseX >= 144 && MouseY <= 649 && MouseY >= MouseX + 387)//三角区域也可以正常判断哦
+	{
+		Clrmous();
+		MouseS = 1;
+		stay_button(s, color_c);
+		while (1)
+		{
+			Newxy();
+			if (MouseX >= 144 && MouseY <= 649 && MouseY >= MouseX + 387)
+			{
+				if (press == 1)
+				{
+					MouseS = 0; 
+					return 1;
+				}//若点击返回1
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				stay_button(s, color);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int nxt_btn_fun(int color, int color_c)
+{
+	long rx = MouseX - 849 - 68;
+	long ry = MouseY - 514 - 68;
+	if (rx * rx + ry * ry <= 68*68L)//圆形区域判断
+	{
+		Clrmous();
+		MouseS = 1;
+		nextr_button(color_c);
+		while (1)
+		{
+			Newxy();
+			rx = MouseX - 849 - 68;
+			ry = MouseY - 514 - 68;
+			if (rx * rx + ry * ry <= 68 * 68L)
+			{
+				if (press == 1)
+				{
+					MouseS = 0;
+					delay(200);//给用户时间抬起左键
+					return 1;
+				}//若点击返回1
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				nextr_button(color);
 				return 0;
 			}
 		}

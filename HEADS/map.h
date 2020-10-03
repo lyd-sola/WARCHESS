@@ -7,8 +7,10 @@
 #define LENGTH 45.75	//一个神秘格子的y方向边长
 #define K 0.5143		//直线斜率的绝对值
 
-void xy2cell(int x, int y, int* n1, int* n2);
+POS xy2cell(int x, int y);
 float f(float x, float a, float b, int n1, int n2);
 void xy(int n1, int n2, int* x, int* y);
 POS center_xy(int row, int col);
+OFF_POS D2O(DBL_POS pos);//双倍宽度坐标转换为偏移坐标
+int clcmap(DBL_POS* pos, MAP map);//判断是否在地图内点击，地图外返回，地图内且无单位返回1，有单位返回2
 #endif

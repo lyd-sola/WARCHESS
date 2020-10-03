@@ -20,9 +20,15 @@ void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_
 
 void Button(int y1, char* s, int color, int color2);
 void Line45(int x1, int y1, int x2, int y2, unsigned int color);
-void Icon_draw(POS pos, int side);
-void Icon_builder(POS pos, int side);
+void Icon_draw(DBL_POS pos, int side);
+void Icon_builder(DBL_POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
+
+void attack_button(char* s, int color);//攻击按钮
+void stay_button(char* s, int color);//驻扎按钮
+void move_button(int color);//移动按钮
+void del_button(int color);//删除按钮
+void nextr_button(int color);//下一回合按钮
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void drawinf1(int x, int y);

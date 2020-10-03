@@ -21,9 +21,7 @@ date:
 int test(void)
 {
 	/*******/
-	int n1, n2, x_tmp, y_tmp;
-	int i = 0, j = 0;
-	POS pos1;
+	POS pos;
 	/*******/
 	Clrmous();
 	test_draw();
@@ -62,26 +60,43 @@ int test(void)
 			return EXIT;
 		}
 		//以下是此页面核心函数
-		
-	}	
+		if (atk_btn_fun("攻击", 65535, 65340))
+		{
+			show_msg("点到攻击按钮啦，我就吓唬你一下", "");
+		}
+		if (stay_btn_fun("驻扎", 65535, 65340))
+		{
+			show_msg("点到驻扎按钮啦，我就吓唬你一下", "");
+		}
+		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_L)
+		{
+			pos = xy2cell(MouseX, MouseY);
+			pos = center_xy(pos.x, pos.y);
+			Clrmous();
+			Icon_builder(pos, 0);
+		}
+	}
 }
 
 void test_draw()
 {
 	short s[101*101];
-	POS p = { 584,418 };
 	
 	//画页面
 	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);
 	Putbmp64k(0, 0, "BMP//map.bmp");
-	
-	/*Bar64k(400, 300, 500, 400, 65535);
-	delay(1000);
-	Putbmp64k_partial(400, 300, 500, 400, "BMP//map.bmp");
-	delay(1000);
-	Bar64k(450, 350, 500, 400, 65535);
-	delay(1000);
-	Putbmp64k_partial(450, 350, 500, 400, "BMP//map.bmp");*/
+	attack_button("攻击", 65535);
+	stay_button("驻扎", 65535);
+	move_button(65535);
+	del_button(65535);
+	show_msg("欢迎使用战棋系统", "");
+	//Bar64k(400, 300, 500, 400, 65535);
+	//delay(1000);
+	//Map_partial(400, 300, 500, 400);
+	//delay(1000);
+	//Bar64k(450, 350, 500, 400, 65535);
+	//delay(1000);
+	//Map_partial(450, 350, 500, 400);
 
 
 	//Lightbar(0, 0, 512, 768, 1.1);

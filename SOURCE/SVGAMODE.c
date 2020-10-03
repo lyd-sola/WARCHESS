@@ -1314,11 +1314,9 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color)
 }
 
 /*½öÌùÒ»ÕÅÍ¼µÄ²¿·Ö£¬ÓÃÓÚÖÆ×÷¶¯»­¡£ËÙ¶È½ÏbarÉÔÂı£¬µ«Ò²¿ÉÒÔ½ÓÊÜ
-lydĞŞ¸Ä×ÔPutbmp64k£¬½öÄÜ´¦ÀíÈ«ÆÁ´óÍ¼£¨ÒòÎªÎÒÃÇÖ»ĞèÒªÕâ¸öXD£©*/
-int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾ØĞÎ·¶Î§
+lydĞŞ¸Ä×ÔPutbmp64k£¬½öÄÜ´¦ÀíÈ«ÆÁ´óÍ¼£¨ÒòÎªÎÒÃÇÖ»ĞèÒªÕâ¸ö£©*/
+int Map_partial(int x1, int y1, int x2, int y2, FILE *fpbmp)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾ØĞÎ·¶Î§
 {
-	/*Ö¸ÏòÍ¼Æ¬ÎÄ¼şµÄÎÄ¼şÖ¸Õë*/
-	FILE* fpbmp;
 
 	/*ĞĞÏñËØ»º´æÖ¸Õë*/
 	COLORS24* buffer;
@@ -1329,12 +1327,6 @@ int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path)//Ç°ËÄ¸ö²
 	/*Ñ­»·±äÁ¿*/
 	int i, j;
 	long h = 3*(x2 - x1 + 1);
-
-	/*´ò¿ªÎÄ¼ş*/
-	if ((fpbmp = fopen(path, "rb")) == NULL)
-	{
-		return 0;
-	}
 
 	/*¶ÁÈ¡¿í¶È¡¢¸ß¶È*/
 	fseek(fpbmp, 18L, 0);
@@ -1388,7 +1380,5 @@ int Putbmp64k_partial(int x1, int y1, int x2, int y2, const char* path)//Ç°ËÄ¸ö²
 	}
 
 	free(buffer);
-	fclose(fpbmp);
-
 	return 1;
 }

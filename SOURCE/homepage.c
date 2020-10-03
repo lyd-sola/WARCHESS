@@ -119,10 +119,7 @@ int homepage()
 			rectangle64k(698, 588, 952, 662, 35362);
 		}
 		
-		if(mouse_press(70, 70, 70+500, 70+90) == MOUSE_IN_R)				//为了方便调试,右键点击标题直接跳过登录界面进入主菜单
-		{
-			return MAINMENU;
-		}
+
 		
 		if(mouse_press(700, 470, 950, 540) == MOUSE_IN_L)	//点击关于键
 		{
@@ -148,6 +145,11 @@ int homepage()
 		{
 			return 233;
 		}
+
+		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,主菜单左上角右键直接快速登录
+		{
+			return MAINMENU;
+		}
 	}
 }
 
@@ -158,9 +160,9 @@ void draw_h_page()
 	Bar64k(974, 0, 1024, 50,65535);
 	
 
-	Outtext(984, 9,"退", 32, 0, RED);
+	Outtext(984, 9, "退", 32, 0, 0);
 	Outtext(85+2,90+2,"红蓝军对抗演练", 48, 70, 27469);
-	Outtext(85, 90, "红蓝军对抗演练", 48, 70, 65184);
+	Outtext(85, 90, "红蓝军对抗演练", 48, 70, 0);
 
 
 	shadow_l(700, 230, 950, 300, 65336);

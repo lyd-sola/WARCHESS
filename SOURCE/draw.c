@@ -1,40 +1,40 @@
 /********************************************************************
-Copyright(c)  2020 åˆ˜äº‘ç¬›ã€é™ˆæ—­æ¡ 	WARCHESS
+Copyright(c)  2020 ÁõÔÆµÑ¡¢³ÂĞñÍ© 	WARCHESS
 file_name: draw.c
-author: é™ˆæ—­æ¡ã€åˆ˜äº‘ç¬›
+author: ³ÂĞñÍ©¡¢ÁõÔÆµÑ
 version: 1.5
-Description: è‡ªå®šä¹‰ç»˜å›¾å‡½æ•°
+Description: ×Ô¶¨Òå»æÍ¼º¯Êı
 date:2020/9/8
 
-æ›´æ–°æ—¥å¿—
-9.8		å¢åŠ äº†é˜´å½±ã€è¾¹æ¡†è‡ªå®šä¹‰ç»˜å›¾å‡½æ•°
-9.9		å¢åŠ äº†ç»˜åˆ¶æ–‡æ¡£å›¾å½¢
-9.10	å‡çº§ä¸ºsvga
-9.11	lydå¢åŠ æŠ å›¾è´´å›¾å‡½æ•°
-9.12	lydå¢åŠ æ”¹å˜äº®åº¦å‡½æ•°ï¼Œåˆ é™¤outtextxycå‡½æ•°
+¸üĞÂÈÕÖ¾
+9.8		Ôö¼ÓÁËÒõÓ°¡¢±ß¿ò×Ô¶¨Òå»æÍ¼º¯Êı
+9.9		Ôö¼ÓÁË»æÖÆÎÄµµÍ¼ĞÎ
+9.10	Éı¼¶Îªsvga
+9.11	lydÔö¼Ó¿ÙÍ¼ÌùÍ¼º¯Êı
+9.12	lydÔö¼Ó¸Ä±äÁÁ¶Èº¯Êı£¬É¾³ıouttextxycº¯Êı
 
-å‡½æ•°ç›®å½•
-1.shadow/shadow_l: 			ç»˜åˆ¶å¸¦ï¼ˆå¤§ï¼‰é˜´å½±çš„æ–‡æœ¬æ¡†
-2.frame: 					ç»˜åˆ¶å¸¦è¾¹æ¡†çš„æ–‡æœ¬æ¡†
-3.filedraw:					ç»˜åˆ¶æ–‡æ¡£å›¾å½¢
-4.Bar64kc/linec/outtextxycï¼š	é›†æˆå‰æ™¯è‰²è®¾ç½®å‡½æ•°ä¸æ™®é€šå›¾å½¢å‡½æ•°
+º¯ÊıÄ¿Â¼
+1.shadow/shadow_l: 			»æÖÆ´ø£¨´ó£©ÒõÓ°µÄÎÄ±¾¿ò
+2.frame: 					»æÖÆ´ø±ß¿òµÄÎÄ±¾¿ò
+3.filedraw:					»æÖÆÎÄµµÍ¼ĞÎ
+4.Bar64kc/linec/outtextxyc£º	¼¯³ÉÇ°¾°É«ÉèÖÃº¯ÊıÓëÆÕÍ¨Í¼ĞÎº¯Êı
 	5.void GetBackground(int left,int top,int right,int bottom,short *buffer);
-		å­˜å‚¨æŸä¸€èŒƒå›´èƒŒæ™¯å›¾ï¼ˆç”¨äºåŠ¨ç”»åˆ¶ä½œï¼‰ï¼Œbufferå›¾ç‰‡å­˜å‚¨åœ°å€ï¼ŒæˆåŠŸè¿”å›0ã€‚
+		´æ´¢Ä³Ò»·¶Î§±³¾°Í¼£¨ÓÃÓÚ¶¯»­ÖÆ×÷£©£¬bufferÍ¼Æ¬´æ´¢µØÖ·£¬³É¹¦·µ»Ø0¡£
 		
 	6.void GetBackground(int left,int top,int right,int bottom,short *buffer);
-		æ”¾å›æŸä¸€èŒƒå›´èƒŒæ™¯å›¾ï¼ˆç”¨äºåŠ¨ç”»åˆ¶ä½œï¼‰ï¼Œbufferå›¾ç‰‡å­˜å‚¨åœ°å€ï¼ŒæˆåŠŸè¿”å›0ã€‚
+		·Å»ØÄ³Ò»·¶Î§±³¾°Í¼£¨ÓÃÓÚ¶¯»­ÖÆ×÷£©£¬bufferÍ¼Æ¬´æ´¢µØÖ·£¬³É¹¦·µ»Ø0¡£
 		
 ******************************************************************/
 #include"common.h"
 
-void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 ä¸èƒ½æ˜¯å¥‡æ•°
+void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 ²»ÄÜÊÇÆæÊı
 {
 	shadow_l(x1, y1, x2, y2, 65504);
 	frame(x1+15, y1+15, x2-15, y2-15, 65535);
 
-	/* åˆ©ç”¨x2-x1ä¸ºçŸ©å½¢é•¿åº¦ï¼Œè®¡ç®—è·ç¦»ä¸¤è¾¹ä¸º60å’Œ80çš„æ¤­åœ†æ¨ªè½´
-	   çºµè½´ä¸ºæ¨ªè½´ä¸€åŠ
-	   ç„¶ååˆ©ç”¨ç›´çº¿å°å£ 
+	/* ÀûÓÃx2-x1Îª¾ØĞÎ³¤¶È£¬¼ÆËã¾àÀëÁ½±ßÎª60ºÍ80µÄÍÖÔ²ºáÖá
+	   ×İÖáÎªºáÖáÒ»°ë
+	   È»ºóÀûÓÃÖ±Ïß·â¿Ú 
 	   setcolor(LIGHT33808);
 	ellipse((x2-x1)/2+x1, y1, 0, 180, (x2-x1)/2-60, ((x2-x1)/2-60)/2); 
 	ellipse((x2-x1)/2+x1, y1, 0, 180, (x2-x1)/2-80, ((x2-x1)/2-80)/2);
@@ -44,21 +44,21 @@ void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 ä¸èƒ½æ˜¯å¥‡æ•°
 	floodfill((x2-x1)/2+x1,y1-(((x2-x1)/2-80)/2)-5,LIGHT33808);*/
 }
 
-//é€šè¿‡ä¸¤ç‚¹æ¨ªåæ ‡è¾“å‡ºæ±‰å­—çœå»è®¡ç®—partçš„æ—¶é—´ï¼ŒåŒæ—¶è¿”å›partå€¼
+//Í¨¹ıÁ½µãºá×ø±êÊä³öºº×ÖÊ¡È¥¼ÆËãpartµÄÊ±¼ä£¬Í¬Ê±·µ»ØpartÖµ
 int Outtextxx(int x1, int y, int x2, char *s,int flag, int color)
 {
-	int num = strlen(s) / 2;				//æ±‰å­—ä¸ªæ•°
-	int part = (x2-x1-flag) / (num - 1);	//ç”±æ±‰å­—æ•°ç»„é•¿åº¦ length = x2 - x1 = flag + (num - 1) X part ç®—å‡ºã€‚
+	int num = strlen(s) / 2;				//ºº×Ö¸öÊı
+	int part = (x2-x1-flag) / (num - 1);	//ÓÉºº×ÖÊı×é³¤¶È length = x2 - x1 = flag + (num - 1) X part Ëã³ö¡£
 	Outtext(x1, y, s, flag, part, color);
 	return part;
 }
 
 /*****************************************
-èƒŒæ™¯æŠ å›¾å’Œè¿˜åŸå‡½æ•°
-Authorï¼šåˆ˜äº‘ç¬›
-bufferä¸ºå­˜å‚¨çš„æ•°ç»„
+±³¾°¿ÙÍ¼ºÍ»¹Ô­º¯Êı
+Author£ºÁõÔÆµÑ
+bufferÎª´æ´¢µÄÊı×é
 *****************************************/
-void GetBackground(int left, int top, int right, int bottom, short *buffer)//è·å–èƒŒæ™¯
+void GetBackground(int left, int top, int right, int bottom, short *buffer)//»ñÈ¡±³¾°
 {
     int i, j;
     int Width, Height;
@@ -75,14 +75,14 @@ void GetBackground(int left, int top, int right, int bottom, short *buffer)//è·
     }     
 } 
 
-void PutBackground(int left, int top, int right, int bottom, short *buffer)//è´´å›èƒŒæ™¯
+void PutBackground(int left, int top, int right, int bottom, short *buffer)//Ìù»Ø±³¾°
 {     
     int i, j;    
     int Width, Height;     
 
     Width=right - left;
     Height=bottom - top;
-    for(i = 0; i<= Height;i ++)//åç»­å¯æ”¹å˜ç”»ç‚¹é¡ºåº
+    for(i = 0; i<= Height;i ++)//ºóĞø¿É¸Ä±ä»­µãË³Ğò
     {
         for(j = 0;j <= Width;j ++)         
         {
@@ -92,24 +92,24 @@ void PutBackground(int left, int top, int right, int bottom, short *buffer)//è´´
 }
 
 /*****************************************
-å±å¹•ä¸Šä¸€ç‚¹çš„å¢åŠ äº®åº¦å‡½æ•°ï¼ˆå®é™…æ˜¯åŒæ­¥å¢åŠ å„ç‚¹rgbçš„å€¼ï¼Œä¸å¦‚è¯´æ˜¯ç™½åº¦ï¼Ÿï¼‰
-drgbçš„å€¼ä¸ºå˜ç™½æ¯”ä¾‹
-Authorï¼šåˆ˜äº‘ç¬›
+ÆÁÄ»ÉÏÒ»µãµÄÔö¼ÓÁÁ¶Èº¯Êı£¨Êµ¼ÊÊÇÍ¬²½Ôö¼Ó¸÷µãrgbµÄÖµ£¬²»ÈçËµÊÇ°×¶È£¿£©
+drgbµÄÖµÎª±ä°×±ÈÀı
+Author£ºÁõÔÆµÑ
 *****************************************/
 
 unsigned int Lightcolor(unsigned int colorbf, float drgb)
 {
 	unsigned int rbf, gbf, bbf;
-	/*è®¡ç®—RGBå€¼*/
+	/*¼ÆËãRGBÖµ*/
 	rbf = colorbf / (1 << 11);
 	gbf = colorbf % (1 << 11) / (1 << 5);
 	bbf = colorbf % (1 << 5);
-	/*å¦‚æœrgbä¸­å¸¦æœ‰0åˆ™æ— æ³•æ”¹å˜æ”¹å˜è¯¥ç‚¹*/
+	/*Èç¹ûrgbÖĞ´øÓĞ0ÔòÎŞ·¨¸Ä±ä¸Ä±ä¸Ãµã*/
 	if (rbf * gbf * bbf == 0)
 	{
 		return colorbf;
 	}
-	/*å¦‚æœdrgbè¿‡å¤§*/
+	/*Èç¹ûdrgb¹ı´ó*/
 	if (drgb * rbf > 31)
 	{
 		drgb = (31.0 / rbf);
@@ -122,7 +122,7 @@ unsigned int Lightcolor(unsigned int colorbf, float drgb)
 	{
 		drgb = (62.0 / gbf);
 	}
-	/*æ ¸å¿ƒï¼šæ¯ä¸ªç‚¹rgbå€¼ä¹˜ä»¥ç›¸åŒå€æ•°ï¼Œå¯ä»¥å®ç°å˜ç™½*/
+	/*ºËĞÄ£ºÃ¿¸öµãrgbÖµ³ËÒÔÏàÍ¬±¶Êı£¬¿ÉÒÔÊµÏÖ±ä°×*/
 	rbf = drgb * rbf;
 	gbf = drgb * gbf;
 	bbf = drgb * bbf;
@@ -138,16 +138,16 @@ void Lightpixel(int x, int y, float drgb)
 	Putpixel64k(x, y, colorbf);
 }
 /*****************************************
-ä»¥ä¸‹ä¸ºçº¿ã€barçš„å¢åŠ äº®åº¦å‡½æ•°
-å®é™…æ¥è‡ªSVGAmode.cä¸­å„å‡½æ•°å‡½æ•°ä¿®æ”¹å¾—åˆ°ï¼Œä¸è®¡å…¥ä»£ç é‡
-Authorï¼šåˆ˜äº‘ç¬›
+ÒÔÏÂÎªÏß¡¢barµÄÔö¼ÓÁÁ¶Èº¯Êı
+Êµ¼ÊÀ´×ÔSVGAmode.cÖĞ¸÷º¯Êıº¯ÊıĞŞ¸ÄµÃµ½£¬²»¼ÆÈë´úÂëÁ¿
+Author£ºÁõÔÆµÑ
 *****************************************/
 void Lightline(int x1, int y1, int x2, int y2, float drgb)
 {
-	int	dx, dy;			/*ç›´çº¿xã€yåæ ‡å·®å€¼*/
-	int dx2, dy2;		/*åŠ å¿«è¿ç®—é€Ÿåº¦çš„ä¸­é—´å€¼*/
-	int xinc, yinc;		/*åˆ¤æ–­æƒ³ã€yå¢åŠ æ–¹å‘çš„ç¬¦å·å€¼*/
-	int d, dxy;			/*å†³ç­–å˜é‡*/
+	int	dx, dy;			/*Ö±Ïßx¡¢y×ø±ê²îÖµ*/
+	int dx2, dy2;		/*¼Ó¿ìÔËËãËÙ¶ÈµÄÖĞ¼äÖµ*/
+	int xinc, yinc;		/*ÅĞ¶ÏÏë¡¢yÔö¼Ó·½ÏòµÄ·ûºÅÖµ*/
+	int d, dxy;			/*¾ö²ß±äÁ¿*/
 	int i;
 	dx = abs(x2 - x1);
 	dx2 = dx << 1;
@@ -235,11 +235,11 @@ void Lightline(int x1, int y1, int x2, int y2, float drgb)
 
 void Lightbar(int x1, int y1, int x2, int y2, float drgb)
 {
-	/*tempä¸ºä¸´æ—¶å˜é‡å’Œå¾ªç¯å˜é‡*/
-	/*widthä¸ºçŸ©å½¢é•¿*/
+	/*tempÎªÁÙÊ±±äÁ¿ºÍÑ­»·±äÁ¿*/
+	/*widthÎª¾ØĞÎ³¤*/
 	int temp, width;
 	int i, j;
-	/*xåæ ‡æ’åº*/
+	/*x×ø±êÅÅĞò*/
 	if (x1 > x2)
 	{
 		temp = x1;
@@ -247,7 +247,7 @@ void Lightbar(int x1, int y1, int x2, int y2, float drgb)
 		x2 = temp;
 	}
 
-	/*yåæ ‡æ’åº*/
+	/*y×ø±êÅÅĞò*/
 	if (y1 > y2)
 	{
 		temp = y1;
@@ -256,7 +256,7 @@ void Lightbar(int x1, int y1, int x2, int y2, float drgb)
 	}
 
 
-	/*é€è¡Œæ‰«æç”»å‡ºçŸ©å½¢*/
+	/*ÖğĞĞÉ¨Ãè»­³ö¾ØĞÎ*/
 	for (i = x1; i <= x2; i++)
 	{
 		Lightline(i, y1, i, y2, drgb);
@@ -268,12 +268,12 @@ void Lightbar(int x1, int y1, int x2, int y2, float drgb)
 }
 
 /**********************************************************
-Functionï¼š		Bar64k_radial_re
-Descriptionï¼š	åå‘æ”¾å°„æ€§ç”»å‡ºçŸ©å½¢æ¡†ï¼Œä½¿ç”¨æ–¹æ³•åŒBar64kï¼Œæœ€åä¸€ä¸ªå‚æ•°ä¸ºæ€»å»¶è¿Ÿæ—¶é—´ï¼ˆå•ä½mmï¼‰
+Function£º		Bar64k_radial_re
+Description£º	·´Ïò·ÅÉäĞÔ»­³ö¾ØĞÎ¿ò£¬Ê¹ÓÃ·½·¨Í¬Bar64k£¬×îºóÒ»¸ö²ÎÊıÎª×ÜÑÓ³ÙÊ±¼ä£¨µ¥Î»mm£©
 
-Callsï¼š			rectangle64k
+Calls£º			rectangle64k
 
-Authorï¼š		åˆ˜äº‘ç¬›
+Author£º		ÁõÔÆµÑ
 **********************************************************/
 void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time)
 {
@@ -281,27 +281,27 @@ void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fi
 
 	if (x2 - x1 > y2 - y1)
 	{
-		n = ceil(((float)y2 - y1) / 2);//å‘ä¸Šå–æ•´
+		n = ceil(((float)y2 - y1) / 2);//ÏòÉÏÈ¡Õû
 	}
 	else
 	{
-		n = ceil(((float)y2 - y1) / 2);//å‘ä¸Šå–æ•´
+		n = ceil(((float)y2 - y1) / 2);//ÏòÉÏÈ¡Õû
 	}
 	t = fill_time / (n + 1);
 
 	for (i = 0; i <= n; i++)
 	{
 		rectangle64k(x1 + i, y1 + i, x2 - i, y2 - i, color);
-		delay(t);//å¯èƒ½è¿˜éœ€è¦è°ƒæ•´
+		delay(t);//¿ÉÄÜ»¹ĞèÒªµ÷Õû
 	}
 }
 /**********************************************************
-Functionï¼š		Bar64k_radial
-Descriptionï¼š	æ­£å‘æ”¾å°„æ€§ç”»å‡ºçŸ©å½¢æ¡†ï¼Œä½¿ç”¨æ–¹æ³•åŒBar64kï¼Œæœ€åä¸€ä¸ªå‚æ•°ä¸ºæ€»å»¶è¿Ÿæ—¶é—´ï¼ˆå•ä½mmï¼‰
+Function£º		Bar64k_radial
+Description£º	ÕıÏò·ÅÉäĞÔ»­³ö¾ØĞÎ¿ò£¬Ê¹ÓÃ·½·¨Í¬Bar64k£¬×îºóÒ»¸ö²ÎÊıÎª×ÜÑÓ³ÙÊ±¼ä£¨µ¥Î»mm£©
 
-Callsï¼š			rectangle64k
+Calls£º			rectangle64k
 
-Authorï¼š		åˆ˜äº‘ç¬›
+Author£º		ÁõÔÆµÑ
 **********************************************************/
 void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time)
 {
@@ -309,35 +309,35 @@ void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_
 
 	if (x2 - x1 > y2 - y1)
 	{
-		n = ceil(((float)y2 - y1) / 2);//å‘ä¸Šå–æ•´
+		n = ceil(((float)y2 - y1) / 2);//ÏòÉÏÈ¡Õû
 	}
 	else
 	{
-		n = ceil(((float)y2 - y1) / 2);//å‘ä¸Šå–æ•´
+		n = ceil(((float)y2 - y1) / 2);//ÏòÉÏÈ¡Õû
 	}
 	t = fill_time / (n + 1);
 
 	for (; n >= 0; n--)
 	{
 		rectangle64k(x1 + n, y1 + n, x2 - n, y2 - n, color);
-		delay(t);//å¯èƒ½è¿˜éœ€è¦è°ƒæ•´
+		delay(t);//¿ÉÄÜ»¹ĞèÒªµ÷Õû
 	}
 }
 /**********************************************************
-Functionï¼š		Button
-Descriptionï¼š	æŒ‰é’®ç»˜åˆ¶å‡½æ•°
-Callsï¼š			Line64k
-Input:			y1æŒ‰é’®ä¸Šæ²¿yåæ ‡ï¼ŒsæŒ‰é’®ä¸Šæ±‰å­—ï¼ˆå››ä¸ªå­—æœ€ä½³ï¼‰
-				color1åº•è‰²ï¼Œcolor2çº¿é¢œè‰²
+Function£º		Button
+Description£º	°´Å¥»æÖÆº¯Êı
+Calls£º			Line64k
+Input:			y1°´Å¥ÉÏÑØy×ø±ê£¬s°´Å¥ÉÏºº×Ö£¨ËÄ¸ö×Ö×î¼Ñ£©
+				color1µ×É«£¬color2ÏßÑÕÉ«
 
-Authorï¼š		åˆ˜äº‘ç¬›
-ps çµæ„Ÿæ¥è‡ªRiddle Jokerï¼ŒæŸšå­ç¤¾å¤©ä¸‹ç¬¬ä¸€ï¼
-ï¼ˆå¤§æ¦‚ä¸ä¼šæœ‰äººçœ‹åˆ°è¿™é‡Œï¼‰
+Author£º		ÁõÔÆµÑ
+ps Áé¸ĞÀ´×ÔRiddle Joker£¬èÖ×ÓÉçÌìÏÂµÚÒ»£¡
+£¨´ó¸Å²»»áÓĞÈË¿´µ½ÕâÀï£©
 **********************************************************/
 void Button(int y1,char *s, int color, int color2)
 {
 	int x1 = 750, x2 = 1024;
-	int height = 30, i;//barå¤§å°274*30
+	int height = 30, i;//bar´óĞ¡274*30
 	for (i = x2; i >= x1; i--)
 	{
 		Line64k(i, y1, i, y1 + height, color);
@@ -345,24 +345,24 @@ void Button(int y1,char *s, int color, int color2)
 	for (i = 1; i <= height; i ++)
 	{
 		Line64k(x1 - i, y1, x1 - i, y1 + height - i, color);
-	}//ä»å³å‘å·¦æ‰«æï¼Œå‡å°‘å¡é¡¿æ•ˆæœ
+	}//´ÓÓÒÏò×óÉ¨Ãè£¬¼õÉÙ¿¨¶ÙĞ§¹û
 	for (i = 0; i <= height - 7; i++)
 	{
 		Putpixel64k(x1 - height + 10 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 11 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 12 + i, y1 + 4 + i, color2);
 		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
-	}//å·¦ä¸‹è£…é¥°èŠ±çº¹ç»˜åˆ¶
+	}//×óÏÂ×°ÊÎ»¨ÎÆ»æÖÆ
 	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
 	Outtext(1024 - 4 * 55 - 20, y1 - 16, s, 32, 55, 0);
 }
 /**********************************************************
-Functionï¼š		Line45
-Descriptionï¼š	ç”»45åº¦è§’æ–œçº¿ï¼Œè¾“å…¥å¯ä»¥äº¤æ¢ä¸¤ç«¯ç‚¹
-Input:			x1,y1,èµ·å§‹ç‚¹,x2ç»ˆç‚¹xåæ ‡
-				coloré¢œè‰²
+Function£º		Line45
+Description£º	»­45¶È½ÇĞ±Ïß£¬ÊäÈë¿ÉÒÔ½»»»Á½¶Ëµã
+Input:			x1,y1,ÆğÊ¼µã,x2ÖÕµãx×ø±ê
+				colorÑÕÉ«
 
-Authorï¼š		åˆ˜äº‘ç¬›
+Author£º		ÁõÔÆµÑ
 **********************************************************/
 void Line45(int x1, int y1, int x2, int y2, unsigned int color)
 {
@@ -376,7 +376,7 @@ void Line45(int x1, int y1, int x2, int y2, unsigned int color)
 		y1 = y2;
 		y2 = i;
 	}
-	sign = (y2 - y1) / abs(y2 - y1);//ä¸ºæ­£åˆ™å¾€å³ä¸‹ç”»
+	sign = (y2 - y1) / abs(y2 - y1);//ÎªÕıÔòÍùÓÒÏÂ»­
 	num = x2 - x1;
 	for (i = 0; i <= num; i++)
 	{
@@ -385,15 +385,15 @@ void Line45(int x1, int y1, int x2, int y2, unsigned int color)
 }
 
 /**********************************************************
-Functionï¼š		Icon_draw
-Descriptionï¼š	ç”»å›¾æ ‡è¾¹æ¡†
-Input:			posæ ¼å­ä¸­å¿ƒç‚¹åæ ‡
-				sideé˜µè¥
-Authorï¼š		åˆ˜äº‘ç¬›
+Function£º		Icon_draw
+Description£º	»­Í¼±ê±ß¿ò
+Input:			pos¸ñ×ÓÖĞĞÄµã×ø±ê
+				sideÕóÓª
+Author£º		ÁõÔÆµÑ
 **********************************************************/
 #define bl_side 0
 #define rd_side 1
-void Icon_draw(POS pos, int side)
+void Icon_draw(DBL_POS pos, int side)
 {
 	unsigned int color1, color2, color2c;	//yello 65385, red 49540, blue 8912
 
@@ -421,20 +421,21 @@ void Icon_draw(POS pos, int side)
 }
 
 /**********************************************************
-Functionï¼š		Icon_builder
-Descriptionï¼š	ç”»ä¸ªé”¤å­ï¼ˆå·¥å…µå›¾æ ‡ï¼‰
-Input:			posæ ¼å­ä¸­å¿ƒç‚¹åæ ‡
-				coloré¢œè‰²
+Function£º		Icon_builder
+Description£º	»­¸ö´¸×Ó£¨¹¤±øÍ¼±ê£©
+Input:			pos¸ñ×ÓÖĞĞÄµã×ø±ê
+				colorÑÕÉ«
 
-Authorï¼š		åˆ˜äº‘ç¬›
+Author£º		ÁõÔÆµÑ
 **********************************************************/
 #define bl_side 0
 #define rd_side 1
-void Icon_builder(POS pos, int side)
+void Icon_builder(DBL_POS pos, int side)
 {
 	unsigned int color1;	
 	color1 = (side == bl_side) ? 8912 : 49540;
 
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
 	Filltriangle(-7 + pos.x, -2 + pos.y, 1 + pos.x, -10 + pos.y, 1 + pos.x, -2 + pos.y, color1);
 	Filltriangle(4 + pos.x, 1 + pos.y, 4 + pos.x, 9 + pos.y, 12 + pos.x, 1 + pos.y, color1);
@@ -443,11 +444,11 @@ void Icon_builder(POS pos, int side)
 	Line45(pos.x, 2 + pos.y, -8 + pos.x, 10 + pos.y, color1);
 	Line45(1 + pos.x, 3 + pos.y, -7 + pos.x, 11 + pos.y, color1);
 	Line45(-1 + pos.x, 2 + pos.y, -9 + pos.x, 10 + pos.y, color1);
-	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//ç”»ä¸ªé”¤å­
+	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//»­¸ö´¸×Ó
 }
 
-//x1, y1, x2, y2ä¸ºå¯¹è§’çº¿ä¸¤ç‚¹åæ ‡
-void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1å’Œy2å¿…é¡»ç›¸åŒ
+//x1, y1, x2, y2Îª¶Ô½ÇÏßÁ½µã×ø±ê
+void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1ºÍy2±ØĞëÏàÍ¬
 {
 	Filltriangle(x1, y1, x3, y3, x2, y2, color);
 	Filltriangle(x2, y2, x3, y3, 2 * x2 - x1, y2, color);
@@ -475,15 +476,77 @@ void frame(int x1, int y1, int x2, int y2, int color)
 	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
 }
 
-void banner(int x1, int y1, int length) //x1, y1ä¸ºçŸ©å½¢å·¦ä¸Šè§’åæ ‡ï¼Œlengthä¸ºçŸ©å½¢é•¿åº¦ï¼Œå‡ä¸åŒ…å«ä¸¤ä¾§ç¼å¸¦
+void attack_button(char* s, int color)
 {
-	/*å·¦ä¾§ç¼å¸¦*/
+	int i;
+	int x1 = 20, y1 = 407, len = 121;
+	Line64k(x1, y1, x1, y1 + len - 3, 0);
+	Line64k(x1 + 1, y1, x1+1, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
+	Line45(x1, y1, len+x1 - 3, y1 + len - 3, 0);
+	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
+	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
+	for (i = 0; i <= 113; i++)
+	{
+		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
+	}
+	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
+}
+
+void stay_button(char* s, int color)
+{
+	int i;
+	int len = 121, x1 = 141 + 3, y1 = 528 + 3;
+	Line64k(x1, y1, x1, y1 + len - 3, 0);
+	Line64k(x1 + 1, y1, x1 + 1, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
+	Line45(x1, y1, len + x1 - 3, y1 + len - 3, 0);
+	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
+	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
+	for (i = 0; i <= 113; i++)
+	{
+		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
+	}
+	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
+}//ÎªÊ²Ã´ÎÒÒªĞ´Á½¸öº¯ÊıÄØ£¬ÒòÎªÀÁµÃ¼Ç×ø±ê
+
+void move_button(int color)
+{
+	rectangle64k(20, 528, 141, 649, 0);
+	rectangle64k(20+1, 528+1, 141-1, 649-1, 0);
+	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
+	Outtext(20+27, 528+44, "ÒÆ¶¯", 32, 35, 0);
+}
+
+void del_button(int color)
+{
+	rectangle64k(20, 649+3, 262, 649+3+45, 0);
+	rectangle64k(20 + 1, 649 + 4, 262 - 1, 649+2+45, 0);
+	Bar64k_radial(20 + 2, 649 + 5, 262 - 2, 649 + 46, color, 0);
+	Outtext(85, 649+9, "É¾³ı", 32, 16+60, 0);
+}
+
+void nextr_button(int color)
+{
+	Circlefill64k(849+68, 514+68, 68, color);
+	Circle64k(849 + 68, 514 + 68, 69, 0);
+	Circle64k(849 + 68, 514 + 68, 68, 0);
+	Circle64k(849 + 68, 514 + 68, 67, 0);
+	Outtextxx(849 + 68 - 40, 514 - 40 + 68, 849 + 40 + 68, "ÏÂÒ»", 32, 0);
+	Outtextxx(849 + 68 - 40, 514 + 40 - 32 + 68, 849 + 68 + 40, "»ØºÏ", 32, 0);
+}
+
+void banner(int x1, int y1, int length) //x1, y1Îª¾ØĞÎ×óÉÏ½Ç×ø±ê£¬lengthÎª¾ØĞÎ³¤¶È£¬¾ù²»°üº¬Á½²à¶Ğ´ø
+{
+	/*×ó²à¶Ğ´ø*/
 	Bar64k(x1 - 25, y1 + 25, x1 + 50, y1 + 125, 62496);
 	Filltriangle(x1 - 75, y1 + 25, x1 - 25, y1 + 75, x1 - 25, y1 + 25, 62496);
 	Filltriangle(x1 - 75, y1 + 125, x1 - 25, y1 + 75, x1 - 25, y1 + 125, 62496);
 	Filltriangle(x1, y1 + 100, x1 + 50, y1 + 125, x1 + 50, y1 + 100, 54938);
 
-	/*å³ä¾§ç¼å¸¦*/
+	/*ÓÒ²à¶Ğ´ø*/
 	Bar64k(x1 + length - 50, y1 + 25, x1 + length + 25, y1 + 125, 62496);
 	Filltriangle(x1 + length + 25, y1 + 25, x1 + length + 25, y1 + 75, x1 + length + 75, y1 + 25, 62496);
 	Filltriangle(x1 + length + 25, y1 + 125, x1 + length + 25, y1 + 75, x1 + length + 75, y1 + 125, 62496);
@@ -492,7 +555,7 @@ void banner(int x1, int y1, int length) //x1, y1ä¸ºçŸ©å½¢å·¦ä¸Šè§’åæ ‡ï¼Œlengt
 	Bar64k(x1, y1, x1 + length, y1 + 100, 64608);
 }
 
-void photo(int x1, int y1, int x2, int y2) //çŸ©å½¢å¯¹è§’çº¿åæ ‡
+void photo(int x1, int y1, int x2, int y2) //¾ØĞÎ¶Ô½ÇÏß×ø±ê
 {
 	int x = (x1 + x2) / 2;
 	int y = (3 * y1 + y2) / 4;
@@ -515,8 +578,8 @@ void drawinf1(int x, int y)
 
 void drawpan1(int x, int y)
 {
-	Bar64k(x, y + 20, x + 70, y + 40, 63488); //è½¦èº« 
-	Bar64k(x + 35, y + 10, x + 65, y + 20, 64526); //ç‚®å¡”
-	Bar64k(x + 65, y + 10, x + 100, y + 15, 63488); //ç‚®ç®¡
+	Bar64k(x, y + 20, x + 70, y + 40, 63488); //³µÉí 
+	Bar64k(x + 35, y + 10, x + 65, y + 20, 64526); //ÅÚËş
+	Bar64k(x + 65, y + 10, x + 100, y + 15, 63488); //ÅÚ¹Ü
 }
 

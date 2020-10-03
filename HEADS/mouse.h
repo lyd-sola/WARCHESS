@@ -7,7 +7,8 @@
 		1.重新绘制了鼠标（使用了证券投资魏靖旻和邓述民函数，转成SVGA模式，有了不同鼠标形态）
 		2.修改了存鼠标背景的mouse_sq数组大小，以及存储范围（根据重新绘制的大小调整）
 		3.调整了大部分函数，解决了切换页面鼠标不移动则不显示问题（Newxy）
-		4.增加了解决鼠标留痕问题函数clrmous(MouseX, MouseY)，
+		4.增加了解决鼠标留痕问题函数clrmous(MouseX, MouseY)
+		5.增加了快速调用版清除鼠标函数Clrmous(),并解决手势不切换问题
 		
 *********************************************************/
 
@@ -19,7 +20,6 @@ int Readmouse(void);
 void Mouse_savebk(int x,int y);
 void Mouse_savebk2(void);
 void Mouse_putbk(int x,int y);
-int Mouse_press(int x1,int y1,int x2,int y2);
 int Mouse_pressother(int x1, int y1, int x2, int y2);
 int Mouse_above(int x1,int y1,int x2,int y2);
 int Mouse_aboveother(int x1, int y1, int x2, int y2);
@@ -33,7 +33,7 @@ void Clrmous(void);//快捷clrmous
 
 extern int MouseX, MouseY, press, MouseS;
 extern int Mouse_flag; 
-enum MOUSE
+enum MOUSE_POS
 {
 	MOUSE_OUT, MOUSE_IN_L, MOUSE_IN, MOUSE_OUT_L, MOUSE_IN_R
 };

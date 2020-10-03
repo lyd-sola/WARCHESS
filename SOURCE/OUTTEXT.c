@@ -23,7 +23,7 @@ data :	2017/8/13
 µ÷ÓÃº¯Êý
 	void Putpixel64k(int x, int y, unsigned char color);	
 **************************************************/
-void Outtext(int x,int y, char *s, int size, int part, int color)		//size16\24\32\48
+void Outtext(int x,int y, char *s, int size, int part, int color)//size16\24\32\48
 {
 	FILE *hzk_p;
 	unsigned char quma,weima;	

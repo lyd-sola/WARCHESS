@@ -11,7 +11,6 @@ Description: 头文件及定义结构、枚举
 #define SCR_WIDTH 1024
 #define SCR_HEIGHT 768
 
-
 #include <stdio.h>     /**文件操作函数头文件**/
 #include <conio.h>     /**getch()函数头文件**/
 #include <stdlib.h>	   /**rand()、exit()等函数头文件**/
@@ -37,9 +36,10 @@ Description: 头文件及定义结构、枚举
 #include "register.h"	//注册界面
 #include "mainmenu.h"	//主菜单界面
 #include "save.h"		//对战信息存档存取
-#include "functions.h"	//各种函数
+#include "func.h"		//各种函数
 #include "map.h"		//地图相关函数
 #include "battle.h"		//对战主函数
+#include "act.h"		//对战行为函数
 enum MENU
 {
 	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT, BATTLE
