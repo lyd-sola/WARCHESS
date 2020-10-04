@@ -18,30 +18,25 @@ int battle(char *user, short save_num, short mode)
 	CELL map[13][13];//地图
 	DBL_POS pos, ptmp;
 	Battleinfo batinfo;//对战信息
-	char s[20] = "SAVES//";
-	FILE* fp;//指向用户文件的指针
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
+	char s[25] = "SAVES//";
+	FILE* fp;
+	
 	strcat(s, user);
-
-	savefile_creat(user, mode);
-
 	if ((fp = fopen(s, "rb+")) == NULL)
-	{
 		show_error("未找到用户存档文件", 1);
-	}
+
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
 	
 	Clrmous();
 	battle_draw();
-
-
+	draw_saves(0, 0, 65535, fp, save_num);
 
 	map[6][6].kind = BUILDER;
 	pos.x = 13; pos.y = 7;
 	Icon_builder(pos, 1);
-	draw_saves(0, 0, 10000, fp, save_num);
 
 
 	while(1)
@@ -128,6 +123,10 @@ void Battle_init(FILE* fp, Battleinfo *info, MAP map)
 	{
 		for (j = 0; j < 13; j++)
 		{
+			if (fp == EOF && i*j != 144)
+			{
+				show_error("地图文件有误！", 1);
+			}
 			fread(map[i] + j, 2, 1, fp);
 		}
 	}//读取地图信息

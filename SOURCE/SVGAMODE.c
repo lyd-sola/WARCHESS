@@ -758,6 +758,153 @@ void Circle64k(int xc, int yc, int radius, unsigned int color)
 	}
 }
 
+void Circle_rd64k(int xc, int yc, int radius, unsigned int color)
+{
+	/*画圆圈的定位变量和决策变量*/
+	int x, y, d;
+
+	/*半径必须为正，否则退出*/
+	if (radius <= 0)
+	{
+		return;
+	}
+
+	/************************************
+	以下运用Bresenham算法生成圆圈。
+	该算法是得到公认的成熟的快速算法。
+	具体细节略去。
+	************************************/
+	y = radius;
+	d = 3 - radius << 1;
+
+	for (x = 0; x <= y; x++)
+	{
+		Putpixel64k(xc + x, yc + y, color);
+		Putpixel64k(xc + y, yc + x, color);
+
+		if (d < 0)
+		{
+			d += x * 4 + 6;
+		}
+
+		else
+		{
+			d += (x - y) * 4 + 10;
+			y--;
+		}
+	}
+}
+
+void Circle_ru64k(int xc, int yc, int radius, unsigned int color)
+{
+	/*画圆圈的定位变量和决策变量*/
+	int x, y, d;
+
+	/*半径必须为正，否则退出*/
+	if (radius <= 0)
+	{
+		return;
+	}
+
+	/************************************
+	以下运用Bresenham算法生成圆圈。
+	该算法是得到公认的成熟的快速算法。
+	具体细节略去。
+	************************************/
+	y = radius;
+	d = 3 - radius << 1;
+
+	for (x = 0; x <= y; x++)
+	{
+		Putpixel64k(xc + x, yc - y, color);
+		Putpixel64k(xc + y, yc - x, color);
+
+		if (d < 0)
+		{
+			d += x * 4 + 6;
+		}
+
+		else
+		{
+			d += (x - y) * 4 + 10;
+			y--;
+		}
+	}
+}
+
+void Circle_lu64k(int xc, int yc, int radius, unsigned int color)
+{
+	/*画圆圈的定位变量和决策变量*/
+	int x, y, d;
+
+	/*半径必须为正，否则退出*/
+	if (radius <= 0)
+	{
+		return;
+	}
+
+	/************************************
+	以下运用Bresenham算法生成圆圈。
+	该算法是得到公认的成熟的快速算法。
+	具体细节略去。
+	************************************/
+	y = radius;
+	d = 3 - radius << 1;
+
+	for (x = 0; x <= y; x++)
+	{
+		Putpixel64k(xc - x, yc - y, color);
+		Putpixel64k(xc - y, yc - x, color);
+
+		if (d < 0)
+		{
+			d += x * 4 + 6;
+		}
+
+		else
+		{
+			d += (x - y) * 4 + 10;
+			y--;
+		}
+	}
+}
+
+void Circle_ld64k(int xc, int yc, int radius, unsigned int color)
+{
+	/*画圆圈的定位变量和决策变量*/
+	int x, y, d;
+
+	/*半径必须为正，否则退出*/
+	if (radius <= 0)
+	{
+		return;
+	}
+
+	/************************************
+	以下运用Bresenham算法生成圆圈。
+	该算法是得到公认的成熟的快速算法。
+	具体细节略去。
+	************************************/
+	y = radius;
+	d = 3 - radius << 1;
+
+	for (x = 0; x <= y; x++)
+	{
+		Putpixel64k(xc - x, yc + y, color);
+		Putpixel64k(xc - y, yc + x, color);
+
+		if (d < 0)
+		{
+			d += x * 4 + 6;
+		}
+
+		else
+		{
+			d += (x - y) * 4 + 10;
+			y--;
+		}
+	}
+}
 /**********************************************************
 Function：		Circlefill64k
 Description：	画实心圆函数

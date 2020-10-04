@@ -16,10 +16,9 @@ date:2020/9/9
 
 int mainmenu(char *user, short *save_num, short *mode)
 {
-
-	mmenu_draw(user); //绘制主菜单函数
 	Clrmous();//更新鼠标状态，防止留痕
-	
+	mmenu_draw(user); //绘制主菜单函数	
+
 	while(1)
 	{
 		Newxy();
@@ -34,8 +33,8 @@ int mainmenu(char *user, short *save_num, short *mode)
 		}
 		if (Sharp_button(225 + 220, "重回往昔", "读取存档", 60361, 65535))
 		{
-			//进入存档界面
-			;
+			savpage(user, save_num, mode);//进入存档界面
+			return BATTLE;
 		}
 		Sharp_button(225 + 330, "作战指导", "操作说明", 60361, 65535);
 		if (Sharp_button(225 + 440, "鸣金收兵", "注销账号", 60361, 65535))

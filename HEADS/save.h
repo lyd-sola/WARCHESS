@@ -17,8 +17,10 @@ Function List：
 #ifndef __SAVE_H__
 #define __SAVE_H__
 
-int savefile_creat(char *user, short mode);
+int savefile_creat(FILE* fp, short mode);
 void seek_savinfo(FILE* fp, short n, int x, int y);
-void savefile_init(FILE* fp, short n);									
+void savefile_init(FILE* fp, short n);			
+short get_savenum(FILE* fp);//返回总存档个数
+short get_savmode(FILE* fp, short savnum);//返回存档的对战模式
 
 #endif

@@ -30,7 +30,6 @@ int register_()
 	Clrmous();
 	drawregi();
 	
-	
 	while(1)
 	{
 		Newxy();
@@ -135,10 +134,10 @@ void user_creat(char *username, char *password)
 {
 	FILE *fp;
 	char filename[30] = "USERS\\";
-	int n = 0;
+	short tot = 0;
 	strcat(filename, username);
 	
-	/***************´´½¨ÓÃ»§Ãû¼°ÃÜÂë±£´æÎÄ¼ş£¨ºóĞø»¹¿ÉÓÃÓÚ±£´æ³É¾ÍĞÅÏ¢µÈ£©********************/
+	//´´½¨ÓÃ»§Ãû¼°ÃÜÂë±£´æÎÄ¼ş
 	if((fp = fopen(filename, "w")) == NULL)
 	{
 		show_error("ÎŞ·¨´´½¨ÓÃ»§´æµµ", 1);
@@ -146,19 +145,20 @@ void user_creat(char *username, char *password)
 	fprintf(fp, "%llu\n%llu", password_classified(password, 67), password_classified(password, 71));//ÕâÀïÉæ¼°¼ÓÃÜÎÊÌâ£¬²»»á¸øÄã×¢ÊÍµÄ
 	fclose(fp);
 	
-	/***********************´´½¨¶ÔÕ½ĞÅÏ¢ÎÄ¼ş£¬ÆäÊµÖ»ÓĞÎÄ¼şÃûºÍÒ»¸ö0***************************/
+	//´´½¨¶ÔÕ½ĞÅÏ¢ÎÄ¼ş£¬ÆäÊµÖ»ÓĞÎÄ¼şÃûºÍÒ»¸ö0
 	sprintf(filename, "SAVES");//½ÌÄãÔõÃ´ÓÅÃÀµØ¸ÄÂ·¾¶
-	filename[5] = '/';
-	if((fp = fopen(filename, "wb")) == NULL)
+	filename[5] = '\\';
+	if((fp = fopen(filename, "wb+")) == NULL)
 	{
 		show_error("ÎŞ·¨´´½¨ÓÃ»§Õ½¶·ĞÅÏ¢´æµµ", 1);
 	}
-	fwrite(&n, 1, 1, fp);
+	fprintf(fp, "%1d", tot);
+	//fwrite(&tot, 1, 1, fp);
 	fclose(fp);
 }
 
 //³ÂĞñÍ©³õ°æ£¬ÁõÔÆµÑĞŞ¸Ä£¬¼ÓÃÜÃÜÂë
-unsigned long long password_classified(char *p, int radix)//×Ö·ûÊı×é×ª»»Îªradix½øÖÆÊı 
+unsigned long long password_classified(char *p, int radix)//¹şÏ£Ëã·¨£¬×Ö·ûÊı×é×ª»»Îªradix½øÖÆÊı 
 {
 	unsigned long long part1 = 0, part2 = 0;
 	int length = strlen(p), i, tmp;
@@ -214,8 +214,8 @@ unsigned long long password_classified(char *p, int radix)//×Ö·ûÊı×é×ª»»Îªradix½
 	/*
 	ÔÚÄã¿´¶®Õâ¸öµÄÊ±ºò£¬ÎÒÃÇµÄ¼ÓÃÜÏµÍ³¾Í±»ÄãÊ¶ÆÆÁËQAQ
 	¿É¶ñ
-	È»¶øÄãÒ²Ëã²»³öÃÜÂë£¨´óÊıµÄÒòÊ½·Ö½â£¬¾­µänpÀàÎÊÌâ£©
-	¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹şXD
+	È»¶øÄãÒ²²»Ò»¶¨ÄÜËã³öÃÜÂë
+	¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş¹ş XD
 	*/
 }
 
@@ -224,7 +224,6 @@ int regis_check(char *un, char *pw, char *pwr)
 	FILE *fp;
 	char filename[30] = "users\\";
 	strcat(filename, un);
-	strcat(filename, ".txt");
 	
 	if(*un == '\0')//Î´ÊäÈëÓÃ»§Ãû
 	{
@@ -246,7 +245,7 @@ int regis_check(char *un, char *pw, char *pwr)
 		return 0;
 	}
 	
-	else if((fp=fopen(filename, "r")) != NULL)//ÓÃ»§ÃûÒÑ´æÔÚ
+	else if((fp=fopen(filename, "rb")) != NULL)//ÓÃ»§ÃûÒÑ´æÔÚ
 	{
 		fclose(fp);
 		shadow_l(512-200, 384-100, 512+200, 384+100, 34429);

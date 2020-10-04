@@ -565,59 +565,90 @@ void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
 }
 
 /**************画个头（步兵图标）************/
-void drawinf1(int x, int y)
+void Icon_inf(DBL_POS pos, int side)
 {	
 	int i = 0;
-	Circlehalf64k(x, y, 20, 49540);
-	Bar64k(x - 20, y, x + 20, y + 4, 49540);
-	Bar64k(x - 20, y + 4, x + 25, y + 8, 49540);
-	for (; i <= 8; i++)
+	Icon_draw(pos, side);
+	Circlehalf64k(pos.x, pos.y, 8, 49540);
+	Bar64k(pos.x - 8, pos.y, pos.x + 8, pos.y + 2, 49540);
+	Bar64k(pos.x - 8, pos.y + 2, pos.x + 10, pos.y + 4, 49540);
+	for (; i <= 4; i++)
 	{
-		Line64k(x - 20 - i, y + 8 + i, x - i, y + 8 + i, 49540);
+		Line64k(pos.x - 8 - i, pos.y + 4 + i, pos.x - i, pos.y + 4 + i, 49540);
 	}
 }
 
+/*****画个坦克*******/
 void Icon_tank(DBL_POS pos, int side)
 {
 	Icon_draw(pos, side);
-	Bar64k(pos.x-20, pos.y-10, pos.x+20, pos.y+10, 63488); //车身 
-	Bar64k(pos.x-20, pos.y-5, pos.x+20, pos.y+5, 64526); //炮塔
-	Circlefill64k(pos.x, pos.y, 8, 63488); //炮管
-	Bar64k(pos.x, pos.y-4, pos.x + 25, pos.y+4, 63488);
+	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, 63488); //车身 
+	Bar64k(pos.x-3, pos.y-10, pos.x+3, pos.y+12, 64526); //炮塔
+	Bar64k(pos.x-1, pos.y, pos.x+1, pos.y+18, 49540);
+	Circlefill64k(pos.x, pos.y, 5, 49540); //炮管
 }
 
-void draw_saves(int x, int y, int color, FILE* fp, short save_num)
+/**************画个刀（超级兵图标）************/
+void Icon_super(DBL_POS pos, int side)
 {
-	char Buffer[20];
-	unsigned int t[3];//年 月日 时分
-	short mode;
-	
-	Bar64k_radial(x, y, x + 5 + 200, y + 25 + 40 + 16 + 5, color, 0);
-	seek_savinfo(fp, save_num, 0, 0);
-	//fseek(fp, 1, SEEK_CUR);//跳过存档号
-	fread(&mode, 1, 1, fp);
-
-	
-	sprintf(Buffer, "%d", save_num);
-	Outtext(x + 5 + 75, y + 25 - 20, "存档", 16, 19, 0);
-	Outtext(x + 5 + 75 + 19+16, y + 25 - 20, Buffer, 16, 19, 0);//存档序号
-
-	fread(t, 2, 3, fp);
-	sprintf(Buffer, "%4u/%02u/%02u %02u:%02u", t[0], t[1]/100, t[1]%100, t[2]/100, t[2]%100);
-	Outtext(x + 5 + 17, y + 25, Buffer, 16, 10, 0);
-
-	if (mode)
+	int i;
+	Icon_draw(pos, side);
+	for (i = -3; i < 4; i++)
 	{
-		Outtext(x + 5, y + 25 + 20, "模式：决战智械", 16, 19, 0);
+		Liney(pos.x+i, pos.y-8-(3-i), pos.x+i, pos.y+8, 23468);
 	}
-	else
+	for (i = 0; i < 3;i++)
 	{
-		Outtext(x + 5, y + 25 + 20, "模式：红蓝对决", 16, 19, 0);
+		Linex(pos.x-5-i, pos.y+8+i, pos.x+5+i, pos.y+8+i, 23468);
 	}
-
-	fread(t, 2, 1, fp);
-	sprintf(Buffer, "%u", (t[0]+1)/2);
-	Outtext(x + 5, y + 25 + 40, "回合数:", 16, 19, 0);
-	Outtext(x + 5 + 19 * 3 + 16, y + 25 + 40, Buffer, 16, 10, 0);
+	for (i = 0; i < 8; i++)
+	{
+		if (i % 4 == 3)
+		{
+			Linex(pos.x-3, pos.y+11+i, pos.x+3, pos.y+11+i, 23468);
+		}
+		else
+		{
+			Linex(pos.x-2, pos.y+11+i, pos.x+2, pos.y+11+i, 23468);
+		}
+	}
 }
 
+/*********带圆角的方形按钮***********/
+void rect_button(int x1, int y1, int x2, int y2, char* s, int color)
+{
+	int ra = (x2 - x1) / 10;
+	Bar64k(x1+ra, y1, x2-ra, y1+ra, color);
+	Bar64k(x1, y1+ra, x2, y2-ra, color);
+	Bar64k(x1+ra, y2-ra, x2-ra, y2, color);
+	Circlefill64k(x1 + ra, y1 + ra, ra, color);
+	Circlefill64k(x1 + ra, y2 - ra, ra, color);
+	Circlefill64k(x2 - ra, y1 + ra, ra, color);
+	Circlefill64k(x2 - ra, y2 - ra, ra, color);
+	if(strlen(s) > 6)
+		Outtextxx(x1+(ra/2), (y1+y2)/2-16, x2-(ra/2),s, 32, 0);
+	else
+		Outtextxx(x1+(ra*2), (y1+y2)/2-16, x2-(ra*2),s, 32, 0);
+}
+
+/*********方形按钮加框，标亮使用***********/
+void rect_btn_frame(int x1, int y1, int x2, int y2, int color)
+{
+	int ra = (x2 - x1) / 10;
+	Linex(x1 + ra, y1 + 1, x2 - ra, y1 + 1, color);
+	Liney(x1 + 1, y1 + ra, x1 + 1, y2 - ra, color);
+	Liney(x2 - 1, y1 + ra, x2 - 1, y2 - ra, color);
+	Linex(x1 + ra, y2 - 1, x2 - ra, y2 - 1, color);
+	Circle_rd64k(x2 - ra, y2 - ra, ra - 1, color);
+	Circle_ru64k(x2 - ra, y1 + ra, ra - 1, color);
+	Circle_ld64k(x1 + ra, y2 - ra, ra - 1, color);
+	Circle_lu64k(x1 + ra, y1 + ra, ra - 1, color);
+	Linex(x1 + ra, y1 + 2, x2 - ra, y1 + 2, color);
+	Liney(x1 + 2, y1 + ra, x1 + 2, y2 - ra, color);
+	Liney(x2 - 2, y1 + ra, x2 - 2, y2 - ra, color);
+	Linex(x1 + ra, y2 - 2, x2 - ra, y2 - 2, color);
+	Circle_rd64k(x2 - ra, y2 - ra, ra - 2, color);
+	Circle_ru64k(x2 - ra, y1 + ra, ra - 2, color);
+	Circle_ld64k(x1 + ra, y2 - ra, ra - 2, color);
+	Circle_lu64k(x1 + ra, y1 + ra, ra - 2, color);
+}

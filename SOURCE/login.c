@@ -26,7 +26,6 @@ int login(char *username)
 	username[0] = '\0';
 	Clrmous();
 	drawlogin();
-	Mouse_savebk2();//¸üĞÂÊó±ê×´Ì¬£¬·ÀÖ¹ÁôºÛ
 	
 	while(1)
 	{

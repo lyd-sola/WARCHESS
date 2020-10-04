@@ -25,15 +25,20 @@ int test(void)
 	/*******/
 	Clrmous();
 	test_draw();
-	//tank_draw(200, 200);
 	banner(200, 200, 200);
-	drawinf1(100,100);
 	pos.x = 400;
 	pos.y = 200;
-	Icon_tank(pos, 1);
+	//Icon_tank(pos, 1);
+	//Icon_inf(pos, 1);
+	Icon_super(pos, 1);
+
+	rect_button(600, 600, 750, 650, "ÎÒÊÇÄãµù", 65340);
+	rect_button(600, 200, 800, 350, "Äãµù", 65340);
 	while(1)
 	{
 		Newxy();
+		rec_btn_fun(600, 600, 750, 650, 65340);
+		rec_btn_fun(600, 200, 800, 350, 65340);
 		if(mouse_press(950, 0, 1024, 74) == MOUSE_IN_L)
 		{
 			return EXIT;

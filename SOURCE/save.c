@@ -41,29 +41,24 @@ Function£ºsavefile_creat
 Author£ºÁõÔÆµÑ
 Description: ¿ìËÙ´´½¨µØÍ¼ÎÄ¼ş
 *******************************************/
-int savefile_creat(char *user, short mode)//Èç¹û·µ»Ø1Ôò´æµµÂú£¬¿ìËÙ´´½¨Ê§°Ü£¬³É¹¦´´½¨·µ»Ø0
+int savefile_creat(FILE *fp, short mode)//Èç¹û·µ»Ø1Ôò´æµµÂú£¬¿ìËÙ´´½¨Ê§°Ü£¬³É¹¦´´½¨·µ»Ø0
 {
-	char filename[25] = "SAVES//";
-	FILE *fp;
 	short n;
-	strcat(filename, user);
-	if( (fp = fopen(filename, "rb+")) == NULL)
-	{
-		show_error("Î´ÕÒµ½ÓÃ»§´æµµÎÄ¼ş", 1);
-	}
-	fread(&n, 1, 1, fp);//¶ÁÈ¡´æµµ¸öÊı
+
+	n = get_savenum(fp);//¶ÁÈ¡´æµµ¸öÊı
 	if(n >= MAX_SAVE_NUM)
 	{
 		return 1;
 	}
 	n++;
 	fseek(fp, 0, SEEK_SET);
-	fwrite(&n, 1, 1, fp);
+	fputc(n + '0', fp);
+	//fprintf(fp, "%1d", n);
+	//fwrite(&n, 1, 1, fp);
 	//Ôö¼Ó´æµµ¸öÊı
 
 	fseek(fp, 0, SEEK_END);//ÒÆ¶¯µ½ÎÄ¼şÎ²£¬¿ªÊ¼´æµµ´´½¨
 	savefile_init(fp, mode);//³õÊ¼ĞÅÏ¢ÌîĞ´
-	fclose(fp);
 	return 0;
 }
 
@@ -81,8 +76,9 @@ void savefile_init(FILE *fp, short mode)
 	CELL cell;
 	FILE *map;
 	char geo;
-	//´æµµºÅ
-	fwrite(&mode, 1, 1, fp);
+	//¶ÔÕ½Ä£Ê½
+	//fwrite(&m, 1, 1, fp);
+	fprintf(fp, "%1d", mode);
 	//µ±Ç°Ê±¼äÊäÈë
 	time( &rawtime );
     info = localtime( &rawtime );
@@ -93,7 +89,7 @@ void savefile_init(FILE *fp, short mode)
 	//³õÊ¼»¯ÄÚÈİ´´½¨
 	i = 1;
 	fwrite(&i, 2, 1, fp);//»ØºÏÊı
-	i = 3;
+	i = 2;
 	fwrite(&i, 2, 1, fp);
 	fwrite(&i, 2, 1, fp);//Ë«·½×ÊÔ´Êı
 	
@@ -174,6 +170,23 @@ void seek_savinfo(FILE* fp, short n, int x, int y)//fp Ö¸ÏòÓÃ»§¶ÔÕ½ĞÅÏ¢ÎÄ¼şµÄÖ¸Õ
 	/* ´æ´¢ĞĞÁĞÓëË«±¶¿í¶È×ø±êµÄ¹ØÏµ£ºrow=y,column=(int)(x+1)/2 */
 	fseek(fp, sizeof(CELL) * MAP_SIZE * (y - 1), SEEK_CUR);//Ìø¹ıy-1ĞĞ
 	fseek(fp, (x - 1) / sizeof(CELL) * sizeof(CELL), SEEK_CUR);//Ìø¹ı(x - 1) / 2ÁĞ
+}
+
+short get_savenum(FILE* fp)
+{
+	short tot;
+	fseek(fp, 0, SEEK_SET);
+	tot = fgetc(fp) - '0';
+	//fread(&tot, 1, 1, fp);//¶ÁÈ¡´æµµ×ÜÊı
+	return tot;
+}
+
+short get_savmode(FILE* fp, short savnum)
+{
+	short mode;
+	seek_savinfo(fp, savnum, 0, 0);
+	fread(&mode, 1, 1, fp);
+	return mode;
 }
 /*******************ÒÔÏÂ²âÊÔº¯Êı£¬¼ÇµÃÉ¾³ı********************/
 
