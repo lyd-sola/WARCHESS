@@ -1,21 +1,22 @@
 /********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
-file_name: 
-author: 
-version: 
-Description: 
-date:
+file_name: savepage.c
+author: 刘云笛
+version: 1.0
+Description:存档界面！ 
+	可以说是非常完美了
+	写了一天，debug了半天（连带所有数据流相关函数）
+	我的孩子终于长大了QAQ
+	写到这里的时候lyd已经懒得缩减代码量了
+date:10.4
 
 更新日志
 
-函数目录
 ******************************************************************/
-//SVGA分辨率1024*768
-//使用时保证清除以下每一个注释，别忘了加进工程噢
 
 #include "common.h"
-
-void savpage(char *user, short* save_num, short* mode)
+/*存档管理页面，返回1可以进入对战界面，返回0回到原界面*/
+int savpage(char *user, short* save_num, short* mode)
 {
 	int flag = 1;//模式，1为读档，0为覆盖
 	short tot = 0;
@@ -36,6 +37,10 @@ void savpage(char *user, short* save_num, short* mode)
 	{
 		Newxy();
 
+		if (mouse_press(197 + 630 - 32, 98, 197 + 630, 98 + 32) == MOUSE_IN_L)
+		{
+			return 0;
+		}
 		if (rec_btn_fun(236, 511, 373, 561, 65535))//点击读取存档
 		{
 			flag = 1;
@@ -89,7 +94,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 1;
 					*mode = get_savmode(fp, 1);
 					fclose(fp);
-					return;
+					return 1;
 				}		
 				else
 				{
@@ -115,7 +120,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 2;
 					*mode = get_savmode(fp, 2);
 					fclose(fp);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -141,7 +146,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 3;
 					*mode = get_savmode(fp, 3);
 					fclose(fp);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -167,7 +172,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 4;
 					*mode = get_savmode(fp, 4);
 					fclose(fp);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -193,7 +198,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 5;
 					*mode = get_savmode(fp, 5);
 					fclose(fp);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -219,7 +224,7 @@ void savpage(char *user, short* save_num, short* mode)
 					*save_num = 6;
 					*mode = get_savmode(fp, 6);
 					fclose(fp);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -244,6 +249,8 @@ void savpage_draw(FILE *fp)
 {
 	Clrmous();
 	Bar64k_radial(197, 98, 197 + 630, 98 + 495, 65340, 0);
+	Bar64k_radial(197+630-32, 98, 197 + 630, 98 + 32, 65535, 0);
+	Outtext(197 + 630 - 32, 98, "返", 32, 32, 0);
 	draw_saves(287 - 15, 398, 65535, fp, 5);
 	draw_saves(532 + 15, 398, 65535, fp, 6);
 	draw_saves(287 - 15, 290, 65535, fp, 3);

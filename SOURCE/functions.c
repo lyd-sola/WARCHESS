@@ -118,7 +118,7 @@ int Sharp_button(int y0, char* s, char* s_change, int color, int color2)		/*本函
 	{
 		Clrmous();
 		MouseS = 1;
-		Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);//遮挡按钮外汉字
+		Bar64k(750, y0 - 16, 1000, y0 - 1, 65370);//遮挡按钮外汉字
 		Button(y0, s_change, 64800, 65535);
 		while (1)//标亮后生成新鼠标，解决反复标亮问题（避免使用多个状态记录变量），lyd原创 XD
 		{
@@ -134,7 +134,7 @@ int Sharp_button(int y0, char* s, char* s_change, int color, int color2)		/*本函
 			{
 				Clrmous();
 				MouseS = 0;
-				Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);
+				Bar64k(750, y0 - 16, 1000, y0 - 1, 65370);
 				Button(y0, s, color, color2);
 				return 0;
 			}//离开区域

@@ -144,7 +144,7 @@ void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 	struct tm* info;
 	int i, j;
 
-	fseek(fp, 1, SEEK_CUR);//跳过存档号
+	fseek(fp, 1, SEEK_CUR);//跳过模式号
 	//当前时间输入
 	time(&rawtime);
 	info = localtime(&rawtime);
