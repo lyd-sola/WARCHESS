@@ -17,7 +17,6 @@ void move(DBL_POS From, MAP map)
 	DBL_POS dbto;
 	POS center;
 
-	center = center_xy(From.x, From.y);
 	ofrom = D2O(From);
 	move_button(600);
 	show_msg("请选择要移动的位置", "");

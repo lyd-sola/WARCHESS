@@ -614,6 +614,22 @@ void Icon_super(DBL_POS pos, int side)
 	}
 }
 
+void Icon_arti(DBL_POS pos, int side)
+{
+	int i, ra;
+	Icon_draw(pos, side);
+	for (i = -2; i < 4; i++)      //画斜45度矩形
+	{
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i-sqrt(0.5)*14, 49540);
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+1+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i+1-sqrt(0.5)*14, 49540);
+	}
+	Bar64k(pos.x-10,pos.y,pos.x-5, pos.y+10, 49540);
+	Liney(pos.x+5, pos.y-2, pos.x+5, pos.y+10, 0);
+	Liney(pos.x+6, pos.y-2, pos.x+6, pos.y+10, 0);
+	Liney(pos.x+7, pos.y-2, pos.x+7, pos.y+10, 0);
+	Linex(pos.x-12, pos.y+10, pos.x+12, pos.y+10, 0);
+}
+
 /*********带圆角的方形按钮***********/
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color)
 {
@@ -682,4 +698,12 @@ int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color)
 	{
 		return 0;
 	}
+}
+
+/*************圆形图标***************/
+void battle_exit(int x, int y)
+{
+	Circlefill64k(x, y, 50, 64096);
+	Line64k(x-30, y-30, x+30, y+30, 65535);
+	Line64k(x+1-30, y-30, x+30, y+30, 65535);
 }

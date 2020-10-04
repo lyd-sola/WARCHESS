@@ -25,6 +25,7 @@ void Icon_builder(DBL_POS pos, int side);
 void Icon_inf(DBL_POS pos, int side);
 void Icon_tank(DBL_POS pos, int side);
 void Icon_super(DBL_POS pos, int side);
+void Icon_arti(DBL_POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 
 void attack_button(char* s, int color);//攻击按钮
@@ -33,6 +34,8 @@ void move_button(int color);//移动按钮
 void del_button(int color);//删除按钮
 void nextr_button(int color);//下一回合按钮
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color); //方形按钮
+
+void battle_exit(int x, int y);
 
 int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color);
 void rect_btn_frame(int x1, int y1, int x2, int y2, char* s, int color);

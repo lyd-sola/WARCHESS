@@ -11,7 +11,6 @@ int main(void)
 {
 	int page = HOMEPAGE;
 	char user[10] = "A";				//初始化用户名数组，系统限制，用户名仅为大写字母和数字，8位以内
-	
 	SetSVGA64k(); 					//分辨率1024*768
 	//Initmouse(1, 1023, 1, 767); 
 	Initmouse(0, 1024, 0, 768); 
