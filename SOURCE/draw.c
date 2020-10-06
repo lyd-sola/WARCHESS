@@ -29,9 +29,28 @@ date:2020/9/8
 
 void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 不能是奇数
 {
-	shadow_l(x1, y1, x2, y2, 65504);
-	frame(x1+15, y1+15, x2-15, y2-15, 65535);
-
+	int i, color;
+	for (i = 0; i <= (x2 - x1) / 2; i++)
+	{
+		if (i == 0)
+		{
+			color = 33808;
+		}
+		else if (i < 15)
+		{
+			color = 65504;
+		}
+		else if (i == 15)
+		{
+			color = 33808;
+		}
+		else
+		{
+			color = 65535;
+		}
+		rectangle64k(x1+i, y1+i, x2-i, y2-i, color);
+	}
+	add_shadow(x1, y1, x2, y2, 10);
 	/* 利用x2-x1为矩形长度，计算距离两边为60和80的椭圆横轴
 	   纵轴为横轴一半
 	   然后利用直线封口 
@@ -458,14 +477,14 @@ void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1和y2
 
 void shadow(int x1, int y1, int x2, int y2, int color1, int color2)
 {
-	Bar64k_radial(x1 + 5, y1 + 5, x2 + 5, y2 + 5, 33808, 0);
+	add_shadow(x1, y1, x2, y2, 10);
 	Bar64k_radial(x1, y1, x2, y2, color1, 0);
 	Bar64k_radial(x1 + 2, y1 + 2, x2, y2, color2, 0);
 }
 
 void shadow_l(int x1, int y1, int x2, int y2, int color)
 {
-	Bar64k_radial(x1 + 10, y1 + 10, x2 + 10, y2 + 10, 33808, 0);
+	add_shadow(x1, y1, x2, y2, 10);
 	Bar64k_radial(x1, y1, x2, y2, color, 0);
 	rectangle64k(x1, y1, x2, y2, 33808);
 }
@@ -474,6 +493,12 @@ void frame(int x1, int y1, int x2, int y2, int color)
 {
 	Bar64k_radial(x1, y1, x2, y2, color, 0);
 	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
+}
+
+void add_shadow(int x1, int y1, int x2, int y2, int size)  //size为阴影偏移量的大小，通常取5或者10即可
+{
+	Bar64k(x1+size, y2, x2+size, y2+size, 33808);
+	Bar64k(x2, y1+size, x2+size, y2, 33808);
 }
 
 void attack_button(char* s, int color)
@@ -568,7 +593,9 @@ void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
 void Icon_inf(DBL_POS pos, int side)
 {	
 	int i = 0;
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	Circlehalf64k(pos.x, pos.y, 8, 49540);
 	Bar64k(pos.x - 8, pos.y, pos.x + 8, pos.y + 2, 49540);
 	Bar64k(pos.x - 8, pos.y + 2, pos.x + 10, pos.y + 4, 49540);
@@ -581,7 +608,9 @@ void Icon_inf(DBL_POS pos, int side)
 /*****画个坦克*******/
 void Icon_tank(DBL_POS pos, int side)
 {
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, 63488); //车身 
 	Bar64k(pos.x-3, pos.y-10, pos.x+3, pos.y+12, 64526); //炮塔
 	Bar64k(pos.x-1, pos.y, pos.x+1, pos.y+18, 49540);
@@ -592,7 +621,9 @@ void Icon_tank(DBL_POS pos, int side)
 void Icon_super(DBL_POS pos, int side)
 {
 	int i;
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	for (i = -3; i < 4; i++)
 	{
 		Liney(pos.x+i, pos.y-8-(3-i), pos.x+i, pos.y+8, 23468);
@@ -617,7 +648,9 @@ void Icon_super(DBL_POS pos, int side)
 void Icon_arti(DBL_POS pos, int side)
 {
 	int i, ra;
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	for (i = -2; i < 4; i++)      //画斜45度矩形
 	{
 		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i-sqrt(0.5)*14, 49540);

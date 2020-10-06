@@ -29,4 +29,8 @@ void Battle_init(FILE* fp, Battleinfo* info, CELL map[][13]);
 
 void save_battle(FILE* fp, Battleinfo* batinfo, CELL map[][13]);
 
+void draw_cell(DBL_POS pos, MAP map);
+
+void initdraw(MAP map);
+
 #endif

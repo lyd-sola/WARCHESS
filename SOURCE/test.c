@@ -26,8 +26,8 @@ int test(void)
 	Clrmous();
 	test_draw();
 	//banner(200, 200, 200);
-	pos.x = 400;
-	pos.y = 200;
+	pos.x = 7;
+	pos.y = 7;
 	//Icon_tank(pos, 1);
 	//Icon_inf(pos, 1);
 	//Icon_super(pos, 1);
