@@ -118,7 +118,7 @@ int Sharp_button(int y0, char* s, char* s_change, int color, int color2)		/*本函
 	{
 		Clrmous();
 		MouseS = 1;
-		Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);//遮挡按钮外汉字
+		Bar64k(750, y0 - 16, 1000, y0 - 1, 65370);//遮挡按钮外汉字
 		Button(y0, s_change, 64800, 65535);
 		while (1)//标亮后生成新鼠标，解决反复标亮问题（避免使用多个状态记录变量），lyd原创 XD
 		{
@@ -134,7 +134,7 @@ int Sharp_button(int y0, char* s, char* s_change, int color, int color2)		/*本函
 			{
 				Clrmous();
 				MouseS = 0;
-				Bar64k(750, y0 - 16, 1000, y0 - 1, 65535);
+				Bar64k(750, y0 - 16, 1000, y0 - 1, 65370);
 				Button(y0, s, color, color2);
 				return 0;
 			}//离开区域
@@ -247,5 +247,62 @@ int nxt_btn_fun(int color, int color_c)
 	else
 	{
 		return 0;
+	}
+}
+
+/*********标亮方形按钮***********/
+int rec_btn_fun(int x1, int y1, int x2, int y2, int color)
+{
+	if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)
+	{
+		Clrmous();
+		MouseS = 1;
+		rect_btn_frame(x1, y1, x2, y2, 33808);
+		while (1)//标亮后生成新鼠标，解决反复标亮问题（避免使用多个状态记录变量），lyd原创 XD
+		{
+			Newxy();
+			if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)
+			{
+				if (press == 1)
+				{
+					delay(50);
+					return 1;
+				}//若点击返回1
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				rect_btn_frame(x1, y1, x2, y2, color); //覆写方框，加快绘图速度
+				return 0;
+			}//离开区域
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/*屏幕上显示信息框，点击btn1返回1，btn2返回0*/
+short msgbar(char *btn1, char *btn2, char *s1, char *s2)
+{
+	Clrmous();
+	Bar64k_radial(262, 218, 262 + 500, 219 + 230, 34429, 0);
+	rect_button(318, 384, 112+318, 45+384, btn1, 65535);
+	rect_button(581, 384, 112+581, 45+384, btn2, 65535);
+	Outtext(304, 252, s1, 32, 35, 0);
+	Outtext(304, 314, s2, 32, 35, 0);
+	while (1)
+	{
+		Newxy();
+		if (rec_btn_fun(318, 384, 112 + 318, 45 + 384, 65535))
+		{
+			return 1;
+		}//点击确定返回1
+		if (rec_btn_fun(581, 384, 112 + 581, 45 + 384, 65535))
+		{
+			return 0;
+		}//点击取消返回0
 	}
 }

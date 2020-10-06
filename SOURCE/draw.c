@@ -674,11 +674,14 @@ void rect_button(int x1, int y1, int x2, int y2, char* s, int color)
 	Circlefill64k(x1 + ra, y2 - ra, ra, color);
 	Circlefill64k(x2 - ra, y1 + ra, ra, color);
 	Circlefill64k(x2 - ra, y2 - ra, ra, color);
-	Outtextxx(x1+(ra/2), (y1+y2)/2-16, x2-(ra/2),s, 32, 0);
+	if(strlen(s) > 6)
+		Outtextxx(x1+(ra/2), (y1+y2)/2-16, x2-(ra/2),s, 32, 0);
+	else
+		Outtextxx(x1+(ra*2), (y1+y2)/2-16, x2-(ra*2),s, 32, 0);
 }
 
 /*********方形按钮加框，标亮使用***********/
-void rect_btn_frame(int x1, int y1, int x2, int y2, char* s, int color)
+void rect_btn_frame(int x1, int y1, int x2, int y2, int color)
 {
 	int ra = (x2 - x1) / 10;
 	Linex(x1 + ra, y1 + 1, x2 - ra, y1 + 1, color);
@@ -712,7 +715,7 @@ int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color)
 			Newxy();
 			if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)
 			{
-				rect_btn_frame(x1, y1, x2, y2, s, 33808);
+				rect_btn_frame(x1, y1, x2, y2, 33808);
 				if (press == 1)
 				{
 					return 1;
@@ -722,7 +725,7 @@ int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color)
 			{
 				Clrmous();
 				MouseS = 0;
-				rect_btn_frame(x1, y1, x2, y2, s, color); //覆写方框，加快绘图速度
+				rect_btn_frame(x1, y1, x2, y2, color); //覆写方框，加快绘图速度
 				return 0;
 			}//离开区域
 		}

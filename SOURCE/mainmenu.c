@@ -14,24 +14,74 @@ date:2020/9/9
 ******************************************************************/
 #include "common.h"
 
-int mainmenu(char *user)
+int mainmenu(char *user, short *save_num, short *mode)
 {
-	mmenu_draw(user); //»æÖÆÖ÷²Ëµ¥º¯Êı
-	Clrmous();//¸üĞÂÊó±ê×´Ì¬£¬·ÀÖ¹ÁôºÛ
-	
+	char s[25] = "SAVES//";
+	FILE* fp;
+	strcat(s, user);
+	if ((fp = fopen(s, "rb+")) == NULL)
+		show_error("Î´ÕÒµ½ÓÃ»§´æµµÎÄ¼ş", 1);
+
+	mmenu_draw(user); //»æÖÆÖ÷²Ëµ¥º¯Êı	
+
 	while(1)
 	{
 		Newxy();
-		Sharp_button(225, "ºìÀ¶¶Ô¾ö", "Ë«ÈË¶ÔÕ½", 60361, 65535);
-		if (Sharp_button(225 + 110, "¾öÕ½ÖÇĞµ", "µ¥ÈËÄ£Ê½", 60361, 65535))
+		if (Sharp_button(225, "ºìÀ¶¶Ô¾ö", "Ë«ÈË¶ÔÕ½", 60361, 65535))
 		{
-			//if (savefile_creat(user) == 1)
-			//{
-			//	return MAINMENU;
-			//}
+			if (savefile_creat(fp, 0) == 1)
+			{
+				if (msgbar("È·¶¨", "È¡Ïû", "´æµµÒÑÂú£¬¿ìËÙ´´½¨Ê§°Ü", "¼´½«Ìø×ªµ½´æµµ¹ÜÀí½çÃæ£¬¿ÉÒÔÂğ£¿"))
+				{
+					if (!savpage(user, save_num, mode))
+					{
+						mmenu_draw(user);
+						continue;
+					}
+				}
+				else
+				{
+					mmenu_draw(user);
+					continue;
+				}
+				return BATTLE;
+			}
+			*save_num = get_savenum(fp);
+			*mode = get_savmode(fp, *save_num);
 			return BATTLE;
 		}
-		Sharp_button(225 + 220, "ÖØ»ØÍùÎô", "¶ÁÈ¡´æµµ", 60361, 65535);
+		if (Sharp_button(225 + 110, "¾öÕ½ÖÇĞµ", "µ¥ÈËÄ£Ê½", 60361, 65535))
+		{
+			if (savefile_creat(fp, 1) == 1)
+			{
+				if (msgbar("È·¶¨", "È¡Ïû", "´æµµÒÑÂú£¬¿ìËÙ´´½¨Ê§°Ü", "¼´½«Ìø×ªµ½´æµµ¹ÜÀí½çÃæ"))
+				{
+					if (!savpage(user, save_num, mode))
+					{
+						mmenu_draw(user);
+						continue;
+					}
+				}
+				else
+				{
+					mmenu_draw(user);
+					continue;
+				}
+				return BATTLE;
+			}
+			*save_num = get_savenum(fp);
+			*mode = get_savmode(fp, *save_num);
+			return BATTLE;
+		}
+		if (Sharp_button(225 + 220, "ÖØ»ØÍùÎô", "¶ÁÈ¡´æµµ", 60361, 65535))
+		{
+			if (!savpage(user, save_num, mode))
+			{
+				mmenu_draw(user);
+				continue;
+			}
+			return BATTLE;
+		}
 		Sharp_button(225 + 330, "×÷Õ½Ö¸µ¼", "²Ù×÷ËµÃ÷", 60361, 65535);
 		if (Sharp_button(225 + 440, "Ãù½ğÊÕ±ø", "×¢ÏúÕËºÅ", 60361, 65535))
 		{
@@ -42,7 +92,7 @@ int mainmenu(char *user)
 
 void mmenu_draw(char *user)//²Ëµ¥£ººìÀ¶¶Ô¾ö£¨Ë«ÈË¶ÔÕ½£©£¬¶Ô¾öÖÇĞµ£¨µ¥ÈËÄ£Ê½£©£¬ÖØ»ØÍùÎô£¨¶ÁÈ¡´æµµ£©£¬×÷Õ½Ö¸µ¼£¨²Ù×÷ËµÃ÷£©£¬Ãù½ğÊÕ±ø£¨×¢ÏúÕËºÅ£©
 {
-	Clrmous();
+	Clrmous();//¸üĞÂÊó±ê×´Ì¬£¬·ÀÖ¹ÁôºÛ
 	Bar64k_radial(0, 0, 1024, 768, 65370, 0);
 	banner(512 - 280, 20, 560);
 	Outtextxx(512 - 280 + 10, 40, 512 - 280 + 560, "»¶Ó­»ØÀ´£¬Ö¸»Ó¹Ù£¡", 48, 65184);
@@ -52,7 +102,7 @@ void mmenu_draw(char *user)//²Ëµ¥£ººìÀ¶¶Ô¾ö£¨Ë«ÈË¶ÔÕ½£©£¬¶Ô¾öÖÇĞµ£¨µ¥ÈËÄ£Ê½£©£¬Ö
 
 	Outtext(230, 235, "Ö¸»Ó¹Ùµµ°¸", 32, 40, 0);
 	Outtextxx(120, 360, 260, "Í¨ĞĞÖ¤: ", 32, 0);
-	Outtext(260, 360, user, 32, 40, 0);
+	Outtext(260, 360, user, 32, 32, 0);
 	Outtextxx(120, 405, 260, "¶Ô¾ÖÊı: ", 32, 0);
 
 	Button(225, "ºìÀ¶¶Ô¾ö",60361, 65535);
@@ -60,4 +110,12 @@ void mmenu_draw(char *user)//²Ëµ¥£ººìÀ¶¶Ô¾ö£¨Ë«ÈË¶ÔÕ½£©£¬¶Ô¾öÖÇĞµ£¨µ¥ÈËÄ£Ê½£©£¬Ö
 	Button(225+220, "ÖØ»ØÍùÎô", 60361, 65535);
 	Button(225+330, "×÷Õ½Ö¸µ¼", 60361, 65535);
 	Button(225+440, "Ãù½ğÊÕ±ø", 60361, 65535);
+
+	//Bar64k_radial(200 - 5, 500 - 20 - 5, 400, 500 + 40 + 16 + 5, 10000, 0);
+	//Outtext(200 + 75, 500 - 20, "´æµµ1", 16, 19, 0);
+	//Outtext(217, 500, "2020/10/03 09:58", 16, 10, 0);
+	//Outtext(200, 500 + 20, "Ä£Ê½£ººìÀ¶¶Ô¾ö", 16, 19, 0);
+	//Outtext(200, 500 + 40, "»ØºÏÊı", 16, 19, 0);
+	//Outtext(200 + 19 * 2 + 16, 500 + 40, ":10000", 16, 10, 0);
+
 }

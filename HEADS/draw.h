@@ -36,10 +36,11 @@ void del_button(int color);//删除按钮
 void nextr_button(int color);//下一回合按钮
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color); //方形按钮
 
+
 void battle_exit(int x, int y);
 
 int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color);
-void rect_btn_frame(int x1, int y1, int x2, int y2, char* s, int color);
+void rect_btn_frame(int x1, int y1, int x2, int y2, int color);
 
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);

@@ -34,12 +34,12 @@ int test(void)
 	Icon_arti(pos, 1);
 	battle_exit(800, 100);
 	rect_button(600, 600, 750, 650, "我是你爹", 65340);
-	rect_button(600, 200, 800, 350, "我你爹", 65340);
+	rect_button(600, 200, 800, 350, "你爹", 65340);
 	while(1)
 	{
 		Newxy();
-		light_r_btn(600, 600, 750, 650, "我是你爹", 65340);
-		light_r_btn(600, 200, 800, 350, "我你爹", 65340);
+		rec_btn_fun(600, 600, 750, 650, 65340);
+		rec_btn_fun(600, 200, 800, 350, 65340);
 		if(mouse_press(950, 0, 1024, 74) == MOUSE_IN_L)
 		{
 			return EXIT;
