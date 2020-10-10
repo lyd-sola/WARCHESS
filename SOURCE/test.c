@@ -85,6 +85,9 @@ void test_draw()
 
 	//Lightbar(0, 0, 512, 768, 1.1);
 	//Lightbar(0, 0, 512, 768, 1.0/1.05);
+	save_btn(65370);
+	exit_btn(65370);
+	option_btn(65370);
 }
 
 void tank_draw(int x, int y)
