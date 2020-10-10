@@ -41,6 +41,7 @@ Description: 头文件及定义结构、枚举
 #include "battle.h"		//对战主函数
 #include "act.h"		//对战行为函数
 #include "savpage.h"	//存档界面
+#include "buttons.h"	//按钮函数
 enum MENU
 {
 	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT, BATTLE

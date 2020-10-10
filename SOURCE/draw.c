@@ -342,39 +342,7 @@ void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_
 		delay(t);//¿ÉÄÜ»¹ÐèÒªµ÷Õû
 	}
 }
-/**********************************************************
-Function£º		Button
-Description£º	°´Å¥»æÖÆº¯Êý
-Calls£º			Line64k
-Input:			y1°´Å¥ÉÏÑØy×ø±ê£¬s°´Å¥ÉÏºº×Ö£¨ËÄ¸ö×Ö×î¼Ñ£©
-				color1µ×É«£¬color2ÏßÑÕÉ«
 
-Author£º		ÁõÔÆµÑ
-ps Áé¸ÐÀ´×ÔRiddle Joker£¬èÖ×ÓÉçÌìÏÂµÚÒ»£¡
-£¨´ó¸Å²»»áÓÐÈË¿´µ½ÕâÀï£©
-**********************************************************/
-void Button(int y1,char *s, int color, int color2)
-{
-	int x1 = 750, x2 = 1024;
-	int height = 30, i;//bar´óÐ¡274*30
-	for (i = x2; i >= x1; i--)
-	{
-		Line64k(i, y1, i, y1 + height, color);
-	}
-	for (i = 1; i <= height; i ++)
-	{
-		Line64k(x1 - i, y1, x1 - i, y1 + height - i, color);
-	}//´ÓÓÒÏò×óÉ¨Ãè£¬¼õÉÙ¿¨¶ÙÐ§¹û
-	for (i = 0; i <= height - 7; i++)
-	{
-		Putpixel64k(x1 - height + 10 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 11 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 12 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
-	}//×óÏÂ×°ÊÎ»¨ÎÆ»æÖÆ
-	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
-	Outtext(1024 - 4 * 55 - 20, y1 - 16, s, 32, 55, 0);
-}
 /**********************************************************
 Function£º		Line45
 Description£º	»­45¶È½ÇÐ±Ïß£¬ÊäÈë¿ÉÒÔ½»»»Á½¶Ëµã
@@ -501,68 +469,6 @@ void add_shadow(int x1, int y1, int x2, int y2, int size)  //sizeÎªÒõÓ°Æ«ÒÆÁ¿µÄ´
 	Bar64k(x2, y1+size, x2+size, y2, 33808);
 }
 
-void attack_button(char* s, int color)
-{
-	int i;
-	int x1 = 20, y1 = 407, len = 121;
-	Line64k(x1, y1, x1, y1 + len - 3, 0);
-	Line64k(x1 + 1, y1, x1+1, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
-	Line45(x1, y1, len+x1 - 3, y1 + len - 3, 0);
-	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
-	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
-	for (i = 0; i <= 113; i++)
-	{
-		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
-	}
-	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
-}
-
-void stay_button(char* s, int color)
-{
-	int i;
-	int len = 121, x1 = 141 + 3, y1 = 528 + 3;
-	Line64k(x1, y1, x1, y1 + len - 3, 0);
-	Line64k(x1 + 1, y1, x1 + 1, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
-	Line45(x1, y1, len + x1 - 3, y1 + len - 3, 0);
-	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
-	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
-	for (i = 0; i <= 113; i++)
-	{
-		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
-	}
-	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
-}//ÎªÊ²Ã´ÎÒÒªÐ´Á½¸öº¯ÊýÄØ£¬ÒòÎªÀÁµÃ¼Ç×ø±ê
-
-void move_button(int color)
-{
-	rectangle64k(20, 528, 141, 649, 0);
-	rectangle64k(20+1, 528+1, 141-1, 649-1, 0);
-	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
-	Outtext(20+27, 528+44, "ÒÆ¶¯", 32, 35, 0);
-}
-
-void del_button(int color)
-{
-	rectangle64k(20, 649+3, 262, 649+3+45, 0);
-	rectangle64k(20 + 1, 649 + 4, 262 - 1, 649+2+45, 0);
-	Bar64k_radial(20 + 2, 649 + 5, 262 - 2, 649 + 46, color, 0);
-	Outtext(85, 649+9, "É¾³ý", 32, 16+60, 0);
-}
-
-void nextr_button(int color)
-{
-	Circlefill64k(849+68, 514+68, 68, color);
-	Circle64k(849 + 68, 514 + 68, 69, 0);
-	Circle64k(849 + 68, 514 + 68, 68, 0);
-	Circle64k(849 + 68, 514 + 68, 67, 0);
-	Outtextxx(849 + 68 - 40, 514 - 40 + 68, 849 + 40 + 68, "ÏÂÒ»", 32, 0);
-	Outtextxx(849 + 68 - 40, 514 + 40 - 32 + 68, 849 + 68 + 40, "»ØºÏ", 32, 0);
-}
-
 void banner(int x1, int y1, int length) //x1, y1Îª¾ØÐÎ×óÉÏ½Ç×ø±ê£¬lengthÎª¾ØÐÎ³¤¶È£¬¾ù²»°üº¬Á½²à¶Ð´ø
 {
 	/*×ó²à¶Ð´ø*/
@@ -661,85 +567,4 @@ void Icon_arti(DBL_POS pos, int side)
 	Liney(pos.x+6, pos.y-2, pos.x+6, pos.y+10, 0);
 	Liney(pos.x+7, pos.y-2, pos.x+7, pos.y+10, 0);
 	Linex(pos.x-12, pos.y+10, pos.x+12, pos.y+10, 0);
-}
-
-/*********´øÔ²½ÇµÄ·½ÐÎ°´Å¥***********/
-void rect_button(int x1, int y1, int x2, int y2, char* s, int color)
-{
-	int ra = (x2 - x1) / 10;
-	Bar64k(x1+ra, y1, x2-ra, y1+ra, color);
-	Bar64k(x1, y1+ra, x2, y2-ra, color);
-	Bar64k(x1+ra, y2-ra, x2-ra, y2, color);
-	Circlefill64k(x1 + ra, y1 + ra, ra, color);
-	Circlefill64k(x1 + ra, y2 - ra, ra, color);
-	Circlefill64k(x2 - ra, y1 + ra, ra, color);
-	Circlefill64k(x2 - ra, y2 - ra, ra, color);
-	if(strlen(s) > 6)
-		Outtextxx(x1+(ra/2), (y1+y2)/2-16, x2-(ra/2),s, 32, 0);
-	else
-		Outtextxx(x1+(ra*2), (y1+y2)/2-16, x2-(ra*2),s, 32, 0);
-}
-
-/*********·½ÐÎ°´Å¥¼Ó¿ò£¬±êÁÁÊ¹ÓÃ***********/
-void rect_btn_frame(int x1, int y1, int x2, int y2, int color)
-{
-	int ra = (x2 - x1) / 10;
-	Linex(x1 + ra, y1 + 1, x2 - ra, y1 + 1, color);
-	Liney(x1 + 1, y1 + ra, x1 + 1, y2 - ra, color);
-	Liney(x2 - 1, y1 + ra, x2 - 1, y2 - ra, color);
-	Linex(x1 + ra, y2 - 1, x2 - ra, y2 - 1, color);
-	Circle_rd64k(x2 - ra, y2 - ra, ra - 1, color);
-	Circle_ru64k(x2 - ra, y1 + ra, ra - 1, color);
-	Circle_ld64k(x1 + ra, y2 - ra, ra - 1, color);
-	Circle_lu64k(x1 + ra, y1 + ra, ra - 1, color);
-	Linex(x1 + ra, y1 + 2, x2 - ra, y1 + 2, color);
-	Liney(x1 + 2, y1 + ra, x1 + 2, y2 - ra, color);
-	Liney(x2 - 2, y1 + ra, x2 - 2, y2 - ra, color);
-	Linex(x1 + ra, y2 - 2, x2 - ra, y2 - 2, color);
-	Circle_rd64k(x2 - ra, y2 - ra, ra - 2, color);
-	Circle_ru64k(x2 - ra, y1 + ra, ra - 2, color);
-	Circle_ld64k(x1 + ra, y2 - ra, ra - 2, color);
-	Circle_lu64k(x1 + ra, y1 + ra, ra - 2, color);
-}
-
-/*********±êÁÁ·½ÐÎ°´Å¥***********/
-int light_r_btn(int x1, int y1, int x2, int y2, char* s, int color)
-{
-	if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)
-	{
-		Clrmous();
-		MouseS = 1;
-
-		while (1)//±êÁÁºóÉú³ÉÐÂÊó±ê£¬½â¾ö·´¸´±êÁÁÎÊÌâ£¨±ÜÃâÊ¹ÓÃ¶à¸ö×´Ì¬¼ÇÂ¼±äÁ¿£©£¬lydÔ­´´ XD
-		{
-			Newxy();
-			if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)
-			{
-				rect_btn_frame(x1, y1, x2, y2, 33808);
-				if (press == 1)
-				{
-					return 1;
-				}//Èôµã»÷·µ»Ø1
-			}
-			else
-			{
-				Clrmous();
-				MouseS = 0;
-				rect_btn_frame(x1, y1, x2, y2, color); //¸²Ð´·½¿ò£¬¼Ó¿ì»æÍ¼ËÙ¶È
-				return 0;
-			}//Àë¿ªÇøÓò
-		}
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-/*************Ô²ÐÎÍ¼±ê***************/
-void battle_exit(int x, int y)
-{
-	Circlefill64k(x, y, 50, 64096);
-	Line64k(x-30, y-30, x+30, y+30, 65535);
-	Line64k(x+1-30, y-30, x+30, y+30, 65535);
 }

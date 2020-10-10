@@ -31,7 +31,7 @@ int mainmenu(char *user, short *save_num, short *mode)
 		{
 			if (savefile_creat(fp, 0) == 1)
 			{
-				if (msgbar("确定", "取消", "存档已满，快速创建失败", "即将跳转到存档管理界面，可以吗？"))
+				if (msgbar("确定", "取消", "存档已满，快速创建失败", "即将跳转到存档管理界面"))
 				{
 					if (!savpage(user, save_num, mode))
 					{

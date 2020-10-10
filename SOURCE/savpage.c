@@ -291,7 +291,7 @@ void draw_saves(int x, int y, int color, FILE* fp, short save_num)
 
 	fread(t, 2, 3, fp);
 	sprintf(Buffer, "%4u/%02u/%02u %02u:%02u", t[0], t[1] / 100, t[1] % 100, t[2] / 100, t[2] % 100);
-	Outtext(x + 5 + 17, y + 25, Buffer, 16, 10, 0);//时间
+	Outtext(x + 5 + 17-1, y + 25, Buffer, 16, 10, 0);//时间
 
 	if (mode == 1)
 	{

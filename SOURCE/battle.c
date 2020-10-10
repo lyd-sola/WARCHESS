@@ -36,7 +36,7 @@ int battle(char *user, short save_num, short mode)
 
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
-	pos.x = 13; pos.y = 7;
+	//pos.x = 13; pos.y = 7;
 	//Icon_builder(pos, 1);
 	initdraw(map);
 
@@ -106,6 +106,11 @@ void battle_draw()
 	move_button(65535);
 	del_button(65535);
 	nextr_button(65535);
+
+	//选项菜单
+	save_btn(29252);
+	exit_btn(29252);
+	option_btn(29252);
 }
 /**********************************************************
 Function：		Battle_init
@@ -125,7 +130,7 @@ void Battle_init(FILE* fp, Battleinfo *info, MAP map)
 	{
 		for (j = 0; j < 13; j++)
 		{
-			if (fp == EOF && i*j != 144)
+			if (feof(fp) && i*j != 144)
 			{
 				show_error("地图文件有误！", 1);
 			}
@@ -166,6 +171,57 @@ void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 			fwrite(map[i] + j, 2, 1, fp);
 		}
 	}
+}
+
+
+//将来一并移入buttons.c
+void save_btn(int color)
+{
+	rect_button(800, 10, 800+49, 10+34, "", color);
+	Outtext(800 + 24 - 8, 10 + 17 - 8, "s", 16, 0, 0);
+	Line64k(833, 23, 833, 34, 0);
+	Line64k(834, 23, 834, 34, 0);
+	Line45(834, 23, 832, 21, 0);
+	Line45(833, 23, 831, 21, 0);
+	Line64k(823, 21, 832, 21, 0);
+	Line64k(823, 22, 832, 22, 0);
+	Line45(823, 21, 821, 19, 0);
+	Line45(823, 22, 821, 20, 0);
+	Line64k(817, 19, 821, 19, 0);
+	Line64k(817, 20, 821, 20, 0);
+	Line45(817, 19, 815, 21, 0);
+	Line45(815, 22, 817, 20, 0);
+	Line64k(815, 22, 815, 34, 0);
+	Line64k(816, 22, 816, 34, 0);
+	Line45(815, 34, 817, 36, 0);
+	Line45(816, 34, 817, 35, 0);
+	Line64k(817, 35, 832, 35, 0);
+	Line64k(817, 36, 832, 36, 0);
+	Putpixel64k(833, 35, 0);
+}
+
+void option_btn(int color)
+{
+	rect_button(880, 10, 880+49, 44, "", color);
+	Bar64k(880+14, 10+9, 880+49-14, 10+9+2, 0);
+	Bar64k(880+14, 10+9+7, 880+49-14, 10+9+2+7, 0);
+	Bar64k(880+14, 10+9+7*2, 880+49-14, 10+9+2+7*2, 0);
+}
+
+void exit_btn(int color)
+{
+	rect_button(960, 10, 960 + 49, 44, "", color);
+	Line45(985 + 11, 27 + 11, 985 - 11, 27 - 11, 0);
+	Line45(985 + 10, 27 + 11, 985 - 11, 27 - 10, 0);
+	Line45(985 + 11, 27 + 10, 985 - 10, 27 - 11, 0);
+	Line45(985 + 9, 27 + 11, 985 - 11, 27 - 9, 0);
+	Line45(985 + 11, 27 + 9, 985 - 9, 27 - 11, 0);
+
+	Line45(985 + 11, 27 - 11, 985 - 11, 27 + 11, 0);
+	Line45(985 + 10, 27 - 11, 985 - 11, 27 + 10, 0);
+	Line45(985 + 11, 27 - 10, 985 - 10, 27 + 11, 0);
+	Line45(985 + 9, 27 - 11, 985 - 11, 27 + 9, 0);
+	Line45(985 + 11, 27 - 9, 985 - 9, 27 + 11, 0);
 }
 
 void draw_cell(DBL_POS pos, MAP map)
