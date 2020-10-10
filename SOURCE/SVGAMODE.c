@@ -981,6 +981,50 @@ void Circlefill64k(int xc, int yc, int radius, unsigned int color)
 	}
 }
 
+void Circlefill_ld64k(int xc, int yc, int radius, unsigned int color)
+{
+	/*画圆圈的定位变量和决策变量*/
+	int x = 0,
+		y = radius,
+		dx = 3,
+		dy = 2 - radius - radius,
+		d = 1 - radius;
+
+	/*半径必须为正，否则退出*/
+	if (radius <= 0)
+	{
+		return;
+	}
+
+	/************************************
+	以下运用Bresenham算法生成实心圆。
+	该算法是得到公认的成熟的快速算法。
+	具体细节略去。
+	************************************/
+	while (x <= y)
+	{
+		Line64k(xc - y, yc + x, xc, yc + x, color);
+		Line64k(xc - x, yc + y, xc, yc + y, color);
+
+		if (d < 0)
+		{
+			d += dx;
+			dx += 2;
+		}
+
+		else
+		{
+			d += (dx + dy);
+			dx += 2;
+			dy += 2;
+			y--;
+		}
+
+		x++;
+	}
+}
+
+
 /**********************************************************
 Function：		Getpixel64k
 

@@ -34,9 +34,11 @@ int battle(char *user, short save_num, short mode)
 	battle_draw();
 	draw_saves(0, 0, 65535, fp, save_num);
 
+	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
-	pos.x = 13; pos.y = 7;
-	Icon_builder(pos, 1);
+	//pos.x = 13; pos.y = 7;
+	//Icon_builder(pos, 1);
+	initdraw(map);
 
 
 	while(1)
@@ -171,6 +173,7 @@ void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 	}
 }
 
+
 //将来一并移入buttons.c
 void save_btn(int color)
 {
@@ -207,7 +210,7 @@ void option_btn(int color)
 
 void exit_btn(int color)
 {
-	rect_button(960, 10, 960+49, 44, "", color);
+	rect_button(960, 10, 960 + 49, 44, "", color);
 	Line45(985 + 11, 27 + 11, 985 - 11, 27 - 11, 0);
 	Line45(985 + 10, 27 + 11, 985 - 11, 27 - 10, 0);
 	Line45(985 + 11, 27 + 10, 985 - 10, 27 - 11, 0);
@@ -219,4 +222,68 @@ void exit_btn(int color)
 	Line45(985 + 11, 27 - 10, 985 - 10, 27 + 11, 0);
 	Line45(985 + 9, 27 - 11, 985 - 11, 27 + 9, 0);
 	Line45(985 + 11, 27 - 9, 985 - 9, 27 + 11, 0);
+}
+
+void draw_cell(DBL_POS pos, MAP map)
+{
+	int flag, side;
+	OFF_POS offpos;
+
+	offpos = D2O(pos);
+	flag = map[offpos.y][offpos.x].kind;
+	side = map[offpos.y][offpos.x].side;
+	switch (flag)
+	{
+	case BUILDER:
+		Icon_builder(pos, side);
+	case INFANTRY:
+		Icon_inf(pos, side);
+	case ARTILLERY:
+		Icon_arti(pos, side);
+	case TANK:
+		Icon_tank(pos, side);
+	case SUPER:
+		Icon_super(pos, side);
+	default:
+		break;
+	}
+}
+
+void initdraw(MAP map)
+{
+	int i, j;
+	OFF_POS opos;
+	DBL_POS dpos;
+	for (i = 0; i < 13; i++)
+	{
+		for (j = 0; j < 13; j++)
+		{
+			if (map[j][i].kind)
+			{
+				opos.x = i;
+				opos.y = j;
+				dpos = O2D(opos);
+				switch (map[j][i].kind)
+				{
+				case BUILDER:
+					Icon_builder(dpos, map[j][i].side);
+					break;
+				case INFANTRY:
+					Icon_inf(dpos, map[j][i].side);
+					break;
+				case ARTILLERY:
+					Icon_arti(dpos, map[j][i].side);
+					break;
+				case TANK:
+					Icon_tank(dpos, map[j][i].side);
+					break;
+				case SUPER:
+					Icon_super(dpos, map[j][i].side);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
 }

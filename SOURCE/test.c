@@ -25,13 +25,14 @@ int test(void)
 	/*******/
 	Clrmous();
 	test_draw();
-	banner(200, 200, 200);
-	pos.x = 400;
-	pos.y = 200;
+	//banner(200, 200, 200);
+	pos.x = 7;
+	pos.y = 7;
 	//Icon_tank(pos, 1);
 	//Icon_inf(pos, 1);
-	Icon_super(pos, 1);
-
+	//Icon_super(pos, 1);
+	Icon_arti(pos, 1);
+	battle_exit(800, 100);
 	rect_button(600, 600, 750, 650, "ÎÒÊÇÄãµù", 65340);
 	rect_button(600, 200, 800, 350, "Äãµù", 65340);
 	while(1)

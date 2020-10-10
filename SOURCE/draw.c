@@ -29,9 +29,28 @@ date:2020/9/8
 
 void file_draw(int x1, int y1, int x2, int y2) //x2 - x1 不能是奇数
 {
-	shadow_l(x1, y1, x2, y2, 65504);
-	frame(x1+15, y1+15, x2-15, y2-15, 65535);
-
+	int i, color;
+	for (i = 0; i <= (x2 - x1) / 2; i++)
+	{
+		if (i == 0)
+		{
+			color = 33808;
+		}
+		else if (i < 15)
+		{
+			color = 65504;
+		}
+		else if (i == 15)
+		{
+			color = 33808;
+		}
+		else
+		{
+			color = 65535;
+		}
+		rectangle64k(x1+i, y1+i, x2-i, y2-i, color);
+	}
+	add_shadow(x1, y1, x2, y2, 10);
 	/* 利用x2-x1为矩形长度，计算距离两边为60和80的椭圆横轴
 	   纵轴为横轴一半
 	   然后利用直线封口 
@@ -323,39 +342,7 @@ void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_
 		delay(t);//可能还需要调整
 	}
 }
-/**********************************************************
-Function：		Button
-Description：	按钮绘制函数
-Calls：			Line64k
-Input:			y1按钮上沿y坐标，s按钮上汉字（四个字最佳）
-				color1底色，color2线颜色
 
-Author：		刘云笛
-ps 灵感来自Riddle Joker，柚子社天下第一！
-（大概不会有人看到这里）
-**********************************************************/
-void Button(int y1,char *s, int color, int color2)
-{
-	int x1 = 750, x2 = 1024;
-	int height = 30, i;//bar大小274*30
-	for (i = x2; i >= x1; i--)
-	{
-		Line64k(i, y1, i, y1 + height, color);
-	}
-	for (i = 1; i <= height; i ++)
-	{
-		Line64k(x1 - i, y1, x1 - i, y1 + height - i, color);
-	}//从右向左扫描，减少卡顿效果
-	for (i = 0; i <= height - 7; i++)
-	{
-		Putpixel64k(x1 - height + 10 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 11 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 12 + i, y1 + 4 + i, color2);
-		Putpixel64k(x1 - height + 13 + i, y1 + 4 + i, color2);
-	}//左下装饰花纹绘制
-	Bar64k(x1 + 4, y1 + height - 3, x1 + 2 + 64, y1 + height - 5, color2);
-	Outtext(1024 - 4 * 55 - 20, y1 - 16, s, 32, 55, 0);
-}
 /**********************************************************
 Function：		Line45
 Description：	画45度角斜线，输入可以交换两端点
@@ -458,14 +445,14 @@ void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1和y2
 
 void shadow(int x1, int y1, int x2, int y2, int color1, int color2)
 {
-	Bar64k_radial(x1 + 5, y1 + 5, x2 + 5, y2 + 5, 33808, 0);
+	add_shadow(x1, y1, x2, y2, 10);
 	Bar64k_radial(x1, y1, x2, y2, color1, 0);
 	Bar64k_radial(x1 + 2, y1 + 2, x2, y2, color2, 0);
 }
 
 void shadow_l(int x1, int y1, int x2, int y2, int color)
 {
-	Bar64k_radial(x1 + 10, y1 + 10, x2 + 10, y2 + 10, 33808, 0);
+	add_shadow(x1, y1, x2, y2, 10);
 	Bar64k_radial(x1, y1, x2, y2, color, 0);
 	rectangle64k(x1, y1, x2, y2, 33808);
 }
@@ -476,66 +463,10 @@ void frame(int x1, int y1, int x2, int y2, int color)
 	rectangle64k(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 33808);
 }
 
-void attack_button(char* s, int color)
+void add_shadow(int x1, int y1, int x2, int y2, int size)  //size为阴影偏移量的大小，通常取5或者10即可
 {
-	int i;
-	int x1 = 20, y1 = 407, len = 121;
-	Line64k(x1, y1, x1, y1 + len - 3, 0);
-	Line64k(x1 + 1, y1, x1+1, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
-	Line45(x1, y1, len+x1 - 3, y1 + len - 3, 0);
-	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
-	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
-	for (i = 0; i <= 113; i++)
-	{
-		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
-	}
-	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
-}
-
-void stay_button(char* s, int color)
-{
-	int i;
-	int len = 121, x1 = 141 + 3, y1 = 528 + 3;
-	Line64k(x1, y1, x1, y1 + len - 3, 0);
-	Line64k(x1 + 1, y1, x1 + 1, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
-	Line45(x1, y1, len + x1 - 3, y1 + len - 3, 0);
-	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
-	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
-	for (i = 0; i <= 113; i++)
-	{
-		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
-	}
-	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
-}//为什么我要写两个函数呢，因为懒得记坐标
-
-void move_button(int color)
-{
-	rectangle64k(20, 528, 141, 649, 0);
-	rectangle64k(20+1, 528+1, 141-1, 649-1, 0);
-	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
-	Outtext(20+27, 528+44, "移动", 32, 35, 0);
-}
-
-void del_button(int color)
-{
-	rectangle64k(20, 649+3, 262, 649+3+45, 0);
-	rectangle64k(20 + 1, 649 + 4, 262 - 1, 649+2+45, 0);
-	Bar64k_radial(20 + 2, 649 + 5, 262 - 2, 649 + 46, color, 0);
-	Outtext(85, 649+9, "删除", 32, 16+60, 0);
-}
-
-void nextr_button(int color)
-{
-	Circlefill64k(849+68, 514+68, 68, color);
-	Circle64k(849 + 68, 514 + 68, 69, 0);
-	Circle64k(849 + 68, 514 + 68, 68, 0);
-	Circle64k(849 + 68, 514 + 68, 67, 0);
-	Outtextxx(849 + 68 - 40, 514 - 40 + 68, 849 + 40 + 68, "下一", 32, 0);
-	Outtextxx(849 + 68 - 40, 514 + 40 - 32 + 68, 849 + 68 + 40, "回合", 32, 0);
+	Bar64k(x1+size, y2, x2+size, y2+size, 33808);
+	Bar64k(x2, y1+size, x2+size, y2, 33808);
 }
 
 void banner(int x1, int y1, int length) //x1, y1为矩形左上角坐标，length为矩形长度，均不包含两侧缎带
@@ -568,7 +499,9 @@ void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
 void Icon_inf(DBL_POS pos, int side)
 {	
 	int i = 0;
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	Circlehalf64k(pos.x, pos.y, 8, 49540);
 	Bar64k(pos.x - 8, pos.y, pos.x + 8, pos.y + 2, 49540);
 	Bar64k(pos.x - 8, pos.y + 2, pos.x + 10, pos.y + 4, 49540);
@@ -581,7 +514,9 @@ void Icon_inf(DBL_POS pos, int side)
 /*****画个坦克*******/
 void Icon_tank(DBL_POS pos, int side)
 {
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, 63488); //车身 
 	Bar64k(pos.x-3, pos.y-10, pos.x+3, pos.y+12, 64526); //炮塔
 	Bar64k(pos.x-1, pos.y, pos.x+1, pos.y+18, 49540);
@@ -592,7 +527,9 @@ void Icon_tank(DBL_POS pos, int side)
 void Icon_super(DBL_POS pos, int side)
 {
 	int i;
+	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
+	
 	for (i = -3; i < 4; i++)
 	{
 		Liney(pos.x+i, pos.y-8-(3-i), pos.x+i, pos.y+8, 23468);
@@ -614,41 +551,20 @@ void Icon_super(DBL_POS pos, int side)
 	}
 }
 
-/*********带圆角的方形按钮***********/
-void rect_button(int x1, int y1, int x2, int y2, char* s, int color)
+void Icon_arti(DBL_POS pos, int side)
 {
-	int ra = (x2 - x1) / 10;
-	Bar64k(x1+ra, y1, x2-ra, y1+ra, color);
-	Bar64k(x1, y1+ra, x2, y2-ra, color);
-	Bar64k(x1+ra, y2-ra, x2-ra, y2, color);
-	Circlefill64k(x1 + ra, y1 + ra, ra, color);
-	Circlefill64k(x1 + ra, y2 - ra, ra, color);
-	Circlefill64k(x2 - ra, y1 + ra, ra, color);
-	Circlefill64k(x2 - ra, y2 - ra, ra, color);
-	if(strlen(s) > 6)
-		Outtextxx(x1+(ra/2), (y1+y2)/2-16, x2-(ra/2),s, 32, 0);
-	else
-		Outtextxx(x1+(ra*2), (y1+y2)/2-16, x2-(ra*2),s, 32, 0);
-}
-
-/*********方形按钮加框，标亮使用***********/
-void rect_btn_frame(int x1, int y1, int x2, int y2, int color)
-{
-	int ra = (x2 - x1) / 10;
-	Linex(x1 + ra, y1 + 1, x2 - ra, y1 + 1, color);
-	Liney(x1 + 1, y1 + ra, x1 + 1, y2 - ra, color);
-	Liney(x2 - 1, y1 + ra, x2 - 1, y2 - ra, color);
-	Linex(x1 + ra, y2 - 1, x2 - ra, y2 - 1, color);
-	Circle_rd64k(x2 - ra, y2 - ra, ra - 1, color);
-	Circle_ru64k(x2 - ra, y1 + ra, ra - 1, color);
-	Circle_ld64k(x1 + ra, y2 - ra, ra - 1, color);
-	Circle_lu64k(x1 + ra, y1 + ra, ra - 1, color);
-	Linex(x1 + ra, y1 + 2, x2 - ra, y1 + 2, color);
-	Liney(x1 + 2, y1 + ra, x1 + 2, y2 - ra, color);
-	Liney(x2 - 2, y1 + ra, x2 - 2, y2 - ra, color);
-	Linex(x1 + ra, y2 - 2, x2 - ra, y2 - 2, color);
-	Circle_rd64k(x2 - ra, y2 - ra, ra - 2, color);
-	Circle_ru64k(x2 - ra, y1 + ra, ra - 2, color);
-	Circle_ld64k(x1 + ra, y2 - ra, ra - 2, color);
-	Circle_lu64k(x1 + ra, y1 + ra, ra - 2, color);
+	int i, ra;
+	pos = center_xy(pos.x, pos.y);
+	Icon_draw(pos, side);
+	
+	for (i = -2; i < 4; i++)      //画斜45度矩形
+	{
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i-sqrt(0.5)*14, 49540);
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+1+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i+1-sqrt(0.5)*14, 49540);
+	}
+	Bar64k(pos.x-10,pos.y,pos.x-5, pos.y+10, 49540);
+	Liney(pos.x+5, pos.y-2, pos.x+5, pos.y+10, 0);
+	Liney(pos.x+6, pos.y-2, pos.x+6, pos.y+10, 0);
+	Liney(pos.x+7, pos.y-2, pos.x+7, pos.y+10, 0);
+	Linex(pos.x-12, pos.y+10, pos.x+12, pos.y+10, 0);
 }

@@ -33,4 +33,8 @@ void save_btn(int color);
 void exit_btn(int color);
 void option_btn(int color);
 
+void draw_cell(DBL_POS pos, MAP map);
+
+void initdraw(MAP map);
+
 #endif

@@ -18,11 +18,6 @@ Function List£∫
 extern FILE* FBMP;//∂Øª≠”√
 void show_error(char* msg, int mode);
 void show_msg(char* msg, char* msg2);
-int Sharp_button(int y0, char* s, char* s_change, int color, int color2);
-int atk_btn_fun(char* s, int color, int color_c);
-int stay_btn_fun(char* s, int color, int color_c);
-int nxt_btn_fun(int color, int color_c);
-int rec_btn_fun(int x1, int y1, int x2, int y2, int color);
 short msgbar(char* btn1, char* btn2, char* s1, char* s2);
 
 #endif

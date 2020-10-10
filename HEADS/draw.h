@@ -5,6 +5,7 @@
 
 void shadow(int x1, int y1, int x2, int y2, int color1, int color2);  //带阴影的文本框
 void shadow_l(int x1, int y1, int x2, int y2, int color); //带大阴影的文本框
+void add_shadow(int x1, int y1, int x2, int y2, int size); //给矩形添加阴影
 void frame(int x1, int y1, int x2, int y2, int color); //带边框的文本框
 void file_draw(int x1, int y1, int x2, int y2); //绘制档案图形
 int Outtextxx(int x1, int y, int x2, char *s,int flag, int color); //根据两点坐标输出汉字
@@ -18,23 +19,14 @@ void Lightbar(int x1, int y1, int x2, int y2, float drgb);
 void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 
-void Button(int y1, char* s, int color, int color2);
 void Line45(int x1, int y1, int x2, int y2, unsigned int color);
 void Icon_draw(DBL_POS pos, int side);
 void Icon_builder(DBL_POS pos, int side);
 void Icon_inf(DBL_POS pos, int side);
 void Icon_tank(DBL_POS pos, int side);
 void Icon_super(DBL_POS pos, int side);
+void Icon_arti(DBL_POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
-
-void attack_button(char* s, int color);//攻击按钮
-void stay_button(char* s, int color);//驻扎按钮
-void move_button(int color);//移动按钮
-void del_button(int color);//删除按钮
-void nextr_button(int color);//下一回合按钮
-void rect_button(int x1, int y1, int x2, int y2, char* s, int color); //方形按钮
-
-void rect_btn_frame(int x1, int y1, int x2, int y2, int color);
 
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);

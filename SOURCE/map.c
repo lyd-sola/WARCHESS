@@ -104,6 +104,13 @@ OFF_POS D2O(DBL_POS pos)
 	return opos;
 }
 
+DBL_POS O2D(OFF_POS pos)
+{
+	DBL_POS dpos;
+	dpos.x = 2 * pos.x + 1;
+	dpos.y = pos.y + 1;
+	return dpos;
+}
 //判断是否在地图内点击，地图外返回0，地图内且无单位返回1，有单位返回2
 int clcmap(DBL_POS* pos, MAP map)
 {

@@ -190,5 +190,6 @@ void Circle_rd64k(int xc, int yc, int radius, unsigned int color);
 void Circle_ru64k(int xc, int yc, int radius, unsigned int color);
 void Circle_lu64k(int xc, int yc, int radius, unsigned int color);
 void Circle_ld64k(int xc, int yc, int radius, unsigned int color);
+void Circlefill_ld64k(int xc, int yc, int radius, unsigned int color);
 
 #endif
