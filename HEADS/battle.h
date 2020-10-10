@@ -27,11 +27,7 @@ void battle_draw(void);
 
 void Battle_init(FILE* fp, Battleinfo* info, MAP map);
 
-void save_battle(FILE* fp, Battleinfo* batinfo, MAP map);
-
-void save_btn(int color);
-void exit_btn(int color);
-void option_btn(int color);
+void save_battle(FILE* fp, Battleinfo batinfo, MAP map);
 
 void draw_cell(DBL_POS pos, MAP map);
 

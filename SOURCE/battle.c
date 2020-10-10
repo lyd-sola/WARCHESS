@@ -30,24 +30,15 @@ int battle(char *user, short save_num, short mode)
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
 	
-	Clrmous();
 	battle_draw();
-	draw_saves(0, 0, 65535, fp, save_num);
 
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
-	//pos.x = 13; pos.y = 7;
-	//Icon_builder(pos, 1);
 	initdraw(map);
-
 
 	while(1)
 	{
 		Newxy();
-		if (Sharp_button(16, "注销账号", "注销账号", 60361, 65535))
-		{
-			return MAINMENU;
-		}
 
 		if (atk_btn_fun("攻击", 65535, 65340))
 		{
@@ -94,13 +85,43 @@ int battle(char *user, short save_num, short mode)
 		{
 			exit(0);
 		}
+
+		if (rec_btn_fun(800, 10, 800 + 49, 10 + 34, 65370))//快速保存
+		{
+			if (msgbar("确定", "取消", "保存存档，确定吗", ""))
+			{
+				seek_savinfo(fp, save_num, 0, 0);
+				save_battle(fp, batinfo, map);
+			}
+			Clrmous();
+			Map_partial(262, 218, 262 + 500, 219 + 230, FBMP);
+			initdraw(map);
+		}
+		if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
+		{
+			;
+		}
+		if (rec_btn_fun(960, 10, 960 + 49, 44, 65370))//叉叉
+		{
+			if (msgbar("确定", "取消", "退出会丢失未保存的进度", "确定退出吗？"))
+			{
+				fclose(fp);
+				return MAINMENU;
+			}
+			else
+			{
+				Clrmous();
+				Map_partial(262, 218, 262 + 500, 219 + 230, FBMP);
+				initdraw(map);
+			}
+		}
 	}
 }
 //绘制战斗界面函数
 void battle_draw()
 {
+	Clrmous();
 	Putbmp64k(0, 0, "BMP//map.bmp");
-	Button(16, "退出战斗", 60361, 65535);
 	attack_button("攻击", 65535);
 	stay_button("驻扎", 65535);
 	move_button(65535);
@@ -108,9 +129,9 @@ void battle_draw()
 	nextr_button(65535);
 
 	//选项菜单
-	save_btn(29252);
-	exit_btn(29252);
-	option_btn(29252);
+	save_btn(65370);
+	exit_btn(65370);
+	option_btn(65370);
 }
 /**********************************************************
 Function：		Battle_init
@@ -144,7 +165,7 @@ Description：	保存存档
 Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
 Author：		刘云笛
 **********************************************************/
-void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
+void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 {
 	unsigned t[3];
 	time_t rawtime;
@@ -160,9 +181,9 @@ void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
 	fwrite(t, 2, 3, fp);
 	//回合信息保存
-	fwrite(&((*batinfo).round), 2, 1, fp);
-	fwrite(&((*batinfo).b_source), 2, 1, fp);
-	fwrite(&((*batinfo).r_source), 2, 1, fp);
+	fwrite(&(batinfo.round), 2, 1, fp);
+	fwrite(&(batinfo.b_source), 2, 1, fp);
+	fwrite(&(batinfo.r_source), 2, 1, fp);
 	//储存地图信息
 	for (i = 0; i < 13; i++)
 	{
@@ -171,57 +192,6 @@ void save_battle(FILE* fp, Battleinfo* batinfo, MAP map)
 			fwrite(map[i] + j, 2, 1, fp);
 		}
 	}
-}
-
-
-//将来一并移入buttons.c
-void save_btn(int color)
-{
-	rect_button(800, 10, 800+49, 10+34, "", color);
-	Outtext(800 + 24 - 8, 10 + 17 - 8, "s", 16, 0, 0);
-	Line64k(833, 23, 833, 34, 0);
-	Line64k(834, 23, 834, 34, 0);
-	Line45(834, 23, 832, 21, 0);
-	Line45(833, 23, 831, 21, 0);
-	Line64k(823, 21, 832, 21, 0);
-	Line64k(823, 22, 832, 22, 0);
-	Line45(823, 21, 821, 19, 0);
-	Line45(823, 22, 821, 20, 0);
-	Line64k(817, 19, 821, 19, 0);
-	Line64k(817, 20, 821, 20, 0);
-	Line45(817, 19, 815, 21, 0);
-	Line45(815, 22, 817, 20, 0);
-	Line64k(815, 22, 815, 34, 0);
-	Line64k(816, 22, 816, 34, 0);
-	Line45(815, 34, 817, 36, 0);
-	Line45(816, 34, 817, 35, 0);
-	Line64k(817, 35, 832, 35, 0);
-	Line64k(817, 36, 832, 36, 0);
-	Putpixel64k(833, 35, 0);
-}
-
-void option_btn(int color)
-{
-	rect_button(880, 10, 880+49, 44, "", color);
-	Bar64k(880+14, 10+9, 880+49-14, 10+9+2, 0);
-	Bar64k(880+14, 10+9+7, 880+49-14, 10+9+2+7, 0);
-	Bar64k(880+14, 10+9+7*2, 880+49-14, 10+9+2+7*2, 0);
-}
-
-void exit_btn(int color)
-{
-	rect_button(960, 10, 960 + 49, 44, "", color);
-	Line45(985 + 11, 27 + 11, 985 - 11, 27 - 11, 0);
-	Line45(985 + 10, 27 + 11, 985 - 11, 27 - 10, 0);
-	Line45(985 + 11, 27 + 10, 985 - 10, 27 - 11, 0);
-	Line45(985 + 9, 27 + 11, 985 - 11, 27 - 9, 0);
-	Line45(985 + 11, 27 + 9, 985 - 9, 27 - 11, 0);
-
-	Line45(985 + 11, 27 - 11, 985 - 11, 27 + 11, 0);
-	Line45(985 + 10, 27 - 11, 985 - 11, 27 + 10, 0);
-	Line45(985 + 11, 27 - 10, 985 - 10, 27 + 11, 0);
-	Line45(985 + 9, 27 - 11, 985 - 11, 27 + 9, 0);
-	Line45(985 + 11, 27 - 9, 985 - 9, 27 + 11, 0);
 }
 
 void draw_cell(DBL_POS pos, MAP map)
