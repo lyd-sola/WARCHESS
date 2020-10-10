@@ -71,7 +71,7 @@ int battle(char *user, short save_num, short mode)
 			else
 			{
 				clccell = 0;
-				show_msg("该区域为空", "");
+		 		show_msg("该区域为空", "");
 			}
 			//show info
 		}
