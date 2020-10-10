@@ -29,4 +29,8 @@ void Battle_init(FILE* fp, Battleinfo* info, MAP map);
 
 void save_battle(FILE* fp, Battleinfo* batinfo, MAP map);
 
+void save_btn(int color);
+void exit_btn(int color);
+void option_btn(int color);
+
 #endif
