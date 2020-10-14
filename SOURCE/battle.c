@@ -22,6 +22,8 @@ int battle(char *user, short save_num, short mode)
 	int flag, msgflag = 0;
 	char s[25] = "SAVES//";
 	FILE* fp;
+
+	int visit[5][5];
 	
 	strcat(s, user);
 	if ((fp = fopen(s, "rb+")) == NULL)
@@ -35,6 +37,10 @@ int battle(char *user, short save_num, short mode)
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
 	initdraw(map);
+	
+	ptmp.x = 13, ptmp.y = 9;
+	memset(visit, 0, sizeof(visit));
+	range(map, ptmp, 2, 1, visit);
 
 	while(1)
 	{
