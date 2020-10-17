@@ -10,7 +10,7 @@ typedef struct _Position
 typedef struct _cell
 {
 	unsigned geo : 3;//地形，序号见_GEO
-	unsigned cost : 3;//移动消耗
+	unsigned cost : 3;//移动消耗		一个空间给是否驻扎，两个空间给设施
 	unsigned side : 1;//阵营，蓝0红1
 	unsigned flag : 1;//标记是否操作过
 	unsigned kind : 3;//兵种种类，序号见_KIND，大本营和资源无需此项
@@ -23,6 +23,15 @@ typedef struct _Battleinfo
 	unsigned r_source;//红方资源
 	unsigned b_source;//蓝方资源
 }Battleinfo;
+
+typedef struct _Arminfo
+{
+	unsigned health;//生命值
+	unsigned attack;//攻击力
+	unsigned move;//移动力
+	unsigned cost;//造价
+	unsigned distance;//射程
+}Arminfo;
 
 enum _GEO
 {

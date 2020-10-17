@@ -26,7 +26,6 @@ int login(char *username)
 	username[0] = '\0';
 	Clrmous();
 	drawlogin();
-	Bar64k(100, 100, 300, 200, 65535);
 	
 	while(1)
 	{
@@ -106,16 +105,6 @@ int login(char *username)
 				return LOGIN;
 			}
 		}
-
-		if (mouse_press(100, 100, 300, 200) == MOUSE_IN_L)
-		{
-			Bar64k(100, 300, 300, 400, 65535);
-			Bar64k(100, 450, 300, 550, 65535);
-			if (password_reset(username) == 1)
-			{
-				show_error("成功", 0);
-			}
-		}
 	}
 }
 
@@ -177,39 +166,5 @@ int login_check(char *username, char *password)
 		Outtextxx(512-200+30, 384-100+40, 512-200+340, "密码错误", 32, 65535);
 		fclose(fp);
 		return 0;
-	}
-}
-
-int password_reset(char *username)
-{
-	FILE* fp;
-	unsigned long long pw, pwt;
-	char filename[30] = "users\\";
-	char password[20];
-
-	strcat(filename, username);
-
-	if ((fp = fopen(filename, "w")) == NULL)
-	{
-		show_error("打开文件发生错误", 1);
-	}
-
-	while (1)
-	{
-		Newxy();
-		if (bioskey(1))
-		{
-			getch();
-		}//防止缓冲区中有内容影响输入
-		if (mouse_press(100, 300, 300, 400) == MOUSE_IN_L)					//输入用户名
-		{
-			kbinput(100, 300, 300, 400, password, 0);
-		}
-		if (mouse_press(100, 450, 300, 550) == MOUSE_IN_L)				//输入密码
-		{
-			fprintf(fp, "%llu\n%llu", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
-			fclose(fp);
-			return 1;
-		}
 	}
 }

@@ -37,4 +37,7 @@ void draw_cell(DBL_POS pos, MAP map);
 
 void initdraw(MAP map);
 
+Arminfo search_info(int kind, DBL_POS dpos);
+void disp_arm_info(CELL cell, DBL_POS dpos);
+
 #endif
