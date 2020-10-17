@@ -22,8 +22,9 @@ int battle(char *user, short save_num, short mode)
 	int flag, msgflag = 0;
 	char s[25] = "SAVES//";
 	FILE* fp;
-
 	int visit[5][5];
+
+	DBL_POS test;
 	
 	strcat(s, user);
 	if ((fp = fopen(s, "rb+")) == NULL)
@@ -40,7 +41,9 @@ int battle(char *user, short save_num, short mode)
 	
 	ptmp.x = 13, ptmp.y = 9;
 	memset(visit, 0, sizeof(visit));
-	range(map, ptmp, 2, 1, visit);
+	range(map, ptmp, 2, 0, visit);
+	test.x = 11; test.y = 7;
+	moving(map, visit, ptmp, test);
 
 	while(1)
 	{
@@ -202,24 +205,30 @@ void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 
 void draw_cell(DBL_POS pos, MAP map)
 {
-	int flag, side;
-	OFF_POS offpos;
+	int kind, side;
+	POS offpos;
 
 	offpos = D2O(pos);
-	flag = map[offpos.y][offpos.x].kind;
+	kind = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
-	switch (flag)
+	pos = center_xy(pos.x, pos.y);
+	switch (kind)
 	{
 	case BUILDER:
 		Icon_builder(pos, side);
+		break;
 	case INFANTRY:
 		Icon_inf(pos, side);
+		break;
 	case ARTILLERY:
 		Icon_arti(pos, side);
+		break;
 	case TANK:
 		Icon_tank(pos, side);
+		break;
 	case SUPER:
 		Icon_super(pos, side);
+		break;
 	default:
 		break;
 	}
@@ -234,32 +243,35 @@ void initdraw(MAP map)
 	{
 		for (j = 0; j < 13; j++)
 		{
-			if (map[j][i].kind)
-			{
-				opos.x = i;
-				opos.y = j;
-				dpos = O2D(opos);
-				switch (map[j][i].kind)
-				{
-				case BUILDER:
-					Icon_builder(dpos, map[j][i].side);
-					break;
-				case INFANTRY:
-					Icon_inf(dpos, map[j][i].side);
-					break;
-				case ARTILLERY:
-					Icon_arti(dpos, map[j][i].side);
-					break;
-				case TANK:
-					Icon_tank(dpos, map[j][i].side);
-					break;
-				case SUPER:
-					Icon_super(dpos, map[j][i].side);
-					break;
-				default:
-					break;
-				}
-			}
+			opos.x = i;
+			opos.y = j;
+			dpos = O2D(opos);
+			draw_cell(dpos, map);
 		}
+	}
+}
+
+void icon(POS world_pos, int side, int kind)
+{
+	switch (kind)
+	{
+	case BUILDER:
+		Icon_builder(world_pos, side);
+		break;
+	case INFANTRY:
+		Icon_inf(world_pos, side);
+		break;
+	case ARTILLERY:
+		Icon_arti(world_pos, side);
+		break;
+	case TANK:
+		Icon_tank(world_pos, side);
+		break;
+	case SUPER:
+		Icon_super(world_pos, side);
+		break;
+	default:
+		Icon_draw(world_pos, side);
+		break;
 	}
 }

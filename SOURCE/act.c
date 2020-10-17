@@ -34,7 +34,7 @@ void move(DBL_POS From, MAP map)
 				show_msg("行军中", "");
 				Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图
 				center = center_xy(dbto.x, dbto.y);
-				Icon_builder(dbto, 1);//图标画到目标点
+				Icon_builder(center, 1);//图标画到目标点
 				delay(1000);
 				
 				//map[To.x][To.y].flag = 1;//标记已移动

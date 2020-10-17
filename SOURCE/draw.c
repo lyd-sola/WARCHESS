@@ -371,69 +371,6 @@ void Line45(int x1, int y1, int x2, int y2, unsigned int color)
 	}
 }
 
-/**********************************************************
-Function：		Icon_draw
-Description：	画图标边框
-Input:			pos格子中心点坐标
-				side阵营
-Author：		刘云笛
-**********************************************************/
-#define bl_side 0
-#define rd_side 1
-void Icon_draw(DBL_POS pos, int side)
-{
-	unsigned int color1, color2, color2c;	//yello 65385, red 49540, blue 8912
-
-	color2 = 63207;
-	color2c = 50347;
-	color1 = (side == bl_side) ? 8912 : 49540;
-
-	Bar64k(-18 + pos.x, -15 + pos.y, -6 + pos.x, -14 + pos.y, color1);
-	Bar64k(18 + pos.x, -15 + pos.y, 6 + pos.x, -14 + pos.y, color1);
-	Bar64k(-7 + pos.x, -17 + pos.y, -3 + pos.x, -16 + pos.y, color1);
-	Bar64k(7 + pos.x, -17 + pos.y, 3 + pos.x, -16 + pos.y, color1);
-	Bar64k(-2 + pos.x, -18 + pos.y, 2 + pos.x, -17 + pos.y, color1);
-	Bar64k(-18 + pos.x, -15 + pos.y, -17 + pos.x, 8 + pos.y, color1);
-	Bar64k(18 + pos.x, -15 + pos.y, 17 + pos.x, 8 + pos.y, color1);
-	Line45(-18 + pos.x, 8 + pos.y, -3 + pos.x, 23 + pos.y, color1);
-	Line45(-17 + pos.x, 8 + pos.y, -2 + pos.x, 23 + pos.y, color1);
-	Line45(18 + pos.x, 8 + pos.y, 3 + pos.x, 23 + pos.y, color1);
-	Line45(17 + pos.x, 8 + pos.y, 2 + pos.x, 23 + pos.y, color1);
-	Bar64k(-2 + pos.x, 22 + pos.y, 2 + pos.x, 23 + pos.y, color1);
-
-	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color1);
-	Floodfill(pos.x - 1, pos.y, color2, color1);
-	Floodfill(pos.x + 1, pos.y, color2c, color1);
-	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color2);
-}
-
-/**********************************************************
-Function：		Icon_builder
-Description：	画个锤子（工兵图标）
-Input:			pos格子中心点坐标
-				color颜色
-
-Author：		刘云笛
-**********************************************************/
-#define bl_side 0
-#define rd_side 1
-void Icon_builder(DBL_POS pos, int side)
-{
-	unsigned int color1;	
-	color1 = (side == bl_side) ? 8912 : 49540;
-
-	pos = center_xy(pos.x, pos.y);
-	Icon_draw(pos, side);
-	Filltriangle(-7 + pos.x, -2 + pos.y, 1 + pos.x, -10 + pos.y, 1 + pos.x, -2 + pos.y, color1);
-	Filltriangle(4 + pos.x, 1 + pos.y, 4 + pos.x, 9 + pos.y, 12 + pos.x, 1 + pos.y, color1);
-	Bar64k(0 + pos.x, -3 + pos.y, 5 + pos.x, 2 + pos.y, color1);
-	Line45(-1 + pos.x, 1 + pos.y, -9 + pos.x, 9 + pos.y, color1);
-	Line45(pos.x, 2 + pos.y, -8 + pos.x, 10 + pos.y, color1);
-	Line45(1 + pos.x, 3 + pos.y, -7 + pos.x, 11 + pos.y, color1);
-	Line45(-1 + pos.x, 2 + pos.y, -9 + pos.x, 10 + pos.y, color1);
-	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//画个锤子
-}
-
 //x1, y1, x2, y2为对角线两点坐标
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color) //y1和y2必须相同
 {
@@ -495,11 +432,72 @@ void photo(int x1, int y1, int x2, int y2) //矩形对角线坐标
 	Filltriangle(x1 + 10, y2 - 10, x, y, x2 - 10, y2 - 10, 29714);
 }
 
+/**********************************************************
+Function：		Icon_draw
+Description：	画图标边框
+Input:			pos格子中心点坐标
+				side阵营
+Author：		刘云笛
+**********************************************************/
+#define bl_side 0
+#define rd_side 1
+void Icon_draw(POS pos, int side)
+{
+	unsigned int color1, color2, color2c;	//yellow 65385, red 49540, blue 8912
+
+	color2 = 63207;
+	color2c = 50347;
+	color1 = (side == bl_side) ? 8912 : 49540;
+
+	Bar64k(-18 + pos.x, -15 + pos.y, -6 + pos.x, -14 + pos.y, color1);
+	Bar64k(18 + pos.x, -15 + pos.y, 6 + pos.x, -14 + pos.y, color1);
+	Bar64k(-7 + pos.x, -17 + pos.y, -3 + pos.x, -16 + pos.y, color1);
+	Bar64k(7 + pos.x, -17 + pos.y, 3 + pos.x, -16 + pos.y, color1);
+	Bar64k(-2 + pos.x, -18 + pos.y, 2 + pos.x, -17 + pos.y, color1);
+	Bar64k(-18 + pos.x, -15 + pos.y, -17 + pos.x, 8 + pos.y, color1);
+	Bar64k(18 + pos.x, -15 + pos.y, 17 + pos.x, 8 + pos.y, color1);
+	Line45(-18 + pos.x, 8 + pos.y, -3 + pos.x, 23 + pos.y, color1);
+	Line45(-17 + pos.x, 8 + pos.y, -2 + pos.x, 23 + pos.y, color1);
+	Line45(18 + pos.x, 8 + pos.y, 3 + pos.x, 23 + pos.y, color1);
+	Line45(17 + pos.x, 8 + pos.y, 2 + pos.x, 23 + pos.y, color1);
+	Bar64k(-2 + pos.x, 22 + pos.y, 2 + pos.x, 23 + pos.y, color1);
+
+	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color1);
+	Floodfill(pos.x - 1, pos.y, color2, color1);
+	Floodfill(pos.x + 1, pos.y, color2c, color1);
+	Line64k(0 + pos.x, -16 + pos.y, 0 + pos.x, 21 + pos.y, color2);
+}
+
+/**********************************************************
+Function：		Icon_builder
+Description：	画个锤子（工兵图标）
+Input:			pos格子中心点坐标
+				color颜色
+
+Author：		刘云笛
+**********************************************************/
+#define bl_side 0
+#define rd_side 1
+void Icon_builder(POS pos, int side)
+{
+	unsigned int color1;
+	color1 = (side == bl_side) ? 8912 : 49540;
+
+	Icon_draw(pos, side);
+	Filltriangle(-7 + pos.x, -2 + pos.y, 1 + pos.x, -10 + pos.y, 1 + pos.x, -2 + pos.y, color1);
+	Filltriangle(4 + pos.x, 1 + pos.y, 4 + pos.x, 9 + pos.y, 12 + pos.x, 1 + pos.y, color1);
+	Bar64k(0 + pos.x, -3 + pos.y, 5 + pos.x, 2 + pos.y, color1);
+	Line45(-1 + pos.x, 1 + pos.y, -9 + pos.x, 9 + pos.y, color1);
+	Line45(pos.x, 2 + pos.y, -8 + pos.x, 10 + pos.y, color1);
+	Line45(1 + pos.x, 3 + pos.y, -7 + pos.x, 11 + pos.y, color1);
+	Line45(-1 + pos.x, 2 + pos.y, -9 + pos.x, 10 + pos.y, color1);
+	Line45(pos.x, 3 + pos.y, -8 + pos.x, 11 + pos.y, color1);//画个锤子
+}
+
 /**************画个头（步兵图标）************/
-void Icon_inf(DBL_POS pos, int side)
+void Icon_inf(POS pos, int side)
 {	
 	int i = 0;
-	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
 	
 	Circlehalf64k(pos.x, pos.y, 8, 49540);
@@ -512,9 +510,8 @@ void Icon_inf(DBL_POS pos, int side)
 }
 
 /*****画个坦克*******/
-void Icon_tank(DBL_POS pos, int side)
+void Icon_tank(POS pos, int side)
 {
-	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
 	
 	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, 63488); //车身 
@@ -524,10 +521,9 @@ void Icon_tank(DBL_POS pos, int side)
 }
 
 /**************画个刀（超级兵图标）************/
-void Icon_super(DBL_POS pos, int side)
+void Icon_super(POS pos, int side)
 {
 	int i;
-	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
 	
 	for (i = -3; i < 4; i++)
@@ -551,10 +547,9 @@ void Icon_super(DBL_POS pos, int side)
 	}
 }
 
-void Icon_arti(DBL_POS pos, int side)
+void Icon_arti(POS pos, int side)
 {
 	int i, ra;
-	pos = center_xy(pos.x, pos.y);
 	Icon_draw(pos, side);
 	
 	for (i = -2; i < 4; i++)      //画斜45度矩形
