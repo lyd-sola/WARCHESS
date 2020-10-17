@@ -39,6 +39,7 @@ int savpage(char *user, short* save_num, short* mode)
 
 		if (mouse_press(197 + 630 - 32, 98, 197 + 630, 98 + 32) == MOUSE_IN_L)
 		{
+			fclose(fp);
 			return 0;
 		}
 		if (rec_btn_fun(236, 511, 373, 561, 65535))//µã»÷¶ÁÈ¡´æµµ

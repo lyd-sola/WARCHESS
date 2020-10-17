@@ -44,10 +44,12 @@ int mainmenu(char *user, short *save_num, short *mode)
 					mmenu_draw(user);
 					continue;
 				}
+				fclose(fp);
 				return BATTLE;
 			}
 			*save_num = get_savenum(fp);
 			*mode = get_savmode(fp, *save_num);
+			fclose(fp);
 			return BATTLE;
 		}
 		if (Sharp_button(225 + 110, "决战智械", "单人模式", 60361, 65535))
@@ -67,10 +69,12 @@ int mainmenu(char *user, short *save_num, short *mode)
 					mmenu_draw(user);
 					continue;
 				}
+				fclose(fp);
 				return BATTLE;
 			}
 			*save_num = get_savenum(fp);
 			*mode = get_savmode(fp, *save_num);
+			fclose(fp);
 			return BATTLE;
 		}
 		if (Sharp_button(225 + 220, "重回往昔", "读取存档", 60361, 65535))
@@ -80,11 +84,13 @@ int mainmenu(char *user, short *save_num, short *mode)
 				mmenu_draw(user);
 				continue;
 			}
+			fclose(fp);
 			return BATTLE;
 		}
 		Sharp_button(225 + 330, "作战指导", "操作说明", 60361, 65535);
 		if (Sharp_button(225 + 440, "鸣金收兵", "注销账号", 60361, 65535))
 		{
+			fclose(fp);
 			return HOMEPAGE;
 		}
 	}

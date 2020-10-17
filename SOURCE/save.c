@@ -25,7 +25,7 @@ save文件设计：											位数表：自开头偏移量（字节）
 	
 	以下重复多个存档块的设计（注：short均为unsigned）
 	------------------------------------
-	模式short*1，0为双人，1为单人							0
+	模式char*1，0为双人，1为单人							0
 	日期 年unsigned*1，月日unsigned*1，时分unsigned*1		1
 	回合数 unsigned*1										7
 	蓝方、红方 资源 unsigned*2								9
@@ -102,6 +102,9 @@ void savefile_init(FILE *fp, short mode)
 	cell.kind = NOARMY;
 	cell.health = 0;
 	cell.side = 0;
+	cell.faci = 0;
+	cell.stay = 0;
+	cell.flag = 0;
 	for(i = 0; i < MAP_SIZE; i ++)
 	{
 		fseek(map, 2, SEEK_CUR);
@@ -109,41 +112,7 @@ void savefile_init(FILE *fp, short mode)
 		{
 			fscanf(map, "%c", &geo);
 			geo -= '0';
-			switch (geo)
-			{
-			case OBSTACLE:
-				cell.geo = OBSTACLE;
-				cell.cost = 7;
-				break;
-			case PLAIN:
-				cell.geo = PLAIN;
-				cell.cost = 1;
-				break;
-			case FOREST:
-				cell.geo = FOREST;
-				cell.cost = 2;
-				break;
-			case DESERT:
-				cell.geo = DESERT;
-				cell.cost = 2;
-				break;
-			case BASE:
-				cell.geo = BASE;
-				cell.cost = 7;
-				break;
-			case SORC:
-				cell.geo = SORC;
-				cell.cost = 2;
-				break;
-			case HSORC:
-				cell.geo = HSORC;
-				cell.cost = 2;
-				break;
-			case OUT_MAP:
-				cell.geo = OUT_MAP;
-				cell.cost = 7;
-				break;
-			}
+			cell.geo = geo;
 			fwrite(&cell, sizeof(CELL), 1, fp);
 		}
 		fseek(map, 2, SEEK_CUR);

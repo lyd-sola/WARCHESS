@@ -125,7 +125,6 @@ int clcmap(DBL_POS* pos, MAP map)
 			{
 				if (map[opos.y][opos.x].kind != NOARMY)
 				{
-					//显示信息
 					return 2;
 				}//有单位
 				else 
@@ -149,3 +148,25 @@ int clcmap(DBL_POS* pos, MAP map)
 	}//未点击
 }
 
+int move_cost(int geo)//返回移动消耗
+{
+	switch (geo)
+	{
+	case OBSTACLE:
+		return 666;
+	case PLAIN:
+		return 1;
+	case FOREST:
+		return 2;
+	case DESERT:
+		return 1;
+	case BASE:
+		return 666;
+	case SORC:
+		return 2;
+	case HSORC:
+		return 2;
+	case OUT_MAP:
+		return 666;
+	}
+}

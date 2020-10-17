@@ -32,6 +32,8 @@ int rec_btn_fun(int x1, int y1, int x2, int y2, int color);
 
 void battle_exit(int x, int y);
 
-
+void save_btn(int color);
+void exit_btn(int color);
+void option_btn(int color);
 
 #endif
