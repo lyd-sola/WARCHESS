@@ -15,12 +15,14 @@ Date:
 //战斗界面主函数
 int battle(char *user, short save_num, short mode)
 {
-	CELL map[13][13];//地图
+	CELL map[13][13], cell;//地图
 	DBL_POS pos, ptmp;
 	Battleinfo batinfo;//对战信息
+	Arminfo arminfo1, arminfo2;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
 	char s[25] = "SAVES//";
+	char tst[20] = "\0";
 	FILE* fp;
 	int visit[5][5];
 
@@ -33,10 +35,13 @@ int battle(char *user, short save_num, short mode)
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
 	
+
 	battle_draw();
+
 
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
+
 	initdraw(map);
 	
 	ptmp.x = 13, ptmp.y = 9;
@@ -44,10 +49,12 @@ int battle(char *user, short save_num, short mode)
 	range(map, ptmp, 2, 0, visit);
 	test.x = 11; test.y = 7;
 	moving(map, visit, ptmp, test);
+	range(map, ptmp, 2, 0, visit);
 
 	while(1)
 	{
 		Newxy();
+		
 
 		if (atk_btn_fun("攻击", 65535, 65340))
 		{
@@ -64,16 +71,22 @@ int battle(char *user, short save_num, short mode)
 			msgflag = 1;
 			if (flag == 2)
 			{
+
 				pos = ptmp;
 				clccell = 1;
 				show_msg("已选择一个单位", "请选择行为");
+				/*******************显示信息********************/
+				
+				disp_arm_info(map[pos.y][pos.x], D2O(pos));
 			}
 			else
 			{
 				clccell = 0;
-				show_msg("该区域为空", "");
+
+				Filltriangle(0, 100, 0, 350, 205, 100, 65535);
+		 		show_msg("该区域为空", "");
 			}
-			//show info
+
 		}
 		if (clccell && (mouse_press(20, 528, 141, 649) == MOUSE_IN_L))//移动
 		{
@@ -131,6 +144,7 @@ void battle_draw()
 {
 	Clrmous();
 	Putbmp64k(0, 0, "BMP//map.bmp");
+
 	attack_button("攻击", 65535);
 	stay_button("驻扎", 65535);
 	move_button(65535);
@@ -138,6 +152,9 @@ void battle_draw()
 	nextr_button(65535);
 
 	//选项菜单
+
+
+
 	save_btn(65370);
 	exit_btn(65370);
 	option_btn(65370);
@@ -174,6 +191,7 @@ Description：	保存存档
 Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
 Author：		刘云笛
 **********************************************************/
+
 void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 {
 	unsigned t[3];
@@ -190,6 +208,9 @@ void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
 	fwrite(t, 2, 3, fp);
 	//回合信息保存
+
+
+
 	fwrite(&(batinfo.round), 2, 1, fp);
 	fwrite(&(batinfo.b_source), 2, 1, fp);
 	fwrite(&(batinfo.r_source), 2, 1, fp);
@@ -202,6 +223,7 @@ void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 		}
 	}
 }
+
 
 void draw_cell(DBL_POS pos, MAP map)
 {
@@ -273,5 +295,57 @@ void icon(POS world_pos, int side, int kind)
 	default:
 		Icon_draw(world_pos, side);
 		break;
+	}
+}
+
+/*搜索兵种信息，仅在disp函数中调用*/
+Arminfo search_info(int kind, DBL_POS dpos)
+{
+	FILE* fp;
+	char buffer[20];
+	Arminfo info;
+	int i;
+	if ((fp = fopen("DATA//info.txt", "r")) == NULL)
+	{
+		show_error("读取兵种信息失败", 0);
+		fclose(fp);
+		return;
+	}
+	for (i = 1; i < kind; i++) //跳至第n个兵种
+	{
+		fgets(buffer, sizeof(buffer), fp);
+		buffer[0] = '\0';
+	}
+	fscanf(fp, "%d%d%d%d%d", &info.health, &info.attack, &info.move, &info.cost, &info.distance);
+	fclose(fp);
+	return info;
+}
+
+/********显示当前鼠标位置兵种信息*********/
+void disp_arm_info(CELL cell, DBL_POS dpos)
+{
+	Arminfo info;
+	char buffer[20] = "\0";
+	info = search_info(cell.kind, dpos);
+	Filltriangle(0, 100, 0, 350, 205, 100, 65535);
+	switch (cell.kind)
+	{
+	case BUILDER:
+		Outtextxx(20, 120, 110, "兵种  工兵", 16, 0);
+		itoa(cell.health, buffer, 10);
+		Outtextxx(20, 140, 75, "生命值", 16, 0);
+		Outtext(90, 140, buffer, 16, 16, 0);
+		itoa(info.attack, buffer, 10);
+		Outtextxx(20, 160, 75, "攻击力", 16, 0);
+		Outtext(90, 160, buffer, 16, 16, 0);
+		itoa(info.move, buffer, 10);
+		Outtextxx(20, 180, 75, "行动力", 16, 0);
+		Outtext(90, 180, buffer, 16, 16, 0);
+		itoa(info.distance, buffer, 10);
+		Outtextxx(20, 200, 75, "射程", 16, 0);
+		Outtext(90, 200, buffer, 16, 16, 0);
+		break;
+	default:
+		return;
 	}
 }

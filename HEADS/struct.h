@@ -25,6 +25,15 @@ typedef struct _Battleinfo
 	unsigned b_source;//蓝方资源
 }Battleinfo;
 
+typedef struct _Arminfo
+{
+	unsigned health;//生命值
+	unsigned attack;//攻击力
+	unsigned move;//移动力
+	unsigned cost;//造价
+	unsigned distance;//射程
+}Arminfo;
+
 enum _GEO
 {
 	OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC, OUT_MAP
