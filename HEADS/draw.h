@@ -20,12 +20,12 @@ void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fi
 void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 
 void Line45(int x1, int y1, int x2, int y2, unsigned int color);
-void Icon_draw(DBL_POS pos, int side);
-void Icon_builder(DBL_POS pos, int side);
-void Icon_inf(DBL_POS pos, int side);
-void Icon_tank(DBL_POS pos, int side);
-void Icon_super(DBL_POS pos, int side);
-void Icon_arti(DBL_POS pos, int side);
+void Icon_draw(POS pos, int side);
+void Icon_builder(POS pos, int side);
+void Icon_inf(POS pos, int side);
+void Icon_tank(POS pos, int side);
+void Icon_super(POS pos, int side);
+void Icon_arti(POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 
 void banner(int x1, int y1, int length);

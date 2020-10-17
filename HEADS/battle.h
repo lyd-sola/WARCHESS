@@ -33,4 +33,6 @@ void draw_cell(DBL_POS pos, MAP map);
 
 void initdraw(MAP map);
 
+void icon(POS world_pos, int side, int kind);
+
 #endif
