@@ -54,6 +54,14 @@ int battle(char *user, short save_num, short mode)
 		{
 			msgflag = 1;
 			opos = D2O(ptmp);
+			if (flag == 3)
+			{
+				clccell = 0;
+				disp_geo_info(map[opos.y][opos.x]);
+				disp_arm_info(map[opos.y][opos.x]); //清空其中的静态结构体变量
+				show_msg("血量", "等级");
+				base_func(map,10);
+			}
 			if (flag == 2)
 			{
 				pos = ptmp;
@@ -417,3 +425,53 @@ Arminfo disp_arm_info(CELL cell)
 	return info;
 }
 
+void base_func(MAP map, int source)
+{
+	int clcflag = 0;
+	Arminfo arminfo;
+	POS pos, center = center_xy(3, 9);
+	pos.x = 745;
+	pos.y = 705;
+	icon(pos, map[9][1].side, BUILDER);
+	pos.x = 800;
+	icon(pos, map[9][1].side, INFANTRY);
+	while (1)
+	{
+		Newxy();
+		if (mouse_press(740-18, 705-18, 740+18, 705+23) == MOUSE_IN_L)
+		{
+			arminfo = search_info(BUILDER);
+			if (clcflag == 1)
+			{
+				clcflag = 0;
+				if (source < arminfo.cost)
+				{
+					show_msg("资源不足无法建造", "");
+					delay(1000);
+					return;
+				}
+				else if (map[8][1].kind != 0)
+				{
+					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
+					delay(1000);
+					return;
+				}
+				else 
+				{
+					map[8][1].kind = BUILDER;
+					map[8][1].health = arminfo.health;
+					icon(center, map[9][1].side, BUILDER);
+					show_msg("建造成功！", "");
+					delay(1000);
+					return;
+				}
+			}
+			else
+			{
+				clcflag = 1;
+				show_msg("工兵，造价：2", "再次点选确定建造");
+				delay(50);
+			}
+		}
+	}
+}

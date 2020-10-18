@@ -39,4 +39,6 @@ void icon(POS world_pos, int side, int kind);
 Arminfo search_info(int kind);
 Arminfo disp_arm_info(CELL cell);
 
+void base_func(MAP map, int source);
+
 #endif
