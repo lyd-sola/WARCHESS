@@ -123,6 +123,10 @@ int clcmap(DBL_POS* pos, MAP map)
 				{
 					return 2;
 				}//有单位
+				else if (map[opos.y][opos.x].geo == BASE)
+				{
+					return 3;
+				}//大本营
 				else 
 				{
 					return 1;

@@ -70,7 +70,6 @@ int battle(char *user, short save_num, short mode)
 				disp_arm_info(map[opos.y][opos.x]); //清空其中的静态结构体变量
 		 		show_msg("该区域为空", "");
 			}
-
 		}
 
 		if (clccell && move_btn_fun(65370, 65340))//移动
@@ -79,7 +78,6 @@ int battle(char *user, short save_num, short mode)
 			clccell = 0;
 			msgflag = 0;
 			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
-
 		}
 
 		if (clccell && stay_btn_fun("驻扎", 65370, 65340))//驻扎
@@ -336,8 +334,6 @@ void disp_geo_info(CELL cell)
 	strcat(text, buffer);
 
 	Bar64k(0, 0, 204, 100, 65370);
-	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
-	
 	switch (cell.geo)
 	{
 	case OBSTACLE: 
