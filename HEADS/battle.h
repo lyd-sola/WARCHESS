@@ -33,6 +33,9 @@ void draw_cell(DBL_POS pos, MAP map);
 
 void initdraw(MAP map);
 
+void disp_geo_info(CELL cell);
+
+void icon(POS world_pos, int side, int kind);
 Arminfo search_info(int kind);
 Arminfo disp_arm_info(CELL cell);
 

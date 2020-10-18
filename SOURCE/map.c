@@ -114,7 +114,7 @@ int clcmap(DBL_POS* pos, MAP map)
 	if (mouse_press(68, 22, 962, 633) == MOUSE_IN_L)
 	{
 		*pos = xy2cell(MouseX, MouseY);
-		if (1 <= pos->x && pos->x <= 26 && 1 <= pos->y && pos->y <= 13)//地图有效存储区域
+		if(inside_map(map, *pos))
 		{
 			opos = D2O(*pos);
 			if (map[opos.y][opos.x].geo != OUT_MAP)
@@ -165,4 +165,12 @@ int move_cost(int geo)//返回移动消耗
 	case OUT_MAP:
 		return 666;
 	}
+}
+
+int inside_map(MAP map, DBL_POS pos)//为了其他函数的美观，把丑陋的东西写在这里
+{
+	OFF_POS opos = D2O(pos);
+
+	return 1 <= pos.x && pos.x <= 26 && 1 <= pos.y && pos.y <= 13
+		&& map[opos.y][opos.x].geo != OUT_MAP;
 }
