@@ -18,13 +18,12 @@ int battle(char *user, short save_num, short mode)
 	CELL map[13][13], cell;//地图
 	DBL_POS pos, ptmp;
 	Battleinfo batinfo;//对战信息
-	Arminfo arminfo1, arminfo2;//兵种信息暂存
+	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
 	char s[25] = "SAVES//";
 	char tst[20] = "\0";
 	FILE* fp;
-	int visit[5][5];
 
 	DBL_POS test;
 	
@@ -43,13 +42,6 @@ int battle(char *user, short save_num, short mode)
 	map[6][6].kind = BUILDER;
 
 	initdraw(map);
-	
-	ptmp.x = 13, ptmp.y = 9;
-	memset(visit, 0, sizeof(visit));
-	range(map, ptmp, 2, 0, visit);
-	test.x = 11; test.y = 7;
-	moving(map, visit, ptmp, test);
-	range(map, ptmp, 2, 0, visit);
 
 	while(1)
 	{
@@ -76,8 +68,7 @@ int battle(char *user, short save_num, short mode)
 				clccell = 1;
 				show_msg("已选择一个单位", "请选择行为");
 				/*******************显示信息********************/
-				
-				disp_arm_info(map[pos.y][pos.x], D2O(pos));
+				arminfo = disp_arm_info(map[pos.y][pos.x], D2O(pos));
 			}
 			else
 			{
@@ -90,10 +81,10 @@ int battle(char *user, short save_num, short mode)
 		}
 		if (clccell && (mouse_press(20, 528, 141, 649) == MOUSE_IN_L))//移动
 		{
-			move(pos, map);
+			move(pos, map, arminfo.move);
 			clccell = 0;
-			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
 			msgflag = 0;
+			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
 		}
 
 		if (msgflag == 0)
@@ -322,7 +313,7 @@ Arminfo search_info(int kind, DBL_POS dpos)
 }
 
 /********显示当前鼠标位置兵种信息*********/
-void disp_arm_info(CELL cell, DBL_POS dpos)
+Arminfo disp_arm_info(CELL cell, DBL_POS dpos)
 {
 	Arminfo info;
 	char buffer[20] = "\0";
@@ -345,7 +336,7 @@ void disp_arm_info(CELL cell, DBL_POS dpos)
 		Outtextxx(20, 200, 75, "射程", 16, 0);
 		Outtext(90, 200, buffer, 16, 16, 0);
 		break;
-	default:
-		return;
+	//default:
 	}
+	return info;
 }

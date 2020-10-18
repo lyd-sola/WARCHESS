@@ -11,15 +11,19 @@ Date:
 ******************************************************************/
 #include "common.h"
 extern FILE* FBMP;
-void move(DBL_POS From, MAP map)
+void move(DBL_POS From, MAP map, int able)//需要增加移动方判断和是否可以行动
 {
 	OFF_POS To, ofrom;
 	DBL_POS dbto;
-	POS center;
+	int visit[7][7];
 
 	ofrom = D2O(From);
+	memset(visit, 0, sizeof(visit));
+	range(map, From, able, 0, visit);
+
 	move_button(600);
-	show_msg("请选择要移动的位置", "");
+	show_msg("请选择要移动的位置", "点击右键取消");
+	/*这里本来想法是标亮所有可以走的点，有待实现*/
 	while (1)
 	{
 		Newxy();
@@ -28,27 +32,29 @@ void move(DBL_POS From, MAP map)
 			To = D2O(dbto);//求出目标偏移坐标
 			if (map[To.y][To.x].kind == NOARMY)//为空可移动，以后还需设置移动能力，还需判断是否原地移动
 			{
-				Clrmous();
-				center = center_xy(From.x, From.y);
+				if (moving(map, visit, From, dbto))
+				{
+					Clrmous();
 
-				show_msg("行军中", "");
-				Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图
-				center = center_xy(dbto.x, dbto.y);
-				Icon_builder(center, 1);//图标画到目标点
-				delay(1000);
-				
-				//map[To.x][To.y].flag = 1;//标记已移动
-				map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
-				map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
-				map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
-				map[ofrom.y][ofrom.x].kind = NOARMY;//清除
-				move_button(65535);
-				return; 
+					map[To.x][To.y].stay = 0;//移动解除驻扎状态
+					map[To.x][To.y].flag = 1;//标记已移动
+					map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
+					map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
+					map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
+					map[ofrom.y][ofrom.x].kind = NOARMY;//清除这个就行了
+					move_button(65535);
+					return;
+				}
+				else
+				{
+					show_msg("此处无法到达", "");
+				}
 			}
 			else
 			{
 				show_msg("此处已被占领", "");
 				move_button(65535);
+				delay(1000);
 				return; 
 			}
 		}
