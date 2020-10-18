@@ -115,7 +115,7 @@ Author：		刘云笛
 **********************************************************/
 int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO)//成功返回1，失败0
 {
-	OFF_POS ofrom, oto, onow, onext;
+	OFF_POS ofrom, oto, onext;
 	DBL_POS now, next, minpos;
 	int nx, ny, i;
 	int dx[] = { 2, 1, -1, -2, -1, 1 };
@@ -139,7 +139,6 @@ int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO)//成功返回1，失败0
 	while (!(now.x == FROM.x && now.y == FROM.y))//一步一步搜索
 	{
 		min = 666;
-		onow = D2O(now);
 		for (i = 0; i < 6; i++)
 		{
 			next.x = now.x + dx[i];

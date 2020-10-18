@@ -18,7 +18,7 @@ int main(void)
 	//Initmouse(1, 1023, 1, 767); 
 	Initmouse(0, 1024, 0, 768); 
 	FBMP = fopen("BMP//map.bmp", "rb");
-	
+
 	while(1)
 	{
 		switch(page)

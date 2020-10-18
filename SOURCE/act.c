@@ -113,7 +113,8 @@ void attack(DBL_POS dpos, MAP map)
 				center = center_xy(dbto.x, dbto.y);
 				if (map[to.y][to.x].side == map[opos.y][opos.x].side) //目标不可为同阵营
 				{
-					show_msg("不可攻击友军！", "");
+					show_msg("不可以攻击友军！", "你怎么肥四");
+					delay(1000);
 				}
 				else
 				{

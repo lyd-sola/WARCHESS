@@ -1,4 +1,4 @@
-	/********************************************************************
+/********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: battle.c
 Author: 刘云笛、陈旭桐
@@ -22,14 +22,13 @@ int battle(char *user, short save_num, short mode)
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
-	char s[25] = "SAVES//";
-	char tst[20] = "\0";
+	char filename[25] = "SAVES//";
 	FILE* fp;
 
 	DBL_POS test;
 	
-	strcat(s, user);
-	if ((fp = fopen(s, "rb+")) == NULL)
+	strcat(filename, user);
+	if ((fp = fopen(filename, "rb+")) == NULL)
 		show_error("未找到用户存档文件", 1);
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
@@ -162,69 +161,7 @@ void battle_draw()
 	exit_btn(65370);
 	option_btn(65370);
 }
-/**********************************************************
-Function：		Battle_init
-Description：	战斗初始化函数，读取存档
-Input:			fp用户存档文件指针，其他你一看就懂
-Author：		刘云笛
-**********************************************************/
-void Battle_init(FILE* fp, Battleinfo *info, MAP map)
-{
-	int i, j;
-	
-	fseek(fp, 7, SEEK_CUR);//跳过日期
-	fread(&(info->round), 2, 1, fp);
-	fread(&(info->b_source), 2, 1, fp);
-	fread(&(info->r_source), 2, 1, fp);
-	for (i = 0; i < 13; i++)
-	{
-		for (j = 0; j < 13; j++)
-		{
-			if (feof(fp) && i*j != 144)
-			{
-				show_error("地图文件有误！", 1);
-			}
-			fread(map[i] + j, 2, 1, fp);
-		}
-	}//读取地图信息
-}
-/**********************************************************
-Function：		save_battle
-Description：	保存存档
-Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
-Author：		刘云笛
-**********************************************************/
-
-void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
-{
-	unsigned t[3];
-	time_t rawtime;
-	struct tm* info;
-	int i, j;
-
-	fseek(fp, 1, SEEK_CUR);//跳过模式号
-	//当前时间输入
-	time(&rawtime);
-	info = localtime(&rawtime);
-	t[0] = info->tm_year + 1900;//年
-	t[1] = (info->tm_mon + 1) * 100 + (info->tm_mday);//月日
-	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
-	fwrite(t, 2, 3, fp);
-	//回合信息保存
-	fwrite(&(batinfo.round), 2, 1, fp);
-	fwrite(&(batinfo.b_source), 2, 1, fp);
-	fwrite(&(batinfo.r_source), 2, 1, fp);
-	//储存地图信息
-	for (i = 0; i < 13; i++)
-	{
-		for (j = 0; j < 13; j++)
-		{
-			fwrite(map[i] + j, 2, 1, fp);
-		}
-	}
-}
-
-
+/*画出一个格子上的兵种符号*/
 void draw_cell(DBL_POS pos, MAP map)
 {
 
@@ -312,9 +249,9 @@ Arminfo search_info(int kind)
 	int i;
 	if ((fp = fopen("DATA//info.txt", "r")) == NULL)
 	{
-		show_error("读取兵种信息失败", 0);
+		show_error("兵种信息文件丢失", 1);
 		fclose(fp);
-		return;
+		return info;
 	}
 	for (i = 1; i < kind; i++) //跳至第n个兵种
 	{
@@ -336,7 +273,7 @@ void disp_geo_info(CELL cell)
 	strcat(text, buffer);
 
 	Bar64k(0, 0, 204, 100, 65370);
-	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
+	//Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 	
 	switch (cell.geo)
 	{
@@ -366,7 +303,6 @@ void disp_geo_info(CELL cell)
 	}
 	cell.geo ? Outtext(20, 70, text, 16, 20, 0) : Outtext(20, 70, "不可逾越", 16, 20, 0);
 	lastcell1 = cell;
-	return;
 }
 
 /********显示当前鼠标位置兵种信息*********/
@@ -374,50 +310,50 @@ Arminfo disp_arm_info(CELL cell)
 {
 	Arminfo info;
 	char buffer[20] = "\0";
-	static CELL lastcell2;
+	//static CELL lastcell2;
 
-	if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
-		return;
+	//if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
+	//	return;
 
 	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 	switch (cell.kind)
 	{
 	case BUILDER:
-		Outtextxx(20, 120, 110, "兵种  工兵", 16, 0);
+		Outtextxx(15, 120, 110, "兵种  工兵", 16, 0);
 		itoa(cell.health, buffer, 10);
-		Outtextxx(20, 140, 75, "生命值", 16, 0);
-		Outtext(90, 140, buffer, 16, 16, 0);
+		Outtextxx(15, 140, 75, "生命值", 16, 0);
+		Outtext(85, 140, buffer, 16, 16, 0);
 		itoa(info.attack, buffer, 10);
-		Outtextxx(20, 160, 75, "攻击力", 16, 0);
-		Outtext(90, 160, buffer, 16, 16, 0);
+		Outtextxx(15, 160, 75, "攻击力", 16, 0);
+		Outtext(85, 160, buffer, 16, 16, 0);
 		itoa(info.move, buffer, 10);
-		Outtextxx(20, 180, 75, "行动力", 16, 0);
-		Outtext(90, 180, buffer, 16, 16, 0);
+		Outtextxx(15, 180, 75, "行动力", 16, 0);
+		Outtext(85, 180, buffer, 16, 16, 0);
 		itoa(info.distance, buffer, 10);
-		Outtextxx(20, 200, 75, "射程", 16, 0);
-		Outtext(90, 200, buffer, 16, 16, 0);
+		Outtextxx(15, 200, 75, "射程", 16, 0);
+		Outtext(85, 200, buffer, 16, 16, 0);
 		break;
 
 	case INFANTRY:
-		Outtextxx(20, 120, 110, "兵种  步兵", 16, 0);
+		Outtextxx(15, 120, 110, "兵种  步兵", 16, 0);
 		itoa(cell.health, buffer, 10);
-		Outtextxx(20, 140, 75, "生命值", 16, 0);
-		Outtext(90, 140, buffer, 16, 16, 0);
+		Outtextxx(15, 140, 75, "生命值", 16, 0);
+		Outtext(85, 140, buffer, 16, 16, 0);
 		itoa(info.attack, buffer, 10);
-		Outtextxx(20, 160, 75, "攻击力", 16, 0);
-		Outtext(90, 160, buffer, 16, 16, 0);
+		Outtextxx(15, 160, 75, "攻击力", 16, 0);
+		Outtext(85, 160, buffer, 16, 16, 0);
 		itoa(info.move, buffer, 10);
-		Outtextxx(20, 180, 75, "行动力", 16, 0);
-		Outtext(90, 180, buffer, 16, 16, 0);
+		Outtextxx(15, 180, 75, "行动力", 16, 0);
+		Outtext(85, 180, buffer, 16, 16, 0);
 		itoa(info.distance, buffer, 10);
-		Outtextxx(20, 200, 75, "射程", 16, 0);
-		Outtext(90, 200, buffer, 16, 16, 0);
+		Outtextxx(15, 200, 75, "射程", 16, 0);
+		Outtext(85, 200, buffer, 16, 16, 0);
 		break;
 	default:
 		break;
 	}
-	lastcell2 = cell;
+	//lastcell2 = cell;
 	return info;
 }
 
