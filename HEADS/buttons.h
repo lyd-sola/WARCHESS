@@ -25,6 +25,8 @@ void nextr_button(int color);//下一回合按钮
 int atk_btn_fun(char* s, int color, int color_c);
 int stay_btn_fun(char* s, int color, int color_c);
 int nxt_btn_fun(int color, int color_c);
+int move_btn_fun(int color, int color_c);
+int del_btn_fun(int color, int color_c);
 
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color); //方形按钮
 void rect_btn_frame(int x1, int y1, int x2, int y2, int color);

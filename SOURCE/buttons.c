@@ -109,51 +109,6 @@ void attack_button(char* s, int color)
 	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
 }
 
-void stay_button(char* s, int color)
-{
-	int i;
-	int len = 121, x1 = 141 + 3, y1 = 528 + 3;
-	Line64k(x1, y1, x1, y1 + len - 3, 0);
-	Line64k(x1 + 1, y1, x1 + 1, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
-	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
-	Line45(x1, y1, len + x1 - 3, y1 + len - 3, 0);
-	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
-	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
-	for (i = 0; i <= 113; i++)
-	{
-		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
-	}
-	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
-}//为什么我要写两个函数呢，因为懒得记坐标
-
-void move_button(int color)
-{
-	rectangle64k(20, 528, 141, 649, 0);
-	rectangle64k(20 + 1, 528 + 1, 141 - 1, 649 - 1, 0);
-	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
-	Outtext(20 + 27, 528 + 44, "移动", 32, 35, 0);
-}
-
-void del_button(int color)
-{
-	rectangle64k(20, 649 + 3, 262, 649 + 3 + 45, 0);
-	rectangle64k(20 + 1, 649 + 4, 262 - 1, 649 + 2 + 45, 0);
-	Bar64k_radial(20 + 2, 649 + 5, 262 - 2, 649 + 46, color, 0);
-	Outtext(85, 649 + 9, "删除", 32, 16 + 60, 0);
-}
-
-void nextr_button(int color)
-{
-	Circlefill64k(849 + 68, 514 + 68, 68, color);
-	Circle64k(849 + 68, 514 + 68, 69, 0);
-	Circle64k(849 + 68, 514 + 68, 68, 0);
-	Circle64k(849 + 68, 514 + 68, 67, 0);
-	Outtextxx(849 + 68 - 40, 514 - 40 + 68, 849 + 40 + 68, "下一", 32, 0);
-	Outtextxx(849 + 68 - 40, 514 + 40 - 32 + 68, 849 + 68 + 40, "回合", 32, 0);
-}
-
-
 int atk_btn_fun(char* s, int color, int color_c)
 {
 	if (MouseX >= 20 && MouseY <= 524 && MouseY >= MouseX + 387)//三角区域也可以正常判断哦
@@ -187,6 +142,24 @@ int atk_btn_fun(char* s, int color, int color_c)
 	}
 }
 
+void stay_button(char* s, int color)
+{
+	int i;
+	int len = 121, x1 = 141 + 3, y1 = 528 + 3;
+	Line64k(x1, y1, x1, y1 + len - 3, 0);
+	Line64k(x1 + 1, y1, x1 + 1, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3, len + x1 - 3, y1 + len - 3, 0);
+	Line64k(x1, y1 + len - 3 - 1, len + x1 - 3 - 1, y1 + len - 3 - 1, 0);
+	Line45(x1, y1, len + x1 - 3, y1 + len - 3, 0);
+	Line45(x1 + 1, y1, len + x1 - 3 + 1, y1 + len - 3, 0);
+	Line45(x1 + 2, y1, len + x1 - 3 + 2, y1 + len - 3, 0);
+	for (i = 0; i <= 113; i++)
+	{
+		Line64k(x1 + 2 + i, y1 + 3 + i, x1 + 2 + i, y1 + len - 3 - 2, color);
+	}
+	Outtext(x1 + 8, y1 + 71, s, 32, 35, 0);
+}//为什么我要写两个函数呢，因为懒得记坐标
+
 int stay_btn_fun(char* s, int color, int color_c)
 {
 	if (MouseX >= 144 && MouseY <= 649 && MouseY >= MouseX + 387)//三角区域也可以正常判断哦
@@ -201,7 +174,9 @@ int stay_btn_fun(char* s, int color, int color_c)
 			{
 				if (press == 1)
 				{
+					Clrmous();
 					MouseS = 0;
+					stay_button(s, color);
 					return 1;
 				}//若点击返回1
 			}
@@ -218,6 +193,104 @@ int stay_btn_fun(char* s, int color, int color_c)
 	{
 		return 0;
 	}
+}
+
+void move_button(int color)
+{
+	rectangle64k(20, 528, 141, 649, 0);
+	rectangle64k(20 + 1, 528 + 1, 141 - 1, 649 - 1, 0);
+	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
+	Outtext(20 + 27, 528 + 44, "移动", 32, 35, 0);
+}
+
+int move_btn_fun(int color, int color_c) //移动
+{
+	if (mouse_press(20+2, 528+2, 141-2, 649-2) == MOUSE_IN)
+	{
+		Clrmous();
+		MouseS = 1;
+		move_button(color_c);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(20+2, 528+2, 141-2, 649-2))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					move_button(color);
+					return 1;
+					//若点击返回1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				move_button(color);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void del_button(int color)
+{
+	rectangle64k(20, 649 + 3, 262, 649 + 3 + 45, 0);
+	rectangle64k(20 + 1, 649 + 4, 262 - 1, 649 + 2 + 45, 0);
+	Bar64k_radial(20 + 2, 649 + 5, 262 - 2, 649 + 46, color, 0);
+	Outtext(85, 649 + 9, "删除", 32, 16 + 60, 0);
+}
+
+int del_btn_fun(int color, int color_c)
+{
+	if (mouse_press(20+2, 649+5, 262-2, 649+46) == MOUSE_IN)
+	{
+		Clrmous();
+		MouseS = 1;
+		del_button(color_c);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(20+2, 649+5, 262-2, 649+46))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					del_button(color);
+					return 1;
+					//若点击返回1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				del_button(color);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void nextr_button(int color)
+{
+	Circlefill64k(849 + 68, 514 + 68, 68, color);
+	Circle64k(849 + 68, 514 + 68, 69, 0);
+	Circle64k(849 + 68, 514 + 68, 68, 0);
+	Circle64k(849 + 68, 514 + 68, 67, 0);
+	Outtextxx(849 + 68 - 40, 514 - 40 + 68, 849 + 40 + 68, "下一", 32, 0);
+	Outtextxx(849 + 68 - 40, 514 + 40 - 32 + 68, 849 + 68 + 40, "回合", 32, 0);
 }
 
 int nxt_btn_fun(int color, int color_c)

@@ -26,8 +26,10 @@ void Icon_inf(DBL_POS pos, int side);
 void Icon_tank(DBL_POS pos, int side);
 void Icon_super(DBL_POS pos, int side);
 void Icon_arti(DBL_POS pos, int side);
+void armdraw(int kind, DBL_POS pos, int side);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
+void draw_bomb(int x, int y, double i);
 #endif

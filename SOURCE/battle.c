@@ -17,6 +17,7 @@ int battle(char *user, short save_num, short mode)
 {
 	CELL map[13][13], cell;//地图
 	DBL_POS pos, ptmp;
+	OFF_POS opos;
 	Battleinfo batinfo;//对战信息
 	Arminfo arminfo1, arminfo2;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
@@ -30,17 +31,15 @@ int battle(char *user, short save_num, short mode)
 	strcat(s, user);
 	if ((fp = fopen(s, "rb+")) == NULL)
 		show_error("未找到用户存档文件", 1);
-
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
 	
-
 	battle_draw();
-
 
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
-
+	map[6][5].side = 2;
+	map[6][5].kind = INFANTRY;
 	initdraw(map);
 	
 	ptmp.x = 13, ptmp.y = 9;
@@ -51,15 +50,6 @@ int battle(char *user, short save_num, short mode)
 	{
 		Newxy();
 		
-
-		if (atk_btn_fun("攻击", 65535, 65340))
-		{
-			show_error("点到攻击按钮啦，我就吓唬你一下", 0);
-		}
-		if (stay_btn_fun("驻扎", 65535, 65340))
-		{
-			show_error("点到驻扎按钮啦，我就吓唬你一下", 0);
-		}
 		nxt_btn_fun(65535, 65340);
 
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
@@ -69,11 +59,11 @@ int battle(char *user, short save_num, short mode)
 			{
 
 				pos = ptmp;
+				opos = D2O(pos);
 				clccell = 1;
 				show_msg("已选择一个单位", "请选择行为");
 				/*******************显示信息********************/
-				
-				disp_arm_info(map[pos.y][pos.x], D2O(pos));
+				disp_arm_info(map[opos.y][opos.x]);
 			}
 			else
 			{
@@ -84,11 +74,32 @@ int battle(char *user, short save_num, short mode)
 			}
 
 		}
-		if (clccell && (mouse_press(20, 528, 141, 649) == MOUSE_IN_L))//移动
+		if (clccell && move_btn_fun(65535, 65340))//移动
 		{
 			move(pos, map);
 			clccell = 0;
 			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
+			msgflag = 0;
+		}
+
+		if (clccell && stay_btn_fun("驻扎", 65535, 65340))//驻扎
+		{
+			stay(pos, map);
+			clccell = 0;
+			msgflag = 0;
+		}
+
+		if (clccell && atk_btn_fun("攻击", 65535, 65340))//攻击
+		{
+			attack(pos, map);
+			clccell = 0;
+			msgflag = 0;
+		}
+
+		if (clccell && del_btn_fun(65535, 65340))//删除
+		{
+			delarm(pos, map);
+			clccell = 0;
 			msgflag = 0;
 		}
 
@@ -97,7 +108,6 @@ int battle(char *user, short save_num, short mode)
 			show_msg("请指挥官进行操作", "");
 			msgflag = 1;
 		}
-
 
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
@@ -148,9 +158,6 @@ void battle_draw()
 	nextr_button(65535);
 
 	//选项菜单
-
-
-
 	save_btn(65370);
 	exit_btn(65370);
 	option_btn(65370);
@@ -204,9 +211,6 @@ void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
 	fwrite(t, 2, 3, fp);
 	//回合信息保存
-
-
-
 	fwrite(&(batinfo.round), 2, 1, fp);
 	fwrite(&(batinfo.b_source), 2, 1, fp);
 	fwrite(&(batinfo.r_source), 2, 1, fp);
@@ -226,24 +230,9 @@ void draw_cell(DBL_POS pos, MAP map)
 	int flag, side;
 	OFF_POS offpos;
 
-	offpos = D2O(pos);
 	flag = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
-	switch (flag)
-	{
-	case BUILDER:
-		Icon_builder(pos, side);
-	case INFANTRY:
-		Icon_inf(pos, side);
-	case ARTILLERY:
-		Icon_arti(pos, side);
-	case TANK:
-		Icon_tank(pos, side);
-	case SUPER:
-		Icon_super(pos, side);
-	default:
-		break;
-	}
+	armdraw(flag, pos, side);
 }
 
 void initdraw(MAP map)
@@ -260,33 +249,14 @@ void initdraw(MAP map)
 				opos.x = i;
 				opos.y = j;
 				dpos = O2D(opos);
-				switch (map[j][i].kind)
-				{
-				case BUILDER:
-					Icon_builder(dpos, map[j][i].side);
-					break;
-				case INFANTRY:
-					Icon_inf(dpos, map[j][i].side);
-					break;
-				case ARTILLERY:
-					Icon_arti(dpos, map[j][i].side);
-					break;
-				case TANK:
-					Icon_tank(dpos, map[j][i].side);
-					break;
-				case SUPER:
-					Icon_super(dpos, map[j][i].side);
-					break;
-				default:
-					break;
-				}
+				armdraw(map[j][i].kind, dpos, map[j][i].side);
 			}
 		}
 	}
 }
 
 /*搜索兵种信息，仅在disp函数中调用*/
-Arminfo search_info(int kind, DBL_POS dpos)
+Arminfo search_info(int kind)
 {
 	FILE* fp;
 	char buffer[20];
@@ -309,11 +279,11 @@ Arminfo search_info(int kind, DBL_POS dpos)
 }
 
 /********显示当前鼠标位置兵种信息*********/
-void disp_arm_info(CELL cell, DBL_POS dpos)
+Arminfo disp_arm_info(CELL cell)
 {
 	Arminfo info;
 	char buffer[20] = "\0";
-	info = search_info(cell.kind, dpos);
+	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 205, 100, 65535);
 	switch (cell.kind)
 	{
@@ -332,7 +302,23 @@ void disp_arm_info(CELL cell, DBL_POS dpos)
 		Outtextxx(20, 200, 75, "射程", 16, 0);
 		Outtext(90, 200, buffer, 16, 16, 0);
 		break;
+	case INFANTRY:
+		Outtextxx(20, 120, 110, "兵种  步兵", 16, 0);
+		itoa(cell.health, buffer, 10);
+		Outtextxx(20, 140, 75, "生命值", 16, 0);
+		Outtext(90, 140, buffer, 16, 16, 0);
+		itoa(info.attack, buffer, 10);
+		Outtextxx(20, 160, 75, "攻击力", 16, 0);
+		Outtext(90, 160, buffer, 16, 16, 0);
+		itoa(info.move, buffer, 10);
+		Outtextxx(20, 180, 75, "行动力", 16, 0);
+		Outtext(90, 180, buffer, 16, 16, 0);
+		itoa(info.distance, buffer, 10);
+		Outtextxx(20, 200, 75, "射程", 16, 0);
+		Outtext(90, 200, buffer, 16, 16, 0);
+		break;
 	default:
-		return;
+		return info;
 	}
+	return info;
 }

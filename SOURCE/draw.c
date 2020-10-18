@@ -568,3 +568,45 @@ void Icon_arti(DBL_POS pos, int side)
 	Liney(pos.x+7, pos.y-2, pos.x+7, pos.y+10, 0);
 	Linex(pos.x-12, pos.y+10, pos.x+12, pos.y+10, 0);
 }
+
+void armdraw(int kind, DBL_POS pos, int side)
+{
+	switch (kind)
+	{
+	case BUILDER:
+		Icon_builder(pos, side);
+		break;
+	case INFANTRY:
+		Icon_inf(pos, side);
+		break;
+	case ARTILLERY:
+		Icon_arti(pos, side);
+		break;
+	case TANK:
+		Icon_tank(pos, side);
+		break;
+	case SUPER:
+		Icon_super(pos, side);
+		break;
+	default:
+		break;
+	}
+}
+
+/*******»­×Óµ¯»ðÑæº¯Êý**********/
+void draw_bomb(int x, int y, double i)
+{
+	Line64k(x - (int)(15 * (0.7 + i)), y, x + (int)(15 * (0.7 + i)), y, 64992);
+	Line64k(x - (int)(15 * (0.7 + i)), y, x - (int)(17 * (0.7 + i)), y - (int)(10 * (0.7 + i)), 64992);
+	Line64k(x - (int)(17 * (0.7 + i)), y - (int)(10 * (0.7 + i)), x - (int)(12 * (0.7 + i)), y - (int)(7 * (0.7 + i)), 64992);
+	Line64k(x - (int)(12 * (0.7 + i)), y - (int)(7 * (0.7 + i)), x - (int)(16 * (0.7 + i)), y - (int)(15 * (0.7 + i)), 64992);
+	Line64k(x - (int)(16 * (0.7 + i)), y - (int)(15 * (0.7 + i)), x - (int)(14 * (0.7 + i)), y - (int)(25 * (0.7 + i)), 64992);
+	Line64k(x - (int)(14 * (0.7 + i)), y - (int)(25 * (0.7 + i)), x - (int)(8 * (0.7 + i)), y - (int)(14 * (0.7 + i)), 64992);
+	Line64k(x - (int)(8 * (0.7 + i)), y - (int)(14 * (0.7 + i)), x, y - (int)(35 * (0.7 + i)), 64992);
+	Line64k(x, y - (int)(35 * (0.7 + i)), x + (int)(5 * (0.7 + i)), y - (int)(15 * (0.7 + i)), 64992);
+	Line64k(x + (int)(5 * (0.7 + i)), y - (int)(15 * (0.7 + i)), x + (int)(7 * (0.7 + i)), y - (int)(22 * (0.7 + i)), 64992);
+	Line64k(x + (int)(7 * (0.7 + i)), y - (int)(22 * (0.7 + i)), x + (int)(13 * (0.7 + i)), y - (int)(12 * (0.7 + i)), 64992);
+	Line64k(x + (int)(13 * (0.7 + i)), y - (int)(12 * (0.7 + i)), x + (int)(18 * (0.7 + i)), y - (int)(15 * (0.7 + i)), 64992);
+	Line64k(x + (int)(18 * (0.7 + i)), y - (int)(15 * (0.7 + i)), x + (int)(15 * (0.7 + i)), y, 64992);
+	Floodfill(x, y - 3, 64992, 64992); 
+}
