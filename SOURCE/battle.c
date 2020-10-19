@@ -395,8 +395,9 @@ void base_func(MAP map, int *source, int side)
 		//点击左下角兵种图标首先显示信息，再次点击进行造兵
 		if (mouse_press(745-18, 705-18, 745+65*4+18, 705+23) == 1)
 		{
-			Map_partial(745-18, 705-18, 745+65*4+18, 705+23, FBMP);
 			buildarm(map, source, side);
+			Clrmous();
+			Map_partial(745-18, 705-18, 745+65*4+18, 705+23, FBMP);
 			return;
 		}
 
