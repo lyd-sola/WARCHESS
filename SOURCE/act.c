@@ -47,7 +47,7 @@ void move(DBL_POS From, MAP map, int able)//需要增加移动方判断和是否可以行动
 				}
 				else
 				{
-					show_msg("此处无法到达", "");
+					show_msg("此处无法到达", "重新选择目的地");
 				}
 			}
 			else
@@ -96,6 +96,8 @@ void attack(DBL_POS dpos, MAP map)
 	int Stay_to, Stay_pos;
 
 	opos = D2O(dpos);
+	info = search_info(map[opos.y][opos.x].kind); //读取当前位置兵种信息
+
 	attack_button("攻击", 600);
 	show_msg("请选择要攻击的位置", "");
 
@@ -107,41 +109,51 @@ void attack(DBL_POS dpos, MAP map)
 			to = D2O(dbto);
 			if (map[to.y][to.x].kind) //目标不为空可以攻击
 			{
-				info = search_info(map[opos.y][opos.x].kind); //读取当前位置兵种信息
-				Stay_pos = map[opos.y][opos.x].stay;
-				Stay_to = map[to.y][to.x].stay;
-				center = center_xy(dbto.x, dbto.y);
-				if (map[to.y][to.x].side == map[opos.y][opos.x].side) //目标不可为同阵营
+				if (attack_judge(map, info.distance, dpos, dbto))
 				{
-					show_msg("不可攻击友军！", "");
+					Stay_pos = map[opos.y][opos.x].stay;
+					Stay_to = map[to.y][to.x].stay;
+					center = center_xy(dbto.x, dbto.y);
+					if (map[to.y][to.x].side == map[opos.y][opos.x].side) //目标不可为同阵营
+					{
+						show_msg("不可以攻击友军！", "你怎么肥四");
+						delay(1000);
+						attack_button("攻击", 65370);
+						return;
+					}
+					else
+					{
+						if (info.attack >= map[to.y][to.x].health) //目标扑街
+						{
+							Clrmous();
+							map[to.y][to.x].kind = NOARMY;
+							show_msg("目标已被歼灭！","");
+							draw_bomb(center.x, center.y+10, 0);
+							delay(1000);
+							Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图
+							attack_button("攻击", 65370);
+							return;
+						}
+					
+						else
+						{
+							//计算驻扎增幅的公式，暂设为驻扎之后攻击力+2，防御力+1（即受到的伤害-1）
+							map[to.y][to.x].health = (map[to.y][to.x].health + Stay_to * 1) - (info.attack + Stay_pos * 2); 
+							show_msg("FIRE!", "");
+							draw_bomb(center.x, center.y+10, 0);
+							delay(1000);
+							icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
+							attack_button("攻击", 65370);
+							return;
+						}
+					}
 				}
 				else
 				{
-					if (info.attack >= map[to.y][to.x].health) //目标扑街
-					{
-						Clrmous();
-						map[to.y][to.x].kind = NOARMY;
-						show_msg("目标已被歼灭！","");
-						draw_bomb(center.x, center.y+10, 0);
-						delay(1000);
-						Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图	
-					}
-					
-					else
-					{
-						//计算驻扎增幅的公式，暂设为驻扎之后攻击力+2，防御力+1（即受到的伤害-1）
-						map[to.y][to.x].health = (map[to.y][to.x].health + Stay_to * 1) - (info.attack + Stay_pos * 2); 
-						show_msg("FIRE!", "");
-						draw_bomb(center.x, center.y+10, 0);
-						delay(1000);
-						icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
-					}
+					show_msg("打不到QAQ", "重新选择目标");
 				}
 			}
-			attack_button("攻击", 65370);
-			return;
 		}
-		
 		else if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)//右键取消
 		{
 			attack_button("攻击", 65370);
@@ -153,8 +165,10 @@ void attack(DBL_POS dpos, MAP map)
 void delarm(DBL_POS dpos, MAP map)
 {
 	POS center;
+	OFF_POS opos;
 	center = center_xy(dpos.x, dpos.y);
-	map[dpos.y][dpos.x].kind = NOARMY;
+	opos = D2O(dpos);
+	map[opos.y][opos.x].kind = NOARMY;
 	show_msg("该部队已撤退！", "");
 	delay(1000);
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);

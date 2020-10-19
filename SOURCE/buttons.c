@@ -123,7 +123,9 @@ int atk_btn_fun(char* s, int color, int color_c)
 			{
 				if (press == 1)
 				{
+					Clrmous();
 					MouseS = 0;
+					attack_button(s, color);
 					return 1;
 				}//Èôµã»÷·µ»Ø1
 			}

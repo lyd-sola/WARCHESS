@@ -1,4 +1,4 @@
-	/********************************************************************
+/********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: battle.c
 Author: 刘云笛、陈旭桐
@@ -22,14 +22,13 @@ int battle(char *user, short save_num, short mode)
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
-	char s[25] = "SAVES//";
-	char tst[20] = "\0";
+	char filename[25] = "SAVES//";
 	FILE* fp;
 
 	DBL_POS test;
 	
-	strcat(s, user);
-	if ((fp = fopen(s, "rb+")) == NULL)
+	strcat(filename, user);
+	if ((fp = fopen(filename, "rb+")) == NULL)
 		show_error("未找到用户存档文件", 1);
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
@@ -42,12 +41,16 @@ int battle(char *user, short save_num, short mode)
 	map[6][5].kind = INFANTRY;
 	initdraw(map);
 
+	//大本营信息的初始化，应放入初始化存档界面？
+	map[3][10].side = 0;
+	map[9][1].side = 1;
+	map[3][10].kind = 1;
+	map[9][1].kind = 1;
+	batinfo.b_source = 50;
 
 	while(1)
 	{
 		Newxy();
-		
-
 		nxt_btn_fun(65370, 65340);
 
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
@@ -59,8 +62,11 @@ int battle(char *user, short save_num, short mode)
 				clccell = 0;
 				disp_geo_info(map[opos.y][opos.x]);
 				disp_arm_info(map[opos.y][opos.x]); //清空其中的静态结构体变量
-				show_msg("血量", "等级");
-				base_func(map,10);
+				/*bug没de掉*/
+				show_msg("血量", textwithint("等级：", map[opos.y][opos.x].kind, "再次点选进行升级"));
+				delay(50);
+				//只能操作右上角即蓝方阵营
+				base_func(map, &batinfo.b_source, map[3][10].side); //这里需要加上一个阵营的判断，因为无下一回合函数，所以暂时不写
 			}
 			if (flag == 2)
 			{
@@ -168,69 +174,7 @@ void battle_draw()
 	exit_btn(65370);
 	option_btn(65370);
 }
-/**********************************************************
-Function：		Battle_init
-Description：	战斗初始化函数，读取存档
-Input:			fp用户存档文件指针，其他你一看就懂
-Author：		刘云笛
-**********************************************************/
-void Battle_init(FILE* fp, Battleinfo *info, MAP map)
-{
-	int i, j;
-	
-	fseek(fp, 7, SEEK_CUR);//跳过日期
-	fread(&(info->round), 2, 1, fp);
-	fread(&(info->b_source), 2, 1, fp);
-	fread(&(info->r_source), 2, 1, fp);
-	for (i = 0; i < 13; i++)
-	{
-		for (j = 0; j < 13; j++)
-		{
-			if (feof(fp) && i*j != 144)
-			{
-				show_error("地图文件有误！", 1);
-			}
-			fread(map[i] + j, 2, 1, fp);
-		}
-	}//读取地图信息
-}
-/**********************************************************
-Function：		save_battle
-Description：	保存存档
-Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
-Author：		刘云笛
-**********************************************************/
-
-void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
-{
-	unsigned t[3];
-	time_t rawtime;
-	struct tm* info;
-	int i, j;
-
-	fseek(fp, 1, SEEK_CUR);//跳过模式号
-	//当前时间输入
-	time(&rawtime);
-	info = localtime(&rawtime);
-	t[0] = info->tm_year + 1900;//年
-	t[1] = (info->tm_mon + 1) * 100 + (info->tm_mday);//月日
-	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
-	fwrite(t, 2, 3, fp);
-	//回合信息保存
-	fwrite(&(batinfo.round), 2, 1, fp);
-	fwrite(&(batinfo.b_source), 2, 1, fp);
-	fwrite(&(batinfo.r_source), 2, 1, fp);
-	//储存地图信息
-	for (i = 0; i < 13; i++)
-	{
-		for (j = 0; j < 13; j++)
-		{
-			fwrite(map[i] + j, 2, 1, fp);
-		}
-	}
-}
-
-
+/*画出一个格子上的兵种符号*/
 void draw_cell(DBL_POS pos, MAP map)
 {
 
@@ -318,9 +262,9 @@ Arminfo search_info(int kind)
 	int i;
 	if ((fp = fopen("DATA//info.txt", "r")) == NULL)
 	{
-		show_error("读取兵种信息失败", 0);
+		show_error("兵种信息文件丢失", 1);
 		fclose(fp);
-		return;
+		return info;
 	}
 	for (i = 1; i < kind; i++) //跳至第n个兵种
 	{
@@ -370,7 +314,6 @@ void disp_geo_info(CELL cell)
 	}
 	cell.geo ? Outtext(20, 70, text, 16, 20, 0) : Outtext(20, 70, "不可逾越", 16, 20, 0);
 	lastcell1 = cell;
-	return;
 }
 
 /********显示当前鼠标位置兵种信息*********/
@@ -378,100 +321,229 @@ Arminfo disp_arm_info(CELL cell)
 {
 	Arminfo info;
 	char buffer[20] = "\0";
-	static CELL lastcell2;
+	//static CELL lastcell2;
 
-	if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
-		return;
+	//if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
+	//	return;
 
 	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 	switch (cell.kind)
 	{
 	case BUILDER:
-		Outtextxx(20, 120, 110, "兵种  工兵", 16, 0);
+		Outtextxx(15, 120, 110, "兵种  工兵", 16, 0);
 		itoa(cell.health, buffer, 10);
-		Outtextxx(20, 140, 75, "生命值", 16, 0);
-		Outtext(90, 140, buffer, 16, 16, 0);
+		Outtextxx(15, 140, 75, "生命值", 16, 0);
+		Outtext(85, 140, buffer, 16, 16, 0);
 		itoa(info.attack, buffer, 10);
-		Outtextxx(20, 160, 75, "攻击力", 16, 0);
-		Outtext(90, 160, buffer, 16, 16, 0);
+		Outtextxx(15, 160, 75, "攻击力", 16, 0);
+		Outtext(85, 160, buffer, 16, 16, 0);
 		itoa(info.move, buffer, 10);
-		Outtextxx(20, 180, 75, "行动力", 16, 0);
-		Outtext(90, 180, buffer, 16, 16, 0);
+		Outtextxx(15, 180, 75, "行动力", 16, 0);
+		Outtext(85, 180, buffer, 16, 16, 0);
 		itoa(info.distance, buffer, 10);
-		Outtextxx(20, 200, 75, "射程", 16, 0);
-		Outtext(90, 200, buffer, 16, 16, 0);
+		Outtextxx(15, 200, 75, "射程", 16, 0);
+		Outtext(85, 200, buffer, 16, 16, 0);
 		break;
 
 	case INFANTRY:
-		Outtextxx(20, 120, 110, "兵种  步兵", 16, 0);
+		Outtextxx(15, 120, 110, "兵种  步兵", 16, 0);
 		itoa(cell.health, buffer, 10);
-		Outtextxx(20, 140, 75, "生命值", 16, 0);
-		Outtext(90, 140, buffer, 16, 16, 0);
+		Outtextxx(15, 140, 75, "生命值", 16, 0);
+		Outtext(85, 140, buffer, 16, 16, 0);
 		itoa(info.attack, buffer, 10);
-		Outtextxx(20, 160, 75, "攻击力", 16, 0);
-		Outtext(90, 160, buffer, 16, 16, 0);
+		Outtextxx(15, 160, 75, "攻击力", 16, 0);
+		Outtext(85, 160, buffer, 16, 16, 0);
 		itoa(info.move, buffer, 10);
-		Outtextxx(20, 180, 75, "行动力", 16, 0);
-		Outtext(90, 180, buffer, 16, 16, 0);
+		Outtextxx(15, 180, 75, "行动力", 16, 0);
+		Outtext(85, 180, buffer, 16, 16, 0);
 		itoa(info.distance, buffer, 10);
-		Outtextxx(20, 200, 75, "射程", 16, 0);
-		Outtext(90, 200, buffer, 16, 16, 0);
+		Outtextxx(15, 200, 75, "射程", 16, 0);
+		Outtext(85, 200, buffer, 16, 16, 0);
 		break;
 	default:
 		break;
 	}
-	lastcell2 = cell;
+	//lastcell2 = cell;
 	return info;
 }
 
-void base_func(MAP map, int source)
+void base_func(MAP map, int *source, int side)
 {
-	int clcflag = 0;
-	Arminfo arminfo;
-	POS pos, center = center_xy(3, 9);
+	POS pos,dpos;
 	pos.x = 745;
 	pos.y = 705;
-	icon(pos, map[9][1].side, BUILDER);
-	pos.x = 800;
-	icon(pos, map[9][1].side, INFANTRY);
+	icon(pos, side, BUILDER);
+	pos.x = 745+65;
+	icon(pos, side, INFANTRY);
+	pos.x = 745+65*2;
+	icon(pos, side, ARTILLERY);
+	pos.x = 745+65*3;
+	icon(pos, side, TANK);
+	pos.x = 745+65*4;
+	icon(pos, side, SUPER);
 	while (1)
 	{
 		Newxy();
-		if (mouse_press(740-18, 705-18, 740+18, 705+23) == MOUSE_IN_L)
+		//再次点击大本营对大本营进行升级
+		if (clcmap(&dpos, map) == 3 && map[D2O(dpos).y][D2O(dpos).x].side == side) //防止花资源给对面升级的投敌行为，待改进
 		{
-			arminfo = search_info(BUILDER);
-			if (clcflag == 1)
+			levelup(dpos, map, source);
+			Map_partial(745-18, 705-18, 745+65*4+18, 705+23, FBMP);
+			return;
+		}
+		//点击左下角兵种图标首先显示信息，再次点击进行造兵
+		if (mouse_press(745-18, 705-18, 745+65*4+18, 705+23) == 1)
+		{
+			Map_partial(745-18, 705-18, 745+65*4+18, 705+23, FBMP);
+			buildarm(map, source, side);
+			return;
+		}
+
+		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)	//右键取消
+		{
+			Map_partial(745-18, 705-18, 745+65*4+18, 705+23, FBMP);
+			show_msg("取消操作", "");
+			delay(500);
+			return;
+		}
+	}
+}
+
+void levelup(DBL_POS dpos, MAP map, int *source)
+{
+	OFF_POS opos;
+	opos = D2O(dpos);
+	if (map[opos.y][opos.x].kind == 3)
+	{
+		show_msg("大本营已满级", "升级失败");
+		delay(1000);
+		return;
+	}
+	else if (*source < (map[opos.y][opos.x].kind == 1 ? 10 : 50)) //一本升二本消耗10资源， 二本升三本消耗50资源
+	{
+		show_msg("资源不足无法升级", "");
+		delay(1000);
+		return;
+	}
+	else
+	{
+		show_msg("升级成功", "");
+		map[opos.y][opos.x].kind += 1;
+		delay(1000);
+		return;
+	}
+}
+
+void buildarm(MAP map, int *source, int side)
+{
+	int armkind = 0;
+	Arminfo arminfo;
+	POS pos, center, dpos, opos;
+	opos.x = side ? 1 : 10;
+	opos.y = side ? 9 : 3;
+	if (mouse_press(745 - 18, 705 - 18, 745 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中工兵
+	{
+		armkind = BUILDER; //为第二次点选确定兵种值
+		show_msg("工兵，造价：2", "再次点选确定建造");
+		delay(100); //使用户有时间将鼠标抬起来
+	}
+	if (mouse_press(745 + 65 - 18, 705 - 18, 745 + 65 + 18, 705 + 23) == MOUSE_IN_L )//第一次点选选中步兵
+	{
+		armkind = INFANTRY;
+		show_msg("步兵，造价：1", "再次点选确定建造");
+		delay(100);
+	}
+	if (mouse_press(745 + 65 * 2 - 18, 705 - 18, 745 + 65 * 2 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中炮兵
+	{
+		if (map[opos.y][opos.x].kind < 2)
+		{
+			show_msg("需要大本营等级：2", "建造失败");
+			delay(1000);
+			return;
+		}
+		armkind = ARTILLERY;
+		show_msg("炮兵，造价：5", "再次点选确定建造");
+		delay(100);
+	}
+	if (mouse_press(745 + 65 * 3 - 18, 705 - 18, 745 + 65 * 3 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中坦克
+	{
+		if (map[opos.y][opos.x].kind < 2)
+		{
+			show_msg("需要大本营等级：2", "建造失败");
+			delay(1000);
+			return;
+		}
+		armkind = TANK;
+		show_msg("坦克，造价：10", "再次点选确定建造");
+		delay(100);
+	}
+	if (mouse_press(745 + 65 * 4 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中超级兵
+	{
+		if (map[opos.y][opos.x].kind < 3)
+		{
+			show_msg("需要大本营等级：3", "建造失败");
+			delay(1000);
+			return;
+		}
+		armkind = SUPER;
+		show_msg("超级杀爆全场一个能打三个坦克特种", "突击装甲兵，造价：30。");
+		delay(100);
+	}
+	while (1)
+	{
+		Newxy();
+		if (mouse_press(745+65*(armkind-1)-18, 705-18, 745+65*(armkind-1)+18, 705+23) == MOUSE_IN_L)
+		{
+			arminfo = search_info(armkind);
+			if (*source < arminfo.cost) //资源不足无法建造
 			{
-				clcflag = 0;
-				if (source < arminfo.cost)
-				{
-					show_msg("资源不足无法建造", "");
-					delay(1000);
-					return;
-				}
-				else if (map[8][1].kind != 0)
+				show_msg("资源不足无法建造", "");
+				delay(1000);
+				return;
+			}
+			else if (side == 1) //蓝色方
+			{
+				if (map[11][1].kind != 0) //判断蓝色方出兵点是否被占领
 				{
 					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
 					delay(1000);
 					return;
 				}
-				else 
+				else //建造成功，更新出兵点信息
 				{
-					map[8][1].kind = BUILDER;
-					map[8][1].health = arminfo.health;
-					icon(center, map[9][1].side, BUILDER);
-					show_msg("建造成功！", "");
+					map[10][2].kind = armkind;
+					map[10][2].health = arminfo.health;
+					center = center_xy(5, 11);
+					icon(center, side, armkind);
+				}
+			}
+			else //红色方
+			{
+				if (map[2][10].kind != 0) //判断红方出兵点是否被占领
+				{
+					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
 					delay(1000);
 					return;
 				}
+				else //建造成功，更新出兵点信息
+				{
+					map[2][10].kind = armkind;
+					map[2][10].health = arminfo.health;
+					center = center_xy(21, 3);
+					icon(center, side, armkind);
+				}
 			}
-			else
-			{
-				clcflag = 1;
-				show_msg("工兵，造价：2", "再次点选确定建造");
-				delay(50);
-			}
+			//*source -= arminfo.cost;
+			show_msg("建造成功！", "");
+			delay(1000);
+			return;
+		}
+		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)	//右键取消
+		{
+			show_msg("取消操作", "");
+			delay(500);
+			return;
 		}
 	}
 }

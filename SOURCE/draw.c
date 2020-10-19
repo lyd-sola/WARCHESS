@@ -581,3 +581,36 @@ void draw_bomb(int x, int y, double i)
 	Line64k(x + (int)(18 * (0.7 + i)), y - (int)(15 * (0.7 + i)), x + (int)(15 * (0.7 + i)), y, 64992);
 	Floodfill(x, y - 3, 64992, 64992); 
 }
+
+/*******输出带整形变量的文本, former为整型变量前的文本，latter为整型变量后的文本**********/
+void Outwithint(int x, int y, char* former, int a, char* latter, int size, int part, int color)
+{
+	char text[80];
+	char buffer[20] = "\0";
+	itoa(a, buffer, 10);
+	strcat(text, former);
+	strcat(text, buffer);
+	strcat(text, latter);
+	Outtext(x, y, text, size, part, color);
+}
+
+/***********此函数使用Outextxx输出，其余与上相同******************/
+void Outwithint2(int x1, int y, int x2, char* former, int a, char* latter, int size, int color)
+{
+	char* text;
+	text = textwithint(former, a, latter);
+	Outtextxx(x1, y, x2, text, size, color);
+}
+
+/*********此函数用于合成文本和整型变量*************/
+/******有问题！有问题！有很大问题！初步判断为是野指针的原因，几次修改未能成功，估计是不用这个函数了********/
+char* textwithint(char* former, int a, char* latter)
+{
+	char *text;
+	char buffer[20] = "\0";
+	itoa(a, buffer, 10);
+	strcat(text, former);
+	strcat(text, buffer);
+	strcat(text, latter);
+	return text;
+}

@@ -9,6 +9,9 @@ void add_shadow(int x1, int y1, int x2, int y2, int size); //给矩形添加阴�
 void frame(int x1, int y1, int x2, int y2, int color); //带边框的文本框
 void file_draw(int x1, int y1, int x2, int y2); //绘制档案图形
 int Outtextxx(int x1, int y, int x2, char *s,int flag, int color); //根据两点坐标输出汉字
+void Outwithint(int x, int y, char *former, int a, char *latter, int size, int part, int color);
+void Outwithint2(int x1, int y, int x2, char* former, int a, char* latter, int size, int color);
+char* textwithint(char* former, int a, char* latter);
 
 void GetBackground(int left, int top, int right, int bottom, short *buffer);
 void PutBackground(int left, int top, int right, int bottom, short *buffer);

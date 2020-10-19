@@ -25,10 +25,6 @@ int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);
 
-void Battle_init(FILE* fp, Battleinfo* info, MAP map);
-
-void save_battle(FILE* fp, Battleinfo batinfo, MAP map);
-
 void draw_cell(DBL_POS pos, MAP map);
 
 void initdraw(MAP map);
@@ -39,6 +35,8 @@ void icon(POS world_pos, int side, int kind);
 Arminfo search_info(int kind);
 Arminfo disp_arm_info(CELL cell);
 
-void base_func(MAP map, int source);
+void base_func(MAP map, int* source, int side);
+void levelup(DBL_POS dpos, MAP map, int* source);
+void buildarm(MAP map, int* source, int side);
 
 #endif

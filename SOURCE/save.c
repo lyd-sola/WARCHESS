@@ -1,18 +1,16 @@
 /********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 file_name: save.c
-author: 刘云笛
-version: 0
+author: 刘云笛	
+version: 3.0
 Description:对战信息文件处理
+		***注意*** 此函数添加存档只能按顺序添加，不能让用户点选任意一个添加
 date:
 
 更新日志																	后续可能需要加密文件防挂，目前暂不考虑
-																			
-																			***注意*** 此函数添加存档只能按顺序添加，不能让用户点选任意一个添加
-
-函数目录
-1.创建用户存档文件
-2.
+version 1.0 ：使用文本文件（好看，但是文件较大，读写慢）
+version 2.0 ：大突破！使用二进制文件，地图单元格使用位字段结构
+version 3.2 ：2020/10/18 增加CELL的容量，为将来增加功能预留空间
 ******************************************************************/
 #define MAP_SIZE 13
 #define MAX_SAVE_NUM 6
@@ -32,7 +30,7 @@ save文件设计：											位数表：自开头偏移量（字节）
 	
 	以下13行*13个unsigned大小（位字段CELL）为地图			13
 	位字段结构设计见struct.h
-	------------------------------------				地图共2*SIZE*SIZE
+	------------------------------------				地图共3*SIZE*SIZE
 	Author：刘云笛
 *************************************************************************************************/
 
@@ -144,16 +142,17 @@ Description: 在对战信息文件中定位
 
 void seek_savinfo(FILE* fp, short n, int x, int y)//fp 指向用户对战信息文件的指针
 {
+	int size = sizeof(CELL);
 	fseek(fp, 1, SEEK_SET);//跳过开始数字
-	fseek(fp, (13 + sizeof(CELL) * MAP_SIZE * MAP_SIZE) * (n - 1), 1);//跳过n-1个存档
+	fseek(fp, (13 + size * MAP_SIZE * MAP_SIZE) * (n - 1), 1);//跳过n-1个存档
 	if (x * y == 0)
 	{
 		return;
 	}
 	fseek(fp, 13, SEEK_CUR);//跳过“存档头”
 	/* 存储行列与双倍宽度坐标的关系：row=y,column=(int)(x+1)/2 */
-	fseek(fp, sizeof(CELL) * MAP_SIZE * (y - 1), SEEK_CUR);//跳过y-1行
-	fseek(fp, (x - 1) / sizeof(CELL) * sizeof(CELL), SEEK_CUR);//跳过(x - 1) / 2列
+	fseek(fp, size * MAP_SIZE * (y - 1), SEEK_CUR);//跳过y-1行
+	fseek(fp, (x - 1) / size * size, SEEK_CUR);//跳过(x - 1) / 2列
 }
 
 short get_savenum(FILE* fp)
@@ -161,7 +160,6 @@ short get_savenum(FILE* fp)
 	short tot;
 	fseek(fp, 0, SEEK_SET);
 	tot = fgetc(fp) - '0';
-	//fread(&tot, 1, 1, fp);//读取存档总数
 	return tot;
 }
 
@@ -172,7 +170,64 @@ short get_savmode(FILE* fp, short savnum)
 	fread(&mode, 1, 1, fp);
 	return mode;
 }
-/*******************以下测试函数，记得删除********************/
+
+/**********************************************************
+Function：		Battle_init
+Description：	战斗初始化函数，读取存档
+Input:			fp用户存档文件指针，其他你一看就懂
+Author：		刘云笛
+**********************************************************/
+void Battle_init(FILE* fp, Battleinfo* info, MAP map)
+{
+	int i;
+	int size = sizeof(CELL);
+
+	fseek(fp, 7, SEEK_CUR);//跳过日期
+	fread(&(info->round), 2, 1, fp);
+	fread(&(info->b_source), 2, 1, fp);
+	fread(&(info->r_source), 2, 1, fp);
+	for (i = 0; i < 13; i++)
+	{
+		fread(map[i], size, 13, fp);
+		if (feof(fp) && i != 12)
+		{
+			show_error("地图文件有误！", 1);
+		}
+	}//读取地图信息
+}
+/**********************************************************
+Function：		save_battle
+Description：	保存存档
+Input:			fp用户存档文件指针，需要指向正确存档，其他你一看就懂
+Author：		刘云笛
+**********************************************************/
+
+void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
+{
+	unsigned t[3];
+	time_t rawtime;
+	struct tm* info;
+	int i;
+	int size = sizeof(CELL);
+
+	fseek(fp, 1, SEEK_CUR);//跳过模式号
+	//当前时间输入
+	time(&rawtime);
+	info = localtime(&rawtime);
+	t[0] = info->tm_year + 1900;//年
+	t[1] = (info->tm_mon + 1) * 100 + (info->tm_mday);//月日
+	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
+	fwrite(t, 2, 3, fp);
+	//回合信息保存
+	fwrite(&(batinfo.round), 2, 1, fp);
+	fwrite(&(batinfo.b_source), 2, 1, fp);
+	fwrite(&(batinfo.r_source), 2, 1, fp);
+	//储存地图信息
+	for (i = 0; i < 13; i++)
+	{
+		fwrite(map[i], size, 13, fp);
+	}
+}
 
 
 
