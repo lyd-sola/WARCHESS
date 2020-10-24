@@ -22,6 +22,7 @@ int battle(char *user, short save_num, short mode)
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上一个格子
 	int flag, msgflag = 0;
+	int side = 0;//标记当前阵营
 	char filename[25] = "SAVES//";
 	FILE* fp;
 
@@ -34,11 +35,10 @@ int battle(char *user, short save_num, short mode)
 	Battle_init(fp, &batinfo, map);
 	
 	battle_draw();
-
-	map[6][6].side = 1;
-	map[6][6].kind = BUILDER;
-	map[6][5].side = 2;
-	map[6][5].kind = INFANTRY;
+	//map[6][6].side = 1;
+	//map[6][6].kind = BUILDER;
+	//map[6][5].side = 2;
+	//map[6][5].kind = INFANTRY;
 	initdraw(map);
 
 	//大本营信息的初始化，应放入初始化存档界面？
@@ -51,22 +51,31 @@ int battle(char *user, short save_num, short mode)
 	while(1)
 	{
 		Newxy();
-		nxt_btn_fun(65370, 65340);
-
+		if (nxt_btn_fun(65370, 65340))
+		{
+			show_msg("进行下一回合", "");
+			nxt_round(map, &batinfo, &side);
+			delay(1000);
+		}
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
 		{
 			msgflag = 1;
 			opos = D2O(ptmp);
+			if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY)
+			{
+				show_msg("此为敌方单位，不可操作！", "");
+				disp_geo_info(map[opos.y][opos.x]);
+				disp_arm_info(map[opos.y][opos.x]);
+				continue;
+			}
 			if (flag == 3)
 			{
 				clccell = 0;
+				disp_arm_info(map[opos.y][opos.x]); 
 				disp_geo_info(map[opos.y][opos.x]);
-				disp_arm_info(map[opos.y][opos.x]); //清空其中的静态结构体变量
-				/*bug没de掉*/
-				show_msg("血量", textwithint("等级：", map[opos.y][opos.x].kind, "再次点选进行升级"));
+				show_msg("保护我方大本营！", "再次点选进行升级");
 				delay(50);
-				//只能操作右上角即蓝方阵营
-				base_func(map, &batinfo.b_source, map[3][10].side); //这里需要加上一个阵营的判断，因为无下一回合函数，所以暂时不写
+				base_func(map, side ? (&batinfo.r_source) : (&batinfo.b_source), side);
 			}
 			if (flag == 2)
 			{
@@ -178,15 +187,27 @@ void battle_draw()
 void draw_cell(DBL_POS pos, MAP map)
 {
 
-	int kind, side;
+	int kind, side, geo;
 	POS offpos;
 
 	offpos = D2O(pos);
 
 	kind = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
-
+	geo = map[offpos.y][offpos.x].side;
 	pos = center_xy(pos.x, pos.y);
+	//防止初始化界面时因为kind不等于0把大本营和资源画错
+	switch (geo)
+	{
+	case BASE:
+		return;
+	case SORC:
+		return;
+	case HSORC:
+		return;
+	default:
+		break;
+	}
 	switch (kind)
 	{
 	case BUILDER:
@@ -218,7 +239,6 @@ void initdraw(MAP map)
 	{
 		for (j = 0; j < 13; j++)
 		{
-
 			opos.x = i;
 			opos.y = j;
 			dpos = O2D(opos);
@@ -276,15 +296,16 @@ Arminfo search_info(int kind)
 	return info;
 }
 
+//显示当前位置地形信息
 void disp_geo_info(CELL cell)
 {
-	char text[20] = "所需行动力", buffer[20];
+	char text[20] = "所需行动力", text1[20] = "生命值 ", text2[20] = "等级 ";
+	char buffer[20], buffer1[20], buffer2[20];
 	static CELL lastcell1;
 	if (lastcell1.geo == cell.geo)
 		return;
 	itoa(move_cost(cell.geo), buffer, 10);
 	strcat(text, buffer);
-
 	Bar64k(0, 0, 204, 100, 65370);
 	switch (cell.geo)
 	{
@@ -301,8 +322,15 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 20, "沙漠", 32, 48, 0);
 		break;
 	case BASE:
+		itoa(cell.health, buffer1, 10);
+		strcat(text1, buffer1);
+		itoa(cell.kind, buffer2, 10);
+		strcat(text2, buffer2);
 		Outtext(20, 20, "大本营", 32, 48, 0);
-		break;
+		Outtext(20, 70, text1, 16, 20, 0);
+		Outtext(20, 100, text2, 16, 20, 0);
+		lastcell1 = cell;
+		return;
 	case SORC:
 		Outtext(20, 20, "资源点", 32, 48, 0);
 		break;
@@ -322,12 +350,14 @@ Arminfo disp_arm_info(CELL cell)
 	Arminfo info;
 	char buffer[20] = "\0";
 	//static CELL lastcell2;
-
 	//if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
 	//	return;
-
 	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
+	//因为存档中的兵种用来存储信息了，这里需要特判
+	if (cell.geo == BASE || cell.geo == SORC || cell.geo == HSORC)
+		return;
+
 	switch (cell.kind)
 	{
 	case BUILDER:
@@ -368,6 +398,7 @@ Arminfo disp_arm_info(CELL cell)
 	return info;
 }
 
+//大本营功能函数
 void base_func(MAP map, int *source, int side)
 {
 	POS pos,dpos;
@@ -411,6 +442,7 @@ void base_func(MAP map, int *source, int side)
 	}
 }
 
+//大本营升级函数
 void levelup(DBL_POS dpos, MAP map, int *source)
 {
 	OFF_POS opos;
@@ -436,6 +468,7 @@ void levelup(DBL_POS dpos, MAP map, int *source)
 	}
 }
 
+//建造兵种函数
 void buildarm(MAP map, int *source, int side)
 {
 	int armkind = 0;
@@ -505,7 +538,7 @@ void buildarm(MAP map, int *source, int side)
 			}
 			else if (side == 1) //蓝色方
 			{
-				if (map[11][1].kind != 0) //判断蓝色方出兵点是否被占领
+				if (map[10][2].kind != 0) //判断蓝色方出兵点是否被占领
 				{
 					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
 					delay(1000);
@@ -515,6 +548,7 @@ void buildarm(MAP map, int *source, int side)
 				{
 					map[10][2].kind = armkind;
 					map[10][2].health = arminfo.health;
+					map[10][2].side = side;
 					center = center_xy(5, 11);
 					icon(center, side, armkind);
 				}
@@ -531,6 +565,7 @@ void buildarm(MAP map, int *source, int side)
 				{
 					map[2][10].kind = armkind;
 					map[2][10].health = arminfo.health;
+					map[2][10].side = side;
 					center = center_xy(21, 3);
 					icon(center, side, armkind);
 				}

@@ -174,3 +174,45 @@ void delarm(DBL_POS dpos, MAP map)
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);
 	return;
 }
+
+//下一回合函数
+void nxt_round(MAP map, Battleinfo* info, int *pside)
+{
+	int i, j, perround = 1;
+	for (i = 0; i < 13; i++)
+	{
+		for (j = 0; j < 13; j++)
+		{
+			if (map[j][i].kind != NOARMY)
+			{
+				map[j][i].flag = 1;
+			}
+		}
+	}
+	if (*pside)
+	{
+		/*计算每回合增加资源数的公式，初始每回合一
+		* 大本营等级二级：+1 大本营等级三级：+3
+		* 普通资源：每占领一个每回合+1
+		* 高级资源：每占领一个每回合+3*/
+		perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
+		info->r_source += perround;
+		info->round += 1; //仅在红方结束行动后增加回合数
+	}
+	else
+	{
+		//没有意识到结构体里是uint型，只能分步计算
+		if (map[3][10].kind > 1) //大本营1级
+			perround += 1;
+		if (map[3][10].kind > 2) //大本营2级
+			perround += 2;
+		if (map[3][1].kind == 1 && map[3][1].side == 0) //普通资源点是否占领
+			perround += 1;
+		if (map[9][10].kind == 1 && map[9][10].side == 0) //同上
+			perround += 1;
+		if (map[6][6].kind == 1 && map[6][6].side == 0) //搞基资源点是否占领
+			perround += 3;
+		info->b_source += perround;
+	}
+	*pside = (*pside) ? 0 : 1; //切换阵营
+}

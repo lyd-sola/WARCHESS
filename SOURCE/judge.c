@@ -210,5 +210,4 @@ int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto)//成功返回1，失败0
 		return 0;
 	}//visit外，或不可到达
 	return 1;
-
 }
