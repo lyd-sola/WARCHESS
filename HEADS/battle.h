@@ -35,4 +35,11 @@ void icon(POS world_pos, int side, int kind);
 Arminfo search_info(int kind);
 Arminfo disp_arm_info(CELL cell);
 
+typedef struct COLR {
+	int atk, mov, stay, del;
+}COLO;
+#define OK_co 65370
+#define CANT_co 44373
+void act_buttons(COLO co);
+void change_co(COLO* co, int kind, int flag);
 #endif

@@ -109,9 +109,24 @@ void savefile_init(FILE *fp, short mode)
 		for(j = 0; j < MAP_SIZE; j ++)//OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC
 		{
 			fscanf(map, "%c", &geo);
-			geo -= '0';
-			cell.geo = geo;
-			fwrite(&cell, sizeof(CELL), 1, fp);
+			if (geo == BASE)
+			{
+				cell.geo = BASE;
+				cell.kind = 1;//大本营初始化
+				cell.health = 30;
+				if (i == 3)//红方
+					cell.side = 1;
+				fwrite(&cell, sizeof(CELL), 1, fp);
+				cell.kind = NOARMY;
+				cell.health = 0;
+				cell.side = 0;
+			}
+			else
+			{
+				geo -= '0';
+				cell.geo = geo;
+				fwrite(&cell, sizeof(CELL), 1, fp);
+			}
 		}
 		fseek(map, 2, SEEK_CUR);
 	}

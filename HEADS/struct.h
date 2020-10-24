@@ -3,8 +3,8 @@
 
 typedef struct _Position
 {
-	short x;
-	short y;
+	int x;
+	int y;
 }DBL_POS, OFF_POS, POS;//double width , offset, POS为世界坐标
 
 typedef struct _cell

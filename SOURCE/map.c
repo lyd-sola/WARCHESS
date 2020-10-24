@@ -89,6 +89,7 @@ float f(float x, float a, float b, int n1, int n2)
 	centpos.y = 54 + (col - 1) * 46;
 	centpos.y -= (col - 1) / 3;
 	centpos.x -= (row - 1) / 3;
+	centpos.y -= 2;//根据图标位置微调
 	return centpos;
 }
 
@@ -165,6 +166,7 @@ int move_cost(int geo)//返回移动消耗
 	case OUT_MAP:
 		return 666;
 	}
+	return 666;
 }
 
 int inside_map(MAP map, DBL_POS pos)//为了其他函数的美观，把丑陋的东西写在这里

@@ -36,13 +36,12 @@ void move(DBL_POS From, MAP map, int able)//需要增加移动方判断和是否可以行动
 				{
 					Clrmous();
 
-					map[To.x][To.y].stay = 0;//移动解除驻扎状态
-					map[To.x][To.y].flag = 1;//标记已移动
+					map[To.y][To.x].stay = 0;//移动解除驻扎状态
+					map[To.y][To.x].flag = 1;//标记已移动
 					map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
 					map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
 					map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
 					map[ofrom.y][ofrom.x].kind = NOARMY;//清除这个就行了
-					move_button(65370);
 					return;
 				}
 				else
@@ -76,14 +75,14 @@ void stay(DBL_POS dpos, MAP map)
 	if (map[opos.y][opos.x].stay)
 	{
 		show_msg("已经在此处驻扎！", "");
-		
 	}
 	else
 	{
 		map[opos.y][opos.x].stay = 1;
+		map[opos.y][opos.x].flag = 1;
 		show_msg("驻扎成功", "");
 	}
-	delay(800);
+	delay(1000);
 	return;
 }
 
@@ -97,7 +96,7 @@ void attack(DBL_POS dpos, MAP map)
 
 	opos = D2O(dpos);
 	attack_button("攻击", 600);
-	show_msg("请选择要攻击的位置", "");
+	show_msg("请选择要攻击的位置", "右键取消");
 
 	while (1)
 	{
@@ -118,6 +117,7 @@ void attack(DBL_POS dpos, MAP map)
 				}
 				else
 				{
+					map[opos.y][opos.x].flag = 1;
 					if (info.attack >= map[to.y][to.x].health) //目标扑街
 					{
 						Clrmous();
@@ -127,11 +127,14 @@ void attack(DBL_POS dpos, MAP map)
 						delay(1000);
 						Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图	
 					}
-					
 					else
 					{
 						//计算驻扎增幅的公式，暂设为驻扎之后攻击力+2，防御力+1（即受到的伤害-1）
-						map[to.y][to.x].health = (map[to.y][to.x].health + Stay_to * 1) - (info.attack + Stay_pos * 2); 
+						map[to.y][to.x].health -= info.attack + Stay_pos * 2; 
+						if (Stay_to && info.attack != 1)
+						{
+							map[to.y][to.x].health++;
+						}
 						show_msg("FIRE!", "");
 						draw_bomb(center.x, center.y+10, 0);
 						delay(1000);
@@ -160,4 +163,22 @@ void delarm(DBL_POS dpos, MAP map)
 	delay(1000);
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);
 	return;
+}
+
+void next_round(MAP map, unsigned *round)
+{
+	int i, j;
+	(*round)++;
+	//if (*round % 2 == 1)//奇数回合前更新
+	//{
+		for (i = 0; i < 13; i++)
+		{
+			for (j = 0; j < 13; j++)
+			{
+				map[i][j].flag = 0;
+			}
+		}
+	//}
+	
+		
 }

@@ -20,10 +20,10 @@ int battle(char *user, short save_num, short mode)
 	OFF_POS opos;
 	Battleinfo batinfo;//对战信息
 	Arminfo arminfo;//兵种信息暂存
-	int clccell = 0;//点击过地图上一个格子
-	int flag, msgflag = 0;
-	char filename[25] = "SAVES//";
-	FILE* fp;
+	int clccell = 0;//点击过地图上的一个格子
+	int flag;
+	char filename[25] = "SAVES//";	FILE* fp;
+	COLO co;
 
 	DBL_POS test;
 	
@@ -32,81 +32,77 @@ int battle(char *user, short save_num, short mode)
 		show_error("未找到用户存档文件", 1);
 	seek_savinfo(fp, save_num, 0, 0);
 	Battle_init(fp, &batinfo, map);
+	fclose(fp);
 	
+	change_co(&co, 0, 1);
 	battle_draw();
 
 	map[6][6].side = 1;
 	map[6][6].kind = BUILDER;
-	map[6][5].side = 2;
+	map[6][6].health = 2;
+	map[6][6].flag = 0;
+	map[6][5].side = 0;
 	map[6][5].kind = INFANTRY;
+	map[6][5].flag = 0;//test
 	initdraw(map);
-
 
 	while(1)
 	{
 		Newxy();
-		
+		show_msg("请指挥官进行操作", "");
 
-		nxt_btn_fun(65370, 65340);
+		if (nxt_btn_fun(65370, 65340))
+		{
+			next_round(map, &(batinfo.round));
+		}
 
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
 		{
-			msgflag = 1;
 			opos = D2O(ptmp);
 			if (flag == 2)
 			{
 				pos = ptmp;
 				clccell = 1;
 				show_msg("已选择一个单位", "请选择行为");
-				/*******************显示信息********************/
 				disp_geo_info(map[opos.y][opos.x]);
-				arminfo = disp_arm_info(map[opos.y][opos.x]);
+				arminfo = disp_arm_info(map[opos.y][opos.x]);//显示信息
+				change_co(&co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag);
+				act_buttons(co);
 			}
 			else
 			{
 				clccell = 0;
 				disp_geo_info(map[opos.y][opos.x]);
-				disp_arm_info(map[opos.y][opos.x]); //清空其中的静态结构体变量
+				disp_arm_info(map[opos.y][opos.x]);
 		 		show_msg("该区域为空", "");
+				change_co(&co, 0, 1);
+				act_buttons(co);
+				delay(1000);
 			}
-
 		}
 
-		if (clccell && move_btn_fun(65370, 65340))//移动
+		if (clccell && move_btn_fun(co.mov, 65340))//移动
 		{
 			move(pos, map, arminfo.move);
 			clccell = 0;
-			msgflag = 0;
-			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
-
+			move_button(co.mov);
 		}
-
-		if (clccell && stay_btn_fun("驻扎", 65370, 65340))//驻扎
+		if (clccell && stay_btn_fun("驻扎", co.stay, 65340))//驻扎
 		{
 			stay(pos, map);
 			clccell = 0;
-			msgflag = 0;
 		}
-
-		if (clccell && atk_btn_fun("攻击", 65370, 65340))//攻击
+		if (clccell && atk_btn_fun("攻击", co.atk, 65340))//攻击
 		{
 			attack(pos, map);
 			clccell = 0;
-			msgflag = 0;
 		}
-
-		if (clccell && del_btn_fun(65370, 65340))//删除
+		if (clccell && del_btn_fun(co.del, 65340))//删除
 		{
 			delarm(pos, map);
 			clccell = 0;
-			msgflag = 0;
 		}
 
-		if (msgflag == 0)
-		{
-			show_msg("请指挥官进行操作", "");
-			msgflag = 1;
-		}
 
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
@@ -117,8 +113,10 @@ int battle(char *user, short save_num, short mode)
 		{
 			if (msgbar("确定", "取消", "保存存档，确定吗", ""))
 			{
+				fp = fopen(filename, "rb+");
 				seek_savinfo(fp, save_num, 0, 0);
 				save_battle(fp, batinfo, map);
+				fclose(fp);
 			}
 			Clrmous();
 			Map_partial(262, 218, 262 + 500, 219 + 230, FBMP);
@@ -132,7 +130,6 @@ int battle(char *user, short save_num, short mode)
 		{
 			if (msgbar("确定", "取消", "退出会丢失未保存的进度", "确定退出吗？"))
 			{
-				fclose(fp);
 				return MAINMENU;
 			}
 			else
@@ -150,11 +147,11 @@ void battle_draw()
 	Clrmous();
 	Putbmp64k(0, 0, "BMP//map.bmp");
 
-	attack_button("攻击", 65370);
-	stay_button("驻扎", 65370);
-	move_button(65370);
-	del_button(65370);
 	nextr_button(65370);
+	attack_button("攻击", CANT_co);
+	stay_button("驻扎", CANT_co);
+	move_button(CANT_co);
+	del_button(CANT_co);
 
 	//选项菜单
 	save_btn(65370);
@@ -266,9 +263,9 @@ Arminfo search_info(int kind)
 void disp_geo_info(CELL cell)
 {
 	char text[20] = "所需行动力", buffer[20];
-	static CELL lastcell1;
+	/*static CELL lastcell1;
 	if (lastcell1.geo == cell.geo)
-		return;
+		return;*/
 	itoa(move_cost(cell.geo), buffer, 10);
 	strcat(text, buffer);
 
@@ -302,7 +299,7 @@ void disp_geo_info(CELL cell)
 		break;
 	}
 	cell.geo ? Outtext(20, 70, text, 16, 20, 0) : Outtext(20, 70, "不可逾越", 16, 20, 0);
-	lastcell1 = cell;
+	//lastcell1 = cell;
 }
 
 /********显示当前鼠标位置兵种信息*********/
@@ -357,3 +354,31 @@ Arminfo disp_arm_info(CELL cell)
 	return info;
 }
 
+void act_buttons(COLO co)
+{
+	attack_button("攻击", co.atk);
+	stay_button("驻扎", co.stay);
+	move_button(co.mov);
+	del_button(co.del);
+}
+void change_co(COLO* co, int kind, int flag)
+{
+	if (flag)
+	{
+		co->atk = CANT_co;
+		co->del = CANT_co;
+		co->mov = CANT_co;
+		co->stay = CANT_co;
+	}
+	else 
+	{
+		co->atk = OK_co;
+		co->del = OK_co;
+		co->mov = OK_co;
+		co->stay = OK_co;
+		if (kind == BUILDER)
+		{
+			co->atk = CANT_co;
+		}
+	}
+}
