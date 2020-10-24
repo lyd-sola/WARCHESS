@@ -66,20 +66,20 @@ Author：刘云笛
 Description: 对某一个存档进行覆盖式初始化
 *******************************************/
 
-void savefile_init(FILE *fp, short mode)
+void savefile_init(FILE* fp, short mode)
 {
 	unsigned int i = 3, j = 0, t[3];
 	time_t rawtime;
-    struct tm *info;
+	struct tm* info;
 	CELL cell;
-	FILE *map;
+	FILE* map;
 	char geo;
 	//对战模式
 	//fwrite(&m, 1, 1, fp);
 	fprintf(fp, "%1d", mode);
 	//当前时间输入
-	time( &rawtime );
-    info = localtime( &rawtime );
+	time(&rawtime);
+	info = localtime(&rawtime);
 	t[0] = info->tm_year + 1900;//年
 	t[1] = (info->tm_mon + 1) * 100 + (info->tm_mday);//月日
 	t[2] = (info->tm_hour) * 100 + (info->tm_min);//时分
@@ -90,8 +90,8 @@ void savefile_init(FILE *fp, short mode)
 	i = 2;
 	fwrite(&i, 2, 1, fp);
 	fwrite(&i, 2, 1, fp);//双方资源数
-	
-	
+
+
 	//地图初始化
 	if ((map = fopen("DATA//map.txt", "r")) == NULL)
 	{
@@ -103,12 +103,13 @@ void savefile_init(FILE *fp, short mode)
 	cell.faci = 0;
 	cell.stay = 0;
 	cell.flag = 0;
-	for(i = 0; i < MAP_SIZE; i ++)
+	for (i = 0; i < MAP_SIZE; i++)
 	{
 		fseek(map, 2, SEEK_CUR);
-		for(j = 0; j < MAP_SIZE; j ++)//OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC
+		for (j = 0; j < MAP_SIZE; j++)//OBSTACLE, PLAIN, FOREST, DESERT, BASE, SORC, HSORC
 		{
 			fscanf(map, "%c", &geo);
+			geo -= '0';
 			if (geo == BASE)
 			{
 				cell.geo = BASE;
@@ -123,7 +124,6 @@ void savefile_init(FILE *fp, short mode)
 			}
 			else
 			{
-				geo -= '0';
 				cell.geo = geo;
 				fwrite(&cell, sizeof(CELL), 1, fp);
 			}

@@ -21,7 +21,8 @@ int battle(char *user, short save_num, short mode)
 	Battleinfo batinfo;//对战信息
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上的一个格子
-	int flag;
+	int flag, msgflag = 0;
+	int side = 0;//标记当前阵营
 	char filename[25] = "SAVES//";	FILE* fp;
 	COLO co;
 
@@ -37,47 +38,82 @@ int battle(char *user, short save_num, short mode)
 	change_co(&co, 0, 1);
 	battle_draw();
 
-	map[6][6].side = 1;
-	map[6][6].kind = BUILDER;
-	map[6][6].health = 2;
-	map[6][6].flag = 0;
-	map[6][5].side = 0;
-	map[6][5].kind = INFANTRY;
-	map[6][5].flag = 0;//test
+	//map[6][6].side = 1;
+	//map[6][6].kind = BUILDER;
+	//map[6][6].health = 2;
+	//map[6][6].flag = 0;
+	//map[6][5].side = 0;
+	//map[6][5].kind = INFANTRY;
+	//map[6][6].side = 1;
+	//map[6][6].kind = BUILDER;
+	//map[6][5].side = 2;
+	//map[6][5].kind = INFANTRY;
+	//map[6][5].flag = 0;//test
 	initdraw(map);
+
+	//大本营信息的初始化，应放入初始化存档界面？
+	//map[3][10].side = 0;
+	//map[9][1].side = 1;
+	//map[3][10].kind = 1;
+	//map[9][1].kind = 1;
+	batinfo.b_source = 50;
 
 	while(1)
 	{
 		Newxy();
-		show_msg("请指挥官进行操作", "");
+		if (!msgflag)
+		{
+			show_msg("请指挥官进行操作", "");
+			msgflag = 1;
+		}
 
 		if (nxt_btn_fun(65370, 65340))
 		{
-			next_round(map, &(batinfo.round));
+			show_msg("进行下一回合", "");
+			nxt_round(map, &batinfo, &side);
+			delay(1000);
 		}
-
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
 		{
 			opos = D2O(ptmp);
+			if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY)
+			{
+				show_msg("此为敌方单位，不可操作！", "");
+				disp_arm_info(map[opos.y][opos.x]);
+				disp_geo_info(map[opos.y][opos.x]);
+				delay(1000);
+				continue;
+			}
+			if (flag == 3)
+			{
+				clccell = 0;
+				disp_arm_info(map[opos.y][opos.x]); 
+				disp_geo_info(map[opos.y][opos.x]);
+				show_msg("再次点选进行升级！", "右键取消");
+				delay(50);
+				base_func(map, side ? (&batinfo.r_source) : (&batinfo.b_source), side);
+				msgflag = 0;
+			}
 			if (flag == 2)
 			{
 				pos = ptmp;
 				clccell = 1;
 				show_msg("已选择一个单位", "请选择行为");
-				disp_geo_info(map[opos.y][opos.x]);
+				msgflag = 1;
 				arminfo = disp_arm_info(map[opos.y][opos.x]);//显示信息
+				disp_geo_info(map[opos.y][opos.x]);
 				change_co(&co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag);
 				act_buttons(co);
 			}
 			else
 			{
 				clccell = 0;
-				disp_geo_info(map[opos.y][opos.x]);
 				disp_arm_info(map[opos.y][opos.x]);
-		 		show_msg("该区域为空", "");
+				disp_geo_info(map[opos.y][opos.x]);
+		 		//show_msg("该区域为空", "");
 				change_co(&co, 0, 1);
 				act_buttons(co);
-				delay(1000);
+				//delay(1000);
 			}
 		}
 
@@ -86,6 +122,7 @@ int battle(char *user, short save_num, short mode)
 			move(pos, map, arminfo.move);
 			clccell = 0;
 			move_button(co.mov);
+			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
 		}
 		if (clccell && stay_btn_fun("驻扎", co.stay, 65340))//驻扎
 		{
@@ -162,15 +199,27 @@ void battle_draw()
 void draw_cell(DBL_POS pos, MAP map)
 {
 
-	int kind, side;
+	int kind, side, geo;
 	POS offpos;
 
 	offpos = D2O(pos);
 
 	kind = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
-
+	geo = map[offpos.y][offpos.x].geo;
 	pos = center_xy(pos.x, pos.y);
+	//防止初始化界面时因为kind不等于0把大本营和资源画错
+	switch (geo)
+	{
+	case BASE:
+		return;
+	case SORC:
+		return;
+	case HSORC:
+		return;
+	default:
+		break;
+	}
 	switch (kind)
 	{
 	case BUILDER:
@@ -202,7 +251,6 @@ void initdraw(MAP map)
 	{
 		for (j = 0; j < 13; j++)
 		{
-
 			opos.x = i;
 			opos.y = j;
 			dpos = O2D(opos);
@@ -260,18 +308,12 @@ Arminfo search_info(int kind)
 	return info;
 }
 
+//显示当前位置地形信息
 void disp_geo_info(CELL cell)
 {
-	char text[20] = "所需行动力", buffer[20];
-	/*static CELL lastcell1;
-	if (lastcell1.geo == cell.geo)
-		return;*/
-	itoa(move_cost(cell.geo), buffer, 10);
-	strcat(text, buffer);
-
+	char text[20], text1[20], text2[20];
+	sprintf(text, "所需行动力 %d", move_cost(cell.geo));
 	Bar64k(0, 0, 204, 100, 65370);
-	//Filltriangle(0, 100, 0, 350, 204, 100, 65370);
-	
 	switch (cell.geo)
 	{
 	case OBSTACLE: 
@@ -287,8 +329,12 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 20, "沙漠", 32, 48, 0);
 		break;
 	case BASE:
+		sprintf(text1, "生命值 %d", cell.health);
+		sprintf(text2, "等级 %d", cell.kind);
 		Outtext(20, 20, "大本营", 32, 48, 0);
-		break;
+		Outtext(20, 70, text1, 16, 20, 0);
+		Outtext(20, 100, text2, 16, 20, 0);
+		return;
 	case SORC:
 		Outtext(20, 20, "资源点", 32, 48, 0);
 		break;
@@ -299,7 +345,6 @@ void disp_geo_info(CELL cell)
 		break;
 	}
 	cell.geo ? Outtext(20, 70, text, 16, 20, 0) : Outtext(20, 70, "不可逾越", 16, 20, 0);
-	//lastcell1 = cell;
 }
 
 /********显示当前鼠标位置兵种信息*********/
@@ -307,13 +352,11 @@ Arminfo disp_arm_info(CELL cell)
 {
 	Arminfo info;
 	char buffer[20] = "\0";
-	//static CELL lastcell2;
-
-	//if (lastcell2.kind == cell.kind && lastcell2.health == cell.health)
-	//	return;
-
 	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
+	if (cell.geo == BASE || cell.geo == SORC || cell.geo == HSORC)
+		return info;
+
 	switch (cell.kind)
 	{
 	case BUILDER:
@@ -350,7 +393,6 @@ Arminfo disp_arm_info(CELL cell)
 	default:
 		break;
 	}
-	//lastcell2 = cell;
 	return info;
 }
 

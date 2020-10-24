@@ -5,9 +5,13 @@
 void move(DBL_POS From, MAP map, int able);
 void stay(DBL_POS dpos, MAP map);
 void attack(DBL_POS dpos, MAP map);
-void next_round(MAP map, unsigned* round);
 
 void delarm(DBL_POS dpos, MAP map);
+void nxt_round(MAP map, Battleinfo* info, int* pside);
+
+void base_func(MAP map, unsigned* source, int side);
+void levelup(DBL_POS dpos, MAP map, unsigned* source);
+void buildarm(MAP map, unsigned* source, int side);
 
 
 #endif

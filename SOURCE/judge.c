@@ -190,3 +190,24 @@ void anime_path(MAP map, DBL_POS* path, int top)
 	//pos = center_xy(path[top].x, path[top].y);
 	//icon(pos, side, kind);
 }
+
+int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto)//成功返回1，失败0
+{
+	OFF_POS opos, oto;
+	int nx, ny;
+
+	int visit[7][7];
+
+	memset(visit, 0, sizeof(visit));
+	range(map, dpos, able, 1, visit);
+
+	opos = D2O(dpos);
+	oto = D2O(dto);
+	nx = oto.x - opos.x + 3;
+	ny = oto.y - opos.y + 3;
+	if (nx < 0 || nx > 6 || ny < 0 || ny > 6 || visit[ny][nx] == 0)
+	{
+		return 0;
+	}//visit外，或不可到达
+	return 1;
+}

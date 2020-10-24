@@ -120,6 +120,10 @@ int clcmap(DBL_POS* pos, MAP map)
 			opos = D2O(*pos);
 			if (map[opos.y][opos.x].geo != OUT_MAP)
 			{
+				if (map[opos.y][opos.x].geo == BASE)
+				{
+					return 3;
+				}//´ó±¾Óª
 				if (map[opos.y][opos.x].kind != NOARMY)
 				{
 					return 2;

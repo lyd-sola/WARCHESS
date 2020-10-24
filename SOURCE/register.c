@@ -263,6 +263,64 @@ int regis_check(char *un, char *pw, char *pwr)
 }
 
 
+//密保问题，用于更改密码（也就是忘记密码，本质上是同一个）
+int secret_question(char *user)
+{
+	//因为输入法的原因，答案仅支持输入字母和数字
+	/*int question1 = 0, question2 = 0;
+	char answer1[20] = "\0", answer2[20] = "\0";*/
+	//while (1)
+	//{
+	//	Newxy();
+	//	if (sq_check(question1, answer1, question2, answer2) == 1)
+	//	{
+	//		return LOGIN;
+	//	}
+	//	if (mouse_press(610, 165, 610 + 370, 165 + 50) == MOUSE_IN_L)					//输入用户名
+	//	{
+	//		kbinput(610, 165, 610 + 370, 165 + 50, question1, 1);
+	//	}
+	//	if (mouse_press(610, 165 + 100, 610 + 370, 165 + 50 + 100) == MOUSE_IN_L)					//输入密码
+	//	{
+	//		kbinput(610, 165 + 100, 610 + 370, 165 + 50 + 100, answer1, 0);
+	//	}
+	//	if (mouse_press(610, 165 + 200, 610 + 370, 165 + 50 + 200) == MOUSE_IN_L)					//再次输入密码
+	//	{
+	//		kbinput(610, 165 + 200, 610 + 370, 165 + 50 + 200, question2, 0);
+	//	}
+	//}
+}
+
+int drop_down_list(int x1, int y1, int x2, int y2, int num)
+{
+	//char* one, two, three, four;
+	//int result = 0, i;
+	//clrmous(MouseX, MouseY);//更新鼠标状态，防止留痕
+	//for (i = 1; i <= num; i++)
+	//{
+	//	Bar64k(x1, y1, x2, y2+i*50, 65535);
+	//	switch (i)
+	//	{
+	//	case 1:
+	//		Outtext(x1+10, y1+(i-1)*50+5, one, 16, 20, 0);
+	//		break;
+	//	case 2:
+	//		Outtext(x1+10, y1+(i-1)*50+5, two, 16, 20, 0);
+	//		break;
+	//	case 3:
+	//		Outtext(x1+10, y1+(i-1)*50+5, three, 16, 20, 0);
+	//		break;
+	//	case 4:
+	//		Outtext(x1+10, y1+(i-1)*50+5, four, 16, 20, 0);
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
+}
+
+
+
 
 
 
