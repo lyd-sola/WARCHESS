@@ -1506,9 +1506,9 @@ void Circlerd64k(int xc, int yc, int radius, unsigned int color)
 
 /*仅贴一张图的部分，用于制作动画。速度较bar稍慢，但也可以接受
 lyd修改自Putbmp64k，仅能处理全屏大图（因为我们只需要这个）*/
-int Map_partial(int x1, int y1, int x2, int y2, FILE *fpbmp)//前四个参数为贴图的矩形范围
+int Map_partial(int x1, int y1, int x2, int y2)//前四个参数为贴图的矩形范围
 {
-
+	FILE* fpbmp = FBMP;
 	/*行像素缓存指针*/
 	COLORS24* buffer;
 

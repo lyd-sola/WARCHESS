@@ -95,9 +95,9 @@ void show_msg(char* msg, char *msg2)
 	static char* lastmsg;
 	if (strcmp(msg, lastmsg) == 0)	//保证了不会连续输出同样的文字导致闪烁
 		return;
-	Map_partial(340, 666, 720, 666+17, FBMP);
+	Map_partial(340, 666, 720, 666+17);
 	Outtext(340, 666, msg, 16, 23, 0);
-	Map_partial(340, 705, 720, 705 + 17, FBMP);
+	Map_partial(340, 705, 720, 705 + 17);
 	Outtext(340, 705, msg2, 16, 23, 0);
 	lastmsg = msg;
 }

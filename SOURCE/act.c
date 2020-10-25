@@ -128,7 +128,7 @@ void attack(DBL_POS dpos, MAP map)
 							show_msg("目标已被歼灭！","");
 							draw_bomb(center.x, center.y+10, 0);
 							delay(1000);
-							Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);//还原此处地图
+							Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);//还原此处地图
 							attack_button("攻击", 65370);
 							return;
 						}
@@ -140,7 +140,8 @@ void attack(DBL_POS dpos, MAP map)
 							show_msg("FIRE!", "");
 							draw_bomb(center.x, center.y+10, 0);
 							delay(1000);
-							icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
+							draw_cell(dbto, map);
+							//icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
 							attack_button("攻击", 65370);
 							return;
 						}
@@ -169,7 +170,7 @@ void delarm(DBL_POS dpos, MAP map)
 	map[opos.y][opos.x].kind = NOARMY;
 	show_msg("该部队已撤退！", "");
 	delay(1000);
-	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23, FBMP);
+	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);
 	return;
 }
 
@@ -177,13 +178,20 @@ void delarm(DBL_POS dpos, MAP map)
 void nxt_round(MAP map, Battleinfo* info, int *pside)
 {
 	int i, j, perround = 1;
+	Arminfo arminfo;
 	for (i = 0; i < 13; i++)
 	{
 		for (j = 0; j < 13; j++)
 		{
 			if (map[j][i].kind != NOARMY)
 			{
-				map[j][i].flag = 1;
+				map[j][i].flag = 0;
+				if (map[j][i].faci == MEDICAL && map[j][i].kind != NOARMY)
+				{
+					arminfo = search_info(map[j][i].kind);
+					if(map[j][i].health < arminfo.health) //防止医疗站把血加爆
+						map[j][i].health += 1;
+				}
 			}
 		}
 	}
@@ -193,25 +201,68 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		* 大本营等级二级：+1 大本营等级三级：+3
 		* 普通资源：每占领一个每回合+1
 		* 高级资源：每占领一个每回合+3*/
-		perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
+		//perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
+		if (map[3][10].kind > 1) //大本营2级
+			perround += 1;
+		if (map[3][10].kind > 2) //大本营3级
+			perround += 2;
+		if (map[3][1].faci == COLLECTION && map[3][1].side == 1) //普通资源点是否占领
+			perround += 1;
+		if (map[9][10].faci == COLLECTION && map[9][10].side == 1) //同上
+			perround += 1;
+		if (map[6][6].health >= 5 && map[6][6].side == 1) //搞基资源点是否占领五回合以上
+			perround += 3;
 		info->r_source += perround;
-		info->round += 1; //仅在红方结束行动后增加回合数
+
+		/*********以下的判断为真正的一回合，即红方结束行动后需要增加的信息**********/
+		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
+		if (map[3][1].faci == COLLECTION ) //每个资源点只能开采20回合, 且只能开采一次
+		{
+			if(map[3][1].health <= 20)
+				map[3][1].health++;
+			else
+			{
+				map[3][1].faci = NOARMY;
+				map[3][1].flag = 1;
+			}
+		}
+		if (map[9][10].faci == COLLECTION) //每个资源点只能开采20回合, 且只能开采一次
+		{
+			if (map[9][10].health <= 20)
+				map[9][10].health++;
+			else
+			{
+				map[9][10].faci = NOARMY;
+				map[9][10].flag = 1;
+			}
+		}
+		if (map[6][6].faci == COLLECTION) //每个资源点只能开采20回合, 且只能开采一次
+		{
+			if (map[6][6].health <= 25)
+				map[6][6].health++;
+			else
+			{
+				map[6][6].faci = NOARMY;
+				map[6][6].flag = 1;
+			}
+		}
 	}
 	else
 	{
 		//没有意识到结构体里是uint型，只能分步计算
-		if (map[3][10].kind > 1) //大本营1级
+		if (map[9][1].kind > 1) //大本营2级
 			perround += 1;
-		if (map[3][10].kind > 2) //大本营2级
+		if (map[9][1].kind > 2) //大本营3级
 			perround += 2;
-		if (map[3][1].kind == 1 && map[3][1].side == 0) //普通资源点是否占领
+		if (map[3][1].faci == COLLECTION && map[3][1].side == 0) //普通资源点是否占领
 			perround += 1;
-		if (map[9][10].kind == 1 && map[9][10].side == 0) //同上
+		if (map[9][10].faci == COLLECTION && map[9][10].side == 0) //同上
 			perround += 1;
-		if (map[6][6].kind == 1 && map[6][6].side == 0) //搞基资源点是否占领
+		if (map[6][6].health >= 5 && map[6][6].side == 0) //搞基资源点是否占领五回合以上
 			perround += 3;
 		info->b_source += perround;
 	}
+	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
 	*pside = (*pside) ? 0 : 1; //切换阵营
 }
 
@@ -221,6 +272,7 @@ void base_func(MAP map, unsigned* source, int side)
 	POS pos, dpos;
 	pos.x = 745;
 	pos.y = 705;
+	Map_partial(740, 670, 980, 742);
 	icon(pos, side, BUILDER);
 	pos.x = 745 + 65;
 	icon(pos, side, INFANTRY);
@@ -237,23 +289,27 @@ void base_func(MAP map, unsigned* source, int side)
 		if (clcmap(&dpos, map) == 3 && map[D2O(dpos).y][D2O(dpos).x].side == side) //防止花资源给对面升级的投敌行为，待改进
 		{
 			levelup(dpos, map, source);
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23, FBMP);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
 			return;
 		}
 		//点击左下角兵种图标首先显示信息，再次点击进行造兵
-		if (mouse_press(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23) == 1)
+		if (mouse_press(745-18, 705-18, 745+65*4+18, 705+23) == 1)
 		{
 			buildarm(map, source, side);
 			Clrmous();
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23, FBMP);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
 			return;
 		}
-
 		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)	//右键取消
 		{
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23, FBMP);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
 			show_msg("取消操作", "");
 			delay(500);
+			return;
+		}
+		if (mouse_press(45-18, 705-18, 745+65*4+18, 705+23) == MOUSE_OUT_L)
+		{
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
 			return;
 		}
 	}
@@ -407,4 +463,26 @@ void buildarm(MAP map, unsigned* source, int side)
 			return;
 		}
 	}
+}
+
+void builder_build(DBL_POS dpos, MAP map)
+{
+	OFF_POS opos;
+	opos = D2O(dpos);
+	if (map[opos.y][opos.x].faci != NOARMY)
+	{
+		show_msg("此处已有设施！", "");
+	}
+	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
+	{
+		map[opos.y][opos.x].faci = COLLECTION;
+		show_msg("采集站建造成功！", "已开始采集资源");
+	}
+	else
+	{
+		map[opos.y][opos.x].faci = MEDICAL;
+		show_msg("医疗站建造成功！", "已可以进行治疗");
+	}
+	delay(1000);
+	return;
 }

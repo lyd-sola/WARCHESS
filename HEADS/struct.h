@@ -13,8 +13,8 @@ typedef struct _cell
 	unsigned stay : 1;//是否驻扎，1为驻扎
 	unsigned faci : 2;//设施，0为无设施
 	unsigned side : 1;//阵营，蓝0红1
-	unsigned flag : 1;//标记是否操作过
-	unsigned kind : 3;//兵种种类，序号见_KIND，大本营和资源无需此项
+	unsigned flag : 1;//标记兵种是否操作过，以及资源点是否已经被采爆
+	unsigned kind : 3;//兵种种类，序号见_KIND，大本营等级，资源无需此项
 	unsigned health : 5;//兵种、大本营血量，高级资源占领回合数
 	unsigned no_use : 8;//预留空间，保留增加功能的空间
 }CELL, MAP[13][13];
@@ -47,4 +47,8 @@ enum _KIND
 	TANK, SUPER
 };//兵种种类标号
 
+enum _FACI
+{
+	NOFACI, COLLECTION/*采集站*/, MEDICAL/*医疗站*/
+};//设施种类编号 虽然只有两个
 #endif

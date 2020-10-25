@@ -304,7 +304,7 @@ void draw_saves(int x, int y, int color, FILE* fp, short save_num)
 	}//模式
 
 	fread(t, 2, 1, fp);
-	sprintf(Buffer, "%u", (t[0] + 1) / 2);
+	sprintf(Buffer, "%u", (t[0]+1)/2);
 	Outtext(x + 5, y + 25 + 40, "回合数:", 16, 19, 0);
 	Outtext(x + 5 + 19 * 3 + 16, y + 25 + 40, Buffer, 16, 10, 0);
 }

@@ -22,7 +22,7 @@ int battle(char *user, short save_num, short mode)
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上的一个格子
 	int flag, msgflag = 0;
-	int side = 0;//标记当前阵营
+	int side;//标记当前阵营
 	char filename[25] = "SAVES//";	FILE* fp;
 	COLO co;
 
@@ -38,25 +38,10 @@ int battle(char *user, short save_num, short mode)
 	change_co(&co, 0, 1);
 	battle_draw();
 
-	//map[6][6].side = 1;
-	//map[6][6].kind = BUILDER;
-	//map[6][6].health = 2;
-	//map[6][6].flag = 0;
-	//map[6][5].side = 0;
-	//map[6][5].kind = INFANTRY;
-	//map[6][6].side = 1;
-	//map[6][6].kind = BUILDER;
-	//map[6][5].side = 2;
-	//map[6][5].kind = INFANTRY;
-	//map[6][5].flag = 0;//test
 	initdraw(map);
-
-	//大本营信息的初始化，应放入初始化存档界面？
-	//map[3][10].side = 0;
-	//map[9][1].side = 1;
-	//map[3][10].kind = 1;
-	//map[9][1].kind = 1;
 	batinfo.b_source = 50;
+	disp_bat_info(batinfo);
+	side = (batinfo.round + 1) % 2;
 
 	while(1)
 	{
@@ -66,17 +51,17 @@ int battle(char *user, short save_num, short mode)
 			show_msg("请指挥官进行操作", "");
 			msgflag = 1;
 		}
-
 		if (nxt_btn_fun(65370, 65340))
 		{
 			show_msg("进行下一回合", "");
 			nxt_round(map, &batinfo, &side);
 			delay(1000);
+			disp_bat_info(batinfo);
 		}
 		if ( (flag = clcmap(&ptmp, map)) != 0 )
 		{
 			opos = D2O(ptmp);
-			if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY)
+			if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY) //点击敌方单位
 			{
 				show_msg("此为敌方单位，不可操作！", "");
 				disp_arm_info(map[opos.y][opos.x]);
@@ -84,7 +69,7 @@ int battle(char *user, short save_num, short mode)
 				delay(1000);
 				continue;
 			}
-			if (flag == 3)
+			if (flag == 3) //点击大本营
 			{
 				clccell = 0;
 				disp_arm_info(map[opos.y][opos.x]); 
@@ -92,9 +77,10 @@ int battle(char *user, short save_num, short mode)
 				show_msg("再次点选进行升级！", "右键取消");
 				delay(50);
 				base_func(map, side ? (&batinfo.r_source) : (&batinfo.b_source), side);
+				disp_bat_info(batinfo);
 				msgflag = 0;
 			}
-			if (flag == 2)
+			if (flag == 2) //点击己方单位
 			{
 				pos = ptmp;
 				clccell = 1;
@@ -105,7 +91,7 @@ int battle(char *user, short save_num, short mode)
 				change_co(&co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag);
 				act_buttons(co);
 			}
-			else
+			if(flag == 1) //点空
 			{
 				clccell = 0;
 				disp_arm_info(map[opos.y][opos.x]);
@@ -113,7 +99,6 @@ int battle(char *user, short save_num, short mode)
 		 		//show_msg("该区域为空", "");
 				change_co(&co, 0, 1);
 				act_buttons(co);
-				//delay(1000);
 			}
 		}
 
@@ -143,6 +128,7 @@ int battle(char *user, short save_num, short mode)
 
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
+			save_battle(fp, batinfo, map);
 			exit(0);
 		}
 
@@ -156,7 +142,7 @@ int battle(char *user, short save_num, short mode)
 				fclose(fp);
 			}
 			Clrmous();
-			Map_partial(262, 218, 262 + 500, 219 + 230, FBMP);
+			Map_partial(262, 218, 262 + 500, 219 + 230);
 			initdraw(map);
 		}
 		if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
@@ -172,7 +158,7 @@ int battle(char *user, short save_num, short mode)
 			else
 			{
 				Clrmous();
-				Map_partial(262, 218, 262 + 500, 219 + 230, FBMP);
+				Map_partial(262, 218, 262 + 500, 219 + 230);
 				initdraw(map);
 			}
 		}
@@ -212,10 +198,10 @@ void draw_cell(DBL_POS pos, MAP map)
 	switch (geo)
 	{
 	case BASE:
-		return;
+		Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
 	case SORC:
-		return;
 	case HSORC:
+	case OUT_MAP:
 		return;
 	default:
 		break;
@@ -360,40 +346,58 @@ Arminfo disp_arm_info(CELL cell)
 	switch (cell.kind)
 	{
 	case BUILDER:
-		Outtextxx(15, 120, 110, "兵种  工兵", 16, 0);
-		itoa(cell.health, buffer, 10);
-		Outtextxx(15, 140, 75, "生命值", 16, 0);
-		Outtext(85, 140, buffer, 16, 16, 0);
-		itoa(info.attack, buffer, 10);
-		Outtextxx(15, 160, 75, "攻击力", 16, 0);
-		Outtext(85, 160, buffer, 16, 16, 0);
-		itoa(info.move, buffer, 10);
-		Outtextxx(15, 180, 75, "行动力", 16, 0);
-		Outtext(85, 180, buffer, 16, 16, 0);
-		itoa(info.distance, buffer, 10);
-		Outtextxx(15, 200, 75, "射程", 16, 0);
-		Outtext(85, 200, buffer, 16, 16, 0);
+		Outtext(30, 100, "工兵", 24, 35, 0);
 		break;
-
 	case INFANTRY:
-		Outtextxx(15, 120, 110, "兵种  步兵", 16, 0);
-		itoa(cell.health, buffer, 10);
-		Outtextxx(15, 140, 75, "生命值", 16, 0);
-		Outtext(85, 140, buffer, 16, 16, 0);
-		itoa(info.attack, buffer, 10);
-		Outtextxx(15, 160, 75, "攻击力", 16, 0);
-		Outtext(85, 160, buffer, 16, 16, 0);
-		itoa(info.move, buffer, 10);
-		Outtextxx(15, 180, 75, "行动力", 16, 0);
-		Outtext(85, 180, buffer, 16, 16, 0);
-		itoa(info.distance, buffer, 10);
-		Outtextxx(15, 200, 75, "射程", 16, 0);
-		Outtext(85, 200, buffer, 16, 16, 0);
+		Outtext(30, 100, "步兵", 24, 35, 0);
+		break;
+	case ARTILLERY:
+		Outtext(30, 100, "炮兵", 24, 35, 0);
+		break;
+	case TANK:
+		Outtext(30, 100, "坦克", 24, 35, 0);
+		break;
+	case SUPER:
+		Outtext(30, 100, "超级兵", 24, 30, 0);
 		break;
 	default:
-		break;
+		return info;
 	}
+
+	itoa(cell.health, buffer, 10);
+	Outtextxx(15, 130, 75, "生命值", 16, 0);
+	Outtext(85, 130, buffer, 16, 16, 0);
+	itoa(info.attack, buffer, 10);
+	Outtextxx(15, 150, 75, "攻击力", 16, 0);
+	Outtext(85, 150, buffer, 16, 16, 0);
+	itoa(info.move, buffer, 10);
+	Outtextxx(15, 170, 75, "行动力", 16, 0);
+	Outtext(85, 170, buffer, 16, 16, 0);
+	itoa(info.distance, buffer, 10);
+	Outtextxx(15,190, 75, "射程", 16, 0);
+	Outtext(85, 190, buffer, 16, 16, 0);
 	return info;
+}
+
+void disp_bat_info(Battleinfo batinfo)
+{
+	char buffer[20];
+	Map_partial(185, 700, 262, 732);
+	Map_partial(740, 670, 980, 742);
+	sprintf(buffer, "回合数 %d", (batinfo.round+1)/2);
+	Outtext(740, 710, buffer, 32, 40, 0);
+	if ((batinfo.round + 1)% 2)
+	{
+		sprintf(buffer, "资源数 %d", batinfo.r_source);
+		Outtext(740, 670, "红军行动", 32, 40, 0);
+		Outtext(20, 700, buffer, 32, 40, 0);
+	}
+	else
+	{
+		sprintf(buffer, "资源数 %d", batinfo.b_source);
+		Outtext(740, 670, "蓝军行动", 32, 40, 0);
+		Outtext(20, 700, buffer, 32, 40, 0);
+	}
 }
 
 void act_buttons(COLO co)

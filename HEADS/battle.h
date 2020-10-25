@@ -34,6 +34,7 @@ void disp_geo_info(CELL cell);
 void icon(POS world_pos, int side, int kind);
 Arminfo search_info(int kind);
 Arminfo disp_arm_info(CELL cell);
+void disp_bat_info(Battleinfo batinfo);
 
 typedef struct COLR {
 	int atk, mov, stay, del;

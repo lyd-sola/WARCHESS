@@ -177,14 +177,14 @@ void anime_path(MAP map, DBL_POS* path, int top)
 	for (; top > 0; top--)//pop出路径
 	{
 		pos = center_xy(path[top].x, path[top].y);
-		Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23, FBMP);//还原此处地图
+		Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23);//还原此处地图
 		icon(pos, side, kind);
-		delay(1000);
+		delay(100);
 		lpos = pos;
 	}
 	pos = center_xy(path[top].x, path[top].y);
 	Clrmous();
-	Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23, FBMP);//还原此处地图
+	Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23);//还原此处地图
 	icon(pos, side, kind);
 
 	//pos = center_xy(path[top].x, path[top].y);
@@ -210,4 +210,25 @@ int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto)//成功返回1，失败0
 		return 0;
 	}//visit外，或不可到达
 	return 1;
+}
+
+int victory_judge(MAP map)
+{
+	if (map[3][10].kind == 0)
+	{
+		delay(1000);
+		if (msgbar("确认", "取消", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+			return MAINMENU;
+		else
+			return BATTLE;
+	}
+	if (map[9][1].kind == 0)
+	{
+		delay(1000);
+		if (msgbar("确认", "取消", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+			return MAINMENU;
+		else
+			return BATTLE;
+	}
+	return 0;
 }
