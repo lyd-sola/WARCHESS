@@ -76,7 +76,8 @@ void battle_draw()
 	Clrmous();
 	Putbmp64k(0, 0, "BMP//map.bmp");
 
-	clear_info();
+	Bar64k(0, 0, 204, 100, 65370);
+	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 	nextr_button(65370);
 
 	//选项菜单
@@ -293,7 +294,7 @@ void disp_bat_info(Battleinfo batinfo)
 	char buffer[20];
 	int x = 25;
 	Map_partial(740+x, 670, 980+x, 700);//还原行动方
-	Map_partial(200+x, 715, 315+x, 747);//还原资源数
+	Map_partial(20 + 4 * 32, 715, 315+x, 747);//还原资源数
 	if (batinfo.round % 2)//回合数显示
 	{
 		Map_partial(740 + x, 700, 980 + x, 742);//还原回合数
@@ -316,11 +317,7 @@ void disp_bat_info(Battleinfo batinfo)
 		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 }
-void clear_info()
-{
-	Bar64k(0, 0, 204, 100, 65370);
-	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
-}
+
 /*绘制行为按钮*/
 void act_buttons(COLO *co, int kind, int flag, int is_same_side)
 {

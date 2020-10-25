@@ -78,10 +78,10 @@ int register_()
 				delay(1000);
 				return LOGIN;
 			}
-			else if(regis_check(user, password, password_r) == 0)
+			else
 			{
 				Outtext(312+92, 484-60,"正在返回注册界面", 16, 25, 65535);
-				delay(1000);
+				delay(2000);
 				return REGIS;
 			}
 		}
@@ -237,6 +237,13 @@ int regis_check(char *un, char *pw, char *pwr)
 	{
 		Outtext(620, 225+100+100, "请再次输入密码", 16, 30, 63488);
 	}
+	else if ((fp = fopen(filename, "rb")) != NULL)//用户名已存在
+	{
+		fclose(fp);
+		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "用户名已存在", 32, 65535);
+		return 0;
+	}
 	else if(strcmp(pw, pwr))//两次输入密码不一致
 	{
 		fclose(fp);
@@ -244,12 +251,16 @@ int regis_check(char *un, char *pw, char *pwr)
 		Outtextxx(512-170, 384-75, 512-170+340, "两次输入密码不一致", 32, 65535);
 		return 0;
 	}
-	
-	else if((fp=fopen(filename, "rb")) != NULL)//用户名已存在
+	else if (strlen(un) < 4)
 	{
-		fclose(fp);
-		shadow_l(512-200, 384-100, 512+200, 384+100, 34429);
-		Outtextxx(512-170, 384-60, 512-170+340, "用户名已存在", 32, 65535);
+		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "用户名需长于三位", 32, 65535);
+		return 0;
+	}
+	else if (strlen(pw) < 4)
+	{
+		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "密码需长于三位", 32, 65535);
 		return 0;
 	}
 	

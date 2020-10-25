@@ -8,9 +8,11 @@ date:2020/9/8
 
 更新日志
 2020/9/9
-优化了登录界面
-增加了判断是否正确输入的函数
-增加了用户名与文件匹配的功能
+	优化了登录界面
+	增加了判断是否正确输入的函数
+	增加了用户名与文件匹配的功能
+2020/10/25
+	解决了免密登录的bug
 
 函数目录
 1.login：		登录函数
@@ -22,8 +24,8 @@ date:2020/9/8
 int login(char *username)  
 {
 	char password[20] = "\0";	//初始化密码数组
+	char tmp[15];
 	int flag = 0;				//防止重复高亮
-	username[0] = '\0';
 	Clrmous();
 	drawlogin();
 	
@@ -62,7 +64,7 @@ int login(char *username)
 		
 		if(mouse_press(610, 280, 610 + 370, 280 + 50) == MOUSE_IN_L)						//输入用户名
 		{
-			kbinput(610, 280, 610 + 370, 280 + 50, username, 1);
+			kbinput(610, 280, 610 + 370, 280 + 50, tmp, 1);
 		}
 		
 		if(mouse_press(610, 280 + 100, 610 + 370, 280 + 50 + 100) == MOUSE_IN_L)				//输入密码
@@ -72,16 +74,16 @@ int login(char *username)
 		
 		if(mouse_press(686 - 15, 490 - 15, 814 + 15, 522 + 15) == MOUSE_IN_L)				//点击登录键
 		{
-			if (*username == '\0')//未输入用户名
+			if (*tmp == '\0')//未输入用户名
 			{
 				Outtext(620, 340, "请输入用户名", 16, 30, 63488);
 			}
-			else if (*password == '\0')//未输入密码
+			else if (*tmp == '\0')//未输入密码
 			{
 				Outtext(620, 440, "请输入密码", 16, 30, 63488);
 			}
 
-			else if(login_check(username, password) == 1)						//判断是否与文件匹配
+			else if(login_check(tmp, password) == 1)						//判断是否与文件匹配
 			{
 				Bar64k_radial(512-250, 384-100, 512+250, 384+100, 65535, 0);
 				delay(500);
@@ -96,6 +98,7 @@ int login(char *username)
 				Bar64k_radial(512-200, 384-100, 512+200, 384+100, 33333, 0);
 				Outtextxx(512-200+30, 384-24, 512-200+30+340, "登录成功！", 48, 2463);
 				delay(1000);
+				strcpy(username, tmp);
 				return MAINMENU;
 			}
 			else

@@ -108,6 +108,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 1, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式
@@ -134,6 +135,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 2, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式
@@ -160,6 +162,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 3, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式
@@ -186,6 +189,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 4, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式
@@ -212,6 +216,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 5, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式
@@ -238,6 +243,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					seek_savinfo(fp, 6, 0, 0);
 					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+					flag = 1;
 				}
 				savpage_draw(fp);
 			}//重置模式

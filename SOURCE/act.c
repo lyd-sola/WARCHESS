@@ -345,7 +345,8 @@ void levelup(DBL_POS dpos, MAP map, unsigned* source)
 		show_msg("Éý¼¶³É¹¦", "");
 		map[opos.y][opos.x].kind++;
 		*source -= cost;
-		clear_info();
+		Bar64k(0, 0, 204, 100, 65370);
+		Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 		disp_geo_info(map[opos.y][opos.x]);
 		delay(1000);
 		return;

@@ -2,14 +2,14 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS
 file_name: homepage.c
 author: 陈旭桐
-version: 1.2
+version: 1.3
 Description: 主页界面
 date:2020/9/8
 
 更新日志
 9.9		增加了主页界面的按键,优化了界面效果
 		增加了调试入口
-
+10.26	优化了homepage()，增加游客登录
 
 函数目录
 1.homepage：	主页函数
@@ -19,127 +19,39 @@ date:2020/9/8
 
 int homepage()
 {
-	int flag1 = 0, flag2 = 0, flag3 = 0, flag4 = 0;	/***********防止重复标亮, 此处需要优化成一个flag****************/
 	Clrmous();//更新鼠标状态，防止留痕
 	draw_h_page(); //绘制主页函数
+
+	delay(1000);
 	while(1)
 	{
 		Newxy();
-		if(bioskey(1))
-		{
-			getch();
-		}//防止缓冲区中有内容影响输入
 	
 		if(mouse_press(974, 0, 1024, 50) == MOUSE_IN_L) //退出
 		{
 			return EXIT;
 		}
 		
-		if(flag1 == 0 && mouse_press(700, 230, 950, 300) == MOUSE_IN)	//标亮登录键
-		{
-			flag1 = 1;
-			MouseS = 1;
-			clrmous(MouseX, MouseY);
-			Bar64k_radial(700, 230, 950, 300, 57083, 0);
-			Outtext(750 + 10, 240, "登录", 48, 70, 0);
-			Mouse_savebk2();//更新鼠标状态，防止留痕
-		}
-		
-		if(flag1 == 1 && mouse_press(700, 230, 950, 300) == MOUSE_OUT)	//取消标亮
-		{
-			flag1 = 0;
-			MouseS = 0;
-			clrmous(MouseX, MouseY);
-			shadow_l(700, 230, 950, 300, 65336);
-			Outtext(750 + 10, 240, "登录", 48, 70, 0);
-			rectangle64k(699, 229, 951, 301, 35362);
-			rectangle64k(698, 228, 952, 302, 35362);
-		}
-		
-		if(flag2 == 0 && mouse_press(700, 350, 950, 420) == MOUSE_IN)	//标亮注册键
-		{
-			flag2 = 1;
-			MouseS = 1;
-			clrmous(MouseX, MouseY);
-			Bar64k(700, 350, 950, 420, 57083);
-			Outtext(750 + 10, 360, "注册", 48, 70, 0);
-			Mouse_savebk2();//更新鼠标状态，防止留痕
-		}
-		
-		if(flag2 == 1 && mouse_press(700, 350, 950, 420) == MOUSE_OUT)	//取消标亮
-		{
-			flag2 = 0;
-			MouseS = 0;
-			clrmous(MouseX, MouseY);
-			shadow_l(700, 350, 950, 420, 65336);
-			Outtext(750 + 10, 360, "注册", 48, 70, 0);
-			rectangle64k(699, 349, 951, 421, 35362);
-			rectangle64k(698, 348, 952, 422, 35362);
-		}
-		
-		if(flag3 == 0 && mouse_press(700, 470, 950, 540) == MOUSE_IN)	//标亮关于键
-		{
-			flag3 = 1;
-			MouseS = 1;
-			clrmous(MouseX, MouseY);
-			Bar64k(700, 470, 950, 540, 44373);
-			Outtext(750 + 10, 480, "关于", 48, 70, 0);
-			Mouse_savebk2();//更新鼠标状态，防止留痕
-		}
-		
-		if(flag3 == 1 && mouse_press(700, 470, 950, 540) == MOUSE_OUT)	//取消标亮
-		{
-			flag3 = 0;
-			MouseS = 0;
-			clrmous(MouseX, MouseY);
-			shadow_l(700, 470, 950, 540, 65336);
-			Outtext(750 + 10, 480, "关于", 48, 70, 0);
-			rectangle64k(699, 469, 951, 541, 35362);
-			rectangle64k(698, 468, 952, 542, 35362);
-		}
-		
-		if(flag4 == 0 && mouse_press(700, 590, 950, 660) == MOUSE_IN)	//标亮退出键
-		{
-			flag4 = 1;
-			MouseS = 1;
-			clrmous(MouseX, MouseY);
-			Bar64k(700, 590, 950, 660,44373);
-			Outtext(750 + 10, 600, "退出", 48, 70, 0);
-			Mouse_savebk2();//更新鼠标状态，防止留痕
-		}
-		
-		if(flag4 == 1 && mouse_press(700, 590, 950, 660) == MOUSE_OUT)	//取消标亮
-		{
-			flag4 = 0;
-			MouseS = 0;
-			clrmous(MouseX, MouseY);
-			shadow_l(700, 590, 950, 660, 65336);
-			Outtext(750 + 10, 600, "退出", 48, 70, 0);
-			rectangle64k(699, 589, 951, 661, 35362);
-			rectangle64k(698, 588, 952, 662, 35362);
-		}
-		
-
-		
-		if(mouse_press(700, 470, 950, 540) == MOUSE_IN_L)	//点击关于键
-		{
-			return ABOUT;
-		}
-		
-		if(mouse_press(700, 230, 950, 300) == MOUSE_IN_L)	//点击登录键
+		if (homepg_btn_fun(700, 230, 950, 300, "登录"))
 		{
 			return LOGIN;
 		}
-		
-		if(mouse_press(700, 350, 950, 420) == MOUSE_IN_L)			//点击注册键
+		if (homepg_btn_fun(700, 350, 950, 420, "注册"))
 		{
 			return REGIS;
 		}
-		if(mouse_press(700, 590, 950, 660) == MOUSE_IN_L)			//点击退出键
+		if (homepg_btn_fun(700, 470, 950, 540, "关于"))
+		{
+			return ABOUT;
+		}
+		if (homepg_btn_fun(700, 590, 950, 660, "退出"))
 		{
 			exit(0);
 		}
-		
+		if (guest_btn_fun())
+		{
+			return GUEST;
+		}
 		/*************************测试用，右键右下角进入test页面****************************/
 		if(mouse_press(1024-100, 768-100, 1024, 768) == MOUSE_IN_R)
 		{
@@ -158,30 +70,92 @@ void draw_h_page()
 	//Bar64k(0, 0, 1024, 768, 29186);
 	Putbmp64k(0, 0, "BMP//homepage.bmp");
 	Bar64k(974, 0, 1024, 50,65535);
-	
-
 	Outtext(984, 9, "退", 32, 0, 0);
 	Outtext(85+2,90+2,"红蓝军对抗演练", 48, 70, 27469);
 	Outtext(85, 90, "红蓝军对抗演练", 48, 70, 0);
 
+	homepg_button(700, 230, 950, 300, "登录", 65336);
+	homepg_button(700, 350, 950, 420, "注册", 65336);
+	homepg_button(700, 470, 950, 540, "关于", 65336);
+	homepg_button(700, 590, 950, 660, "退出", 65336);
 
-	shadow_l(700, 230, 950, 300, 65336);
-	Outtext(750+10, 240,"登录", 48, 70, 0);
-	rectangle64k(699, 229, 951, 301, 35362);
-	rectangle64k(698, 228, 952, 302, 35362);
+	Outtextxx(846, 313, 978, "游客登录", 24, 0);
+}
 
-	shadow_l(700, 350, 950, 420, 65336);
-	Outtext(750+10, 360,"注册", 48, 70, 0);
-	rectangle64k(699, 349, 951, 421, 35362);
-	rectangle64k(698, 348, 952, 422, 35362);
-	
-	shadow_l(700, 470, 950, 540, 65336);
-	Outtext(750+10, 480,"关于", 48, 70,0);
-	rectangle64k(699, 469, 951, 541, 35362);
-	rectangle64k(698, 468, 952, 542, 35362);
-	
-	shadow_l(700, 590, 950, 660, 65336);
-	Outtext(750+10, 600,"退出", 48, 70, 0);
-	rectangle64k(699, 589, 951, 661, 35362);
-	rectangle64k(698, 588, 952, 662, 35362);
+void homepg_button(int x1, int y1, int x2, int y2, char *s, int color)
+{
+	shadow_l(x1, y1, x2, y2, color);
+	Outtext(x1+60, y1+10, s, 48, 70, 0);
+	rectangle64k(x1-1, y1-1, x2+1, y2+1, 35362);
+	rectangle64k(x1-2, y1-2, x2+2, y2+2, 35362);
+}
+
+int homepg_btn_fun(int x1, int y1, int x2, int y2, char *s)//按钮功能函数
+{
+	if (Mouse_above(x1 - 2, y1 - 2, x2 + 2, y2 + 2))
+	{
+		Clrmous();
+		MouseS = 1;
+		homepg_button(x1, y1, x2, y2, s, 44373);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(x1-2, y1-2, x2+2, y2+2))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					return 1;
+					//若点击返回1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				homepg_button(x1, y1, x2, y2, s, 65336);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int guest_btn_fun()//游客登录按钮功能函数
+{
+	if (Mouse_above(846, 313, 978, 313 + 24))
+	{
+		Clrmous();
+		MouseS = 1;
+		Bar64k(846, 313 + 26, 978, 313 + 27, 0);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(846, 313, 978, 313 + 24))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					return 1;
+					//若点击返回1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				putbmp_partial(846, 313 + 26, 978, 313 + 27, "BMP//homepage.bmp");
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
 }
