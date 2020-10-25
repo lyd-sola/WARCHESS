@@ -2,12 +2,14 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: battle.c
 Author: 刘云笛、陈旭桐
-Version: 
+Version: 1.0
 Description: 战斗界面
 Date:
 
 更新日志
-
+	10.25前	部分功能实现beta残缺版
+	10.25	1.0版本
+			实现按钮灰色时无法点击，解决部分msg问题，缩短battle长度
 函数目录
 ******************************************************************/
 
@@ -15,34 +17,21 @@ Date:
 //战斗界面主函数
 int battle(char *user, short save_num, short mode)
 {
-	CELL map[13][13], cell;//地图
-	DBL_POS pos, ptmp;
-	OFF_POS opos;
+	CELL map[13][13];//地图
+	DBL_POS pos;
 	Battleinfo batinfo;//对战信息
 	Arminfo arminfo;//兵种信息暂存
 	int clccell = 0;//点击过地图上的一个格子
 	int flag, msgflag = 0;
 	int side;//标记当前阵营
-	char filename[25] = "SAVES//";	FILE* fp;
+	FILE* fp;
 	COLO co;
-
-	DBL_POS test;
-	
-	strcat(filename, user);
-	if ((fp = fopen(filename, "rb+")) == NULL)
-		show_error("未找到用户存档文件", 1);
-	seek_savinfo(fp, save_num, 0, 0);
-	Battle_init(fp, &batinfo, map);
-	fclose(fp);
-	
-	change_co(&co, 0, 1);
-	battle_draw();
-
+	load_battle(user, save_num, &batinfo, map, &fp);
 	initdraw(map);
-	batinfo.b_source = 50;
+	battle_draw();
+	act_buttons(&co, 0, 1, 0);
 	disp_bat_info(batinfo);
-	side = (batinfo.round + 1) % 2;
-
+	side = (batinfo.round - 1) % 2;
 	while(1)
 	{
 		Newxy();
@@ -53,114 +42,31 @@ int battle(char *user, short save_num, short mode)
 		}
 		if (nxt_btn_fun(65370, 65340))
 		{
-			show_msg("进行下一回合", "");
 			nxt_round(map, &batinfo, &side);
-			delay(1000);
 			disp_bat_info(batinfo);
+			next_r_banner(side);//画banner，自带delay
+			Map_partial(512-240-75, 300, 512+240+75, 300+125);
+			initdraw(map);//还原
 		}
-		if ( (flag = clcmap(&ptmp, map)) != 0 )
+		first_click(map, &pos, &clccell, &msgflag, &arminfo, &batinfo, &co);//点击地图上一个点
+		if (clccell)//所有行为按钮
 		{
-			opos = D2O(ptmp);
-			if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY) //点击敌方单位
+			act_btn(map, &co, &clccell, pos, &arminfo);
+			if (!clccell)
 			{
-				show_msg("此为敌方单位，不可操作！", "");
-				disp_arm_info(map[opos.y][opos.x]);
-				disp_geo_info(map[opos.y][opos.x]);
-				delay(1000);
-				continue;
-			}
-			if (flag == 3) //点击大本营
-			{
-				clccell = 0;
-				disp_arm_info(map[opos.y][opos.x]); 
-				disp_geo_info(map[opos.y][opos.x]);
-				show_msg("再次点选进行升级！", "右键取消");
-				delay(50);
-				base_func(map, side ? (&batinfo.r_source) : (&batinfo.b_source), side);
-				disp_bat_info(batinfo);
+				act_buttons(&co, 0, 1, 0);
 				msgflag = 0;
-			}
-			if (flag == 2) //点击己方单位
-			{
-				pos = ptmp;
-				clccell = 1;
-				show_msg("已选择一个单位", "请选择行为");
-				msgflag = 1;
-				arminfo = disp_arm_info(map[opos.y][opos.x]);//显示信息
-				disp_geo_info(map[opos.y][opos.x]);
-				change_co(&co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag);
-				act_buttons(co);
-			}
-			if(flag == 1) //点空
-			{
-				clccell = 0;
-				disp_arm_info(map[opos.y][opos.x]);
-				disp_geo_info(map[opos.y][opos.x]);
-		 		//show_msg("该区域为空", "");
-				change_co(&co, 0, 1);
-				act_buttons(co);
+				delay(300);
 			}
 		}
-
-		if (clccell && move_btn_fun(co.mov, 65340))//移动
-		{
-			move(pos, map, arminfo.move);
-			clccell = 0;
-			move_button(co.mov);
-			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
-		}
-		if (clccell && stay_btn_fun("驻扎", co.stay, 65340))//驻扎
-		{
-			stay(pos, map);
-			clccell = 0;
-		}
-		if (clccell && atk_btn_fun("攻击", co.atk, 65340))//攻击
-		{
-			attack(pos, map);
-			clccell = 0;
-		}
-		if (clccell && del_btn_fun(co.del, 65340))//删除
-		{
-			delarm(pos, map);
-			clccell = 0;
-		}
-
-
-		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
-		{
-			save_battle(fp, batinfo, map);
-			exit(0);
-		}
-
-		if (rec_btn_fun(800, 10, 800 + 49, 10 + 34, 65370))//快速保存
-		{
-			if (msgbar("确定", "取消", "保存存档，确定吗", ""))
-			{
-				fp = fopen(filename, "rb+");
-				seek_savinfo(fp, save_num, 0, 0);
-				save_battle(fp, batinfo, map);
-				fclose(fp);
-			}
-			Clrmous();
-			Map_partial(262, 218, 262 + 500, 219 + 230);
-			initdraw(map);
-		}
-		if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
+		if (opt_btn(fp, save_num, map, &batinfo) != BATTLE)//右上角选项菜单区
 		{
 			return MAINMENU;
 		}
-		if (rec_btn_fun(960, 10, 960 + 49, 44, 65370))//叉叉
+		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
-			if (msgbar("确定", "取消", "退出会丢失未保存的进度", "确定退出吗？"))
-			{
-				return MAINMENU;
-			}
-			else
-			{
-				Clrmous();
-				Map_partial(262, 218, 262 + 500, 219 + 230);
-				initdraw(map);
-			}
+			fclose(fp);
+			exit(0);
 		}
 	}
 }
@@ -170,11 +76,8 @@ void battle_draw()
 	Clrmous();
 	Putbmp64k(0, 0, "BMP//map.bmp");
 
+	clear_info();
 	nextr_button(65370);
-	attack_button("攻击", CANT_co);
-	stay_button("驻扎", CANT_co);
-	move_button(CANT_co);
-	del_button(CANT_co);
 
 	//选项菜单
 	save_btn(65370);
@@ -198,7 +101,7 @@ void draw_cell(DBL_POS pos, MAP map)
 	switch (geo)
 	{
 	case BASE:
-		Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
+		//Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
 	case SORC:
 	case HSORC:
 	case OUT_MAP:
@@ -297,8 +200,7 @@ Arminfo search_info(int kind)
 //显示当前位置地形信息
 void disp_geo_info(CELL cell)
 {
-	char text[20], text1[20], text2[20];
-	sprintf(text, "所需行动力 %d", move_cost(cell.geo));
+	char text[20];
 	Bar64k(0, 0, 204, 100, 65370);
 	switch (cell.geo)
 	{
@@ -315,11 +217,17 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 20, "沙漠", 32, 48, 0);
 		break;
 	case BASE:
-		sprintf(text1, "生命值 %d", cell.health);
-		sprintf(text2, "等级 %d", cell.kind);
 		Outtext(20, 20, "大本营", 32, 48, 0);
-		Outtext(20, 70, text1, 16, 20, 0);
-		Outtext(20, 100, text2, 16, 20, 0);
+		sprintf(text, "生命值 %d", cell.health);
+		Outtext(20, 70, text, 16, 20, 0);
+		sprintf(text, "等级 %d", cell.kind);
+		Outtext(20, 100, text, 16, 20, 0);
+		if (cell.kind < 3)
+		{
+			sprintf(text, "升级花费 %d", cell.kind == 1 ? 10 : 50);
+			Outtext(20, 130, text, 16, 20, 0);
+		}
+		
 		return;
 	case SORC:
 		Outtext(20, 20, "资源点", 32, 48, 0);
@@ -330,6 +238,7 @@ void disp_geo_info(CELL cell)
 	default:
 		break;
 	}
+	sprintf(text, "所需行动力 %d", move_cost(cell.geo));
 	cell.geo ? Outtext(20, 70, text, 16, 20, 0) : Outtext(20, 70, "不可逾越", 16, 20, 0);
 }
 
@@ -382,49 +291,188 @@ Arminfo disp_arm_info(CELL cell)
 void disp_bat_info(Battleinfo batinfo)
 {
 	char buffer[20];
-	Map_partial(185, 700, 262, 732);
-	Map_partial(740, 670, 980, 742);
-	sprintf(buffer, "回合数 %d", (batinfo.round+1)/2);
-	Outtext(740, 710, buffer, 32, 40, 0);
-	if ((batinfo.round + 1)% 2)
+	int x = 25;
+	Map_partial(740+x, 670, 980+x, 700);//还原行动方
+	Map_partial(200+x, 715, 315+x, 747);//还原资源数
+	if (batinfo.round % 2)//回合数显示
 	{
-		sprintf(buffer, "资源数 %d", batinfo.r_source);
-		Outtext(740, 670, "红军行动", 32, 40, 0);
-		Outtext(20, 700, buffer, 32, 40, 0);
+		Map_partial(740 + x, 700, 980 + x, 742);//还原回合数
+		sprintf(buffer, "回合数");
+		Outtext(740 + x, 710, buffer, 32, 40, 0);
+		sprintf(buffer, "%d", (batinfo.round + 1) / 2);
+		Outtext(740+32*4 + x, 710, buffer, 32, 32, 0);
+	}
+	Outtext(20, 715, "资源数", 32, 40, 0);
+	if ((batinfo.round + 1)% 2)//资源显示
+	{
+		sprintf(buffer, "%d", batinfo.r_source);
+		Outtext(740+x, 670, "红军行动", 32, 40, 0);
+		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 	else
 	{
-		sprintf(buffer, "资源数 %d", batinfo.b_source);
-		Outtext(740, 670, "蓝军行动", 32, 40, 0);
-		Outtext(20, 700, buffer, 32, 40, 0);
+		sprintf(buffer, "%d", batinfo.b_source);
+		Outtext(740+x, 670, "蓝军行动", 32, 40, 0);
+		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 }
-
-void act_buttons(COLO co)
+void clear_info()
 {
-	attack_button("攻击", co.atk);
-	stay_button("驻扎", co.stay);
-	move_button(co.mov);
-	del_button(co.del);
+	Bar64k(0, 0, 204, 100, 65370);
+	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 }
-void change_co(COLO* co, int kind, int flag)
+/*绘制行为按钮*/
+void act_buttons(COLO *co, int kind, int flag, int is_same_side)
 {
-	if (flag)
+	if (flag || !is_same_side)
 	{
 		co->atk = CANT_co;
 		co->del = CANT_co;
 		co->mov = CANT_co;
 		co->stay = CANT_co;
 	}
-	else 
+	else
 	{
-		co->atk = OK_co;
 		co->del = OK_co;
 		co->mov = OK_co;
 		co->stay = OK_co;
-		if (kind == BUILDER)
+		co->atk = OK_co;
+	}
+	if (kind == BUILDER)
+	{
+		attack_button("建造", co->atk);
+	}
+	else
+	{
+		attack_button("攻击", co->atk);
+	}
+	stay_button("驻扎", co->stay);
+	move_button(co->mov);
+	del_button(co->del);
+}
+/*按钮整合函数，灰色状态不能点击*/
+void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo)
+{
+	if (co->mov == (int)OK_co)
+	{
+		if (move_btn_fun(co->mov, 65340))//移动
 		{
-			co->atk = CANT_co;
+			move(pos, map, arminfo->move);
+			*clccell = 0;
+			move_button(co->mov);
+			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
 		}
 	}
+	if (co->stay == (int)OK_co)
+	{
+		if (stay_btn_fun("驻扎", co->stay, 65340))//驻扎
+		{
+			stay(pos, map);
+			*clccell = 0;
+		}
+	}
+	if (co->atk == (int)OK_co)
+	{
+		if (atk_btn_fun("攻击", co->atk, 65340))//攻击
+		{
+			attack(pos, map);
+			*clccell = 0;
+		}
+	}
+	if (co->del == (int)OK_co)
+	{
+		if (del_btn_fun(co->del, 65340))//删除
+		{
+			delarm(pos, map);
+			*clccell = 0;
+		}
+	}
+}
+/*点击地图上一点，会改变clccell状态，记录pos，调用大本营相关函数*/
+void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arminfo, Battleinfo *batinfo, COLO *co)
+{
+	int flag, side = (batinfo->round - 1) % 2;
+	DBL_POS ptmp;
+	OFF_POS opos;
+	if ((flag = clcmap(&ptmp, map)) != 0)
+	{
+		opos = D2O(ptmp);
+		*arminfo = disp_arm_info(map[opos.y][opos.x]);//显示信息
+		disp_geo_info(map[opos.y][opos.x]);
+		if (map[opos.y][opos.x].side != side && map[opos.y][opos.x].kind != NOARMY) //点击敌方单位
+		{
+			*clccell = 0;
+			show_msg("此为敌方单位，不可操作！", "");
+			delay(msg_sec);
+			*msgflag = 0;
+			return;
+		}
+		if (map[opos.y][opos.x].flag)
+		{
+			*clccell = 0;
+			show_msg("该单位无行动力", "下一回合再来操作吧");
+			delay(msg_sec);
+			*msgflag = 0;
+			return;
+		}
+		switch (flag)
+		{
+		case 1:		//点空
+			*clccell = 0;
+			show_msg("该区域为空", "");
+			act_buttons(co, 0, 1, 0);
+			break;
+		case 2:		//点击己方单位
+			*pos = ptmp;
+			*clccell = 1;
+			show_msg("已选择一个单位", "请选择行为");
+			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,
+				map[opos.y][opos.x].side == side);
+			break;
+		case 3:		//点击大本营
+			*clccell = 0;
+			show_msg("再次点选进行升级！", "右键取消");
+			delay(50);
+			base_func(map, side ? &(batinfo->r_source) : &(batinfo->b_source), side);
+			disp_bat_info(*batinfo);
+			act_buttons(co, 0, 1, 0);
+			*msgflag = 0;
+			break;
+		}
+	}
+}
+/*右上角选项菜单区*/
+int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
+{
+	if (rec_btn_fun(800, 10, 800 + 49, 10 + 34, 65370))//快速保存
+	{
+		if (msgbar("确定", "取消", "保存存档，确定吗", ""))
+		{
+			seek_savinfo(fp, save_num, 0, 0);
+			save_battle(fp, *batinfo, map);
+		}
+		Clrmous();
+		Map_partial(262, 218, 262 + 500, 219 + 230);
+		initdraw(map);
+	}
+	if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
+	{
+		fclose(fp);
+		return MAINMENU;
+	}
+	if (rec_btn_fun(960, 10, 960 + 49, 44, 65370))//叉叉
+	{
+		if (msgbar("确定", "取消", "退出会丢失未保存的进度", "确定退出吗？"))
+		{
+			fclose(fp);
+			return MAINMENU;
+		}
+		else
+		{
+			Clrmous();
+			Map_partial(262, 218, 262 + 500, 219 + 230);
+			initdraw(map);
+		}
+	}
+	return BATTLE;
 }

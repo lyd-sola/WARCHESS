@@ -87,7 +87,8 @@ void savefile_init(FILE* fp, short mode)
 	//初始化内容创建
 	i = 1;
 	fwrite(&i, 2, 1, fp);//回合数
-	i = 2;
+	/*i = 2;*/
+	i = 100;					//for test
 	fwrite(&i, 2, 1, fp);
 	fwrite(&i, 2, 1, fp);//双方资源数
 
@@ -229,17 +230,12 @@ void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void load_battle(char* user, int save_num, Battleinfo* batinfo, MAP map, FILE **fp)
+{
+	char filename[25] = "SAVES//";
+	strcat(filename, user);
+	if ((*fp = fopen(filename, "rb+")) == NULL)
+		show_error("未找到用户存档文件", 1);
+	seek_savinfo(*fp, save_num, 0, 0);
+	Battle_init(*fp, batinfo, map);
+}

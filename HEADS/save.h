@@ -25,5 +25,5 @@ short get_savmode(FILE* fp, short savnum);//返回存档的对战模式
 void Battle_init(FILE* fp, Battleinfo* info, MAP map);
 
 void save_battle(FILE* fp, Battleinfo batinfo, MAP map);
-
+void load_battle(char* user, int save_num, Battleinfo* batinfo, MAP map, FILE** fp);
 #endif

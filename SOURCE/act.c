@@ -266,6 +266,14 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 	*pside = (*pside) ? 0 : 1; //切换阵营
 }
 
+void next_r_banner(int side)
+{
+	char* s = side ? "红方回合" : "蓝方回合";
+	banner(512 - 240, 300, 480);
+	Outtextxx(312 + 40, 300 + 50 - 24, 712 - 40, s, 48, 0);
+	delay(msg_sec);
+}
+
 //大本营功能函数
 void base_func(MAP map, unsigned* source, int side)
 {
@@ -318,8 +326,8 @@ void base_func(MAP map, unsigned* source, int side)
 //大本营升级函数
 void levelup(DBL_POS dpos, MAP map, unsigned* source)
 {
-	OFF_POS opos;
-	opos = D2O(dpos);
+	OFF_POS opos = D2O(dpos);
+	int cost = (map[opos.y][opos.x].kind == 1 ? 10 : 50);
 	if (map[opos.y][opos.x].kind == 3)
 	{
 		show_msg("大本营已满级", "升级失败");
@@ -335,7 +343,10 @@ void levelup(DBL_POS dpos, MAP map, unsigned* source)
 	else
 	{
 		show_msg("升级成功", "");
-		map[opos.y][opos.x].kind += 1;
+		map[opos.y][opos.x].kind++;
+		*source -= cost;
+		clear_info();
+		disp_geo_info(map[opos.y][opos.x]);
 		delay(1000);
 		return;
 	}
@@ -352,13 +363,13 @@ void buildarm(MAP map, unsigned* source, int side)
 	if (mouse_press(745 - 18, 705 - 18, 745 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中工兵
 	{
 		armkind = BUILDER; //为第二次点选确定兵种值
-		show_msg("工兵，造价：2", "再次点选确定建造");
+		show_msg("工兵，造价：2", "再次点选确定建造，右键取消");
 		delay(100); //使用户有时间将鼠标抬起来
 	}
 	else if (mouse_press(745 + 65 - 18, 705 - 18, 745 + 65 + 18, 705 + 23) == MOUSE_IN_L)//第一次点选选中步兵
 	{
 		armkind = INFANTRY;
-		show_msg("步兵，造价：1", "再次点选确定建造");
+		show_msg("步兵，造价：1", "再次点选确定建造，右键取消");
 		delay(100);
 	}
 	else if (mouse_press(745 + 65 * 2 - 18, 705 - 18, 745 + 65 * 2 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中炮兵
@@ -370,7 +381,7 @@ void buildarm(MAP map, unsigned* source, int side)
 			return;
 		}
 		armkind = ARTILLERY;
-		show_msg("炮兵，造价：5", "再次点选确定建造");
+		show_msg("炮兵，造价：5", "再次点选确定建造，右键取消");
 		delay(100);
 	}
 	else if (mouse_press(745 + 65 * 3 - 18, 705 - 18, 745 + 65 * 3 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中坦克
@@ -382,19 +393,19 @@ void buildarm(MAP map, unsigned* source, int side)
 			return;
 		}
 		armkind = TANK;
-		show_msg("坦克，造价：10", "再次点选确定建造");
+		show_msg("坦克，造价：10", "再次点选确定建造，右键取消");
 		delay(100);
 	}
 	else if (mouse_press(745 + 65 * 4 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23) == MOUSE_IN_L) //第一次点选选中超级兵
 	{
 		if (map[opos.y][opos.x].kind < 3)
 		{
-			show_msg("需要大本营等级：3", "建造失败");
+			show_msg("需要大本营等级：3", "建造失败，右键取消");
 			delay(1000);
 			return;
 		}
 		armkind = SUPER;
-		show_msg("超级杀爆全场一个能打三个坦克特种", "突击装甲兵，造价：30。");
+		show_msg("超级兵，造价：30。", "再次点选确定建造，右键取消");
 		delay(100);
 	}
 	else
@@ -451,7 +462,7 @@ void buildarm(MAP map, unsigned* source, int side)
 					icon(center, side, armkind);
 				}
 			}
-			//*source -= arminfo.cost;
+			*source -= arminfo.cost;
 			show_msg("建造成功！", "");
 			delay(1000);
 			return;
