@@ -372,7 +372,7 @@ void rect_btn_frame(int x1, int y1, int x2, int y2, int color)
 	Circle_lu64k(x1 + ra, y1 + ra, ra - 2, color);
 }
 
-/*********标亮方形按钮***********/
+/*********方形圆角按钮功能函数***********/
 int rec_btn_fun(int x1, int y1, int x2, int y2, int color)
 {
 	if (MouseX >= x1 && MouseX <= x2 && MouseY >= y1 && MouseY <= y2)

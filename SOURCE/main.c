@@ -31,10 +31,13 @@ int main(void)
 			case HOMEPAGE:			//首页
 				page = homepage();
 				break;
+
+			case ABOUT:				//关于界面
+				page = about_page();
+				break;
 				
 			case LOGIN:				//登录界面
 				page = login(user);
-
 				break;
 			
 			case REGIS:				//注册界面

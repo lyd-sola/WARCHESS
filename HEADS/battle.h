@@ -22,7 +22,7 @@ Function List£º
 #include "struct.h"
 #define msg_sec 1000
 
-int battle(char* user, short save_num, short mode);
+int battle(const char* user, short save_num, short mode);
 
 void battle_draw(void);
 

@@ -15,7 +15,7 @@ Date:
 
 #include "common.h"
 //战斗界面主函数
-int battle(char *user, short save_num, short mode)
+int battle(const char *user, short save_num, short mode)
 {
 	CELL map[13][13];//地图
 	DBL_POS pos;
@@ -497,7 +497,7 @@ int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
 			if (msgbar("不了", "坚持", msg, "真的不再坚持一下吗?"))
 			{
 				if(msgbar("是的", "嘻嘻", msg, "真的是本人操作吗？"))
-					side ? (map[3][10].health = 0) : (map[9][1].health = 0);
+					side ? (map[3][10].health = map[3][10].kind = 0) : (map[9][1].health = map[9][1].kind = 0);
 			}
 			Map_partial(262, 218, 262 + 500, 219 + 230);
 			Map_partial(837, 46, 976, 88 + 41 * 2);

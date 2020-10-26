@@ -2,18 +2,15 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS
 file_name: homepage.c
 author: 陈旭桐
-version: 1.3
+version: 2.0
 Description: 主页界面
 date:2020/9/8
 
 更新日志
 9.9		增加了主页界面的按键,优化了界面效果
 		增加了调试入口
-10.26	优化了homepage()，增加游客登录
-
-函数目录
-1.homepage：	主页函数
-2.draw_h_page:	主页界面
+10.25	优化了homepage()，增加游客登录
+10.26	增加关于界面
 ******************************************************************/
 #include "common.h"
 
@@ -157,5 +154,20 @@ int guest_btn_fun()//游客登录按钮功能函数
 	else
 	{
 		return 0;
+	}
+}
+
+int about_page()
+{
+	Clrmous();
+	Putbmp64k(0, 0, "BMP//about.bmp");
+	rect_button(833, 700, 1000, 755, "返回主界面", 65370);
+	while (1)
+	{
+		Newxy();
+		if (rec_btn_fun(833, 700, 1000, 755, 65370))
+		{
+			return HOMEPAGE;
+		}
 	}
 }
