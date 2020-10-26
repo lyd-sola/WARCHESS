@@ -485,7 +485,7 @@ void draw_opts()
 	Outtextxx(846, 54+41*2, 966, "хойД", 24, 0);
 }
 
-int opts_fun()
+int opts_fun(void)
 {
 	while (1)
 	{
