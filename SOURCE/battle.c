@@ -26,12 +26,15 @@ int battle(char *user, short save_num, short mode)
 	int side;//标记当前阵营
 	FILE* fp;
 	COLO co;
-	load_battle(user, save_num, &batinfo, map, &fp);
-	initdraw(map);
-	battle_draw();
-	act_buttons(&co, 0, 1, 0);
-	disp_bat_info(batinfo);
+	load_battle(user, save_num, &batinfo, map, &fp);//读取存档
+	battle_draw();//界面绘制
+	act_buttons(&co, 0, 1, 0);//行为按钮
+	disp_bat_info(batinfo);//对战信息（回合资源）
 	side = (batinfo.round - 1) % 2;
+	initdraw(map);//单位绘制
+	next_r_banner(side);//画banner，自带delay
+	Map_partial(512 - 240 - 75, 300, 512 + 240 + 75, 300 + 125);
+	initdraw(map);//单位绘制
 	while(1)
 	{
 		Newxy();
@@ -59,9 +62,9 @@ int battle(char *user, short save_num, short mode)
 				delay(300);
 			}
 		}
-		if (opt_btn(fp, save_num, map, &batinfo) != BATTLE)//右上角选项菜单区
+		if ((flag = opt_btn(fp, save_num, map, &batinfo)) != BATTLE)//右上角选项菜单区
 		{
-			return MAINMENU;
+			return flag;
 		}
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
@@ -74,7 +77,8 @@ int battle(char *user, short save_num, short mode)
 void battle_draw()
 {
 	Clrmous();
-	Putbmp64k(0, 0, "BMP//map.bmp");
+	Map_partial(0, 0, 1024, 768);
+	//Putbmp64k(0, 0, "BMP//map.bmp");
 
 	Bar64k(0, 0, 204, 100, 65370);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
@@ -441,9 +445,11 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 /*右上角选项菜单区*/
 int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
 {
+	int flag, side = (batinfo->round - 1) % 2;
+	char* s, msg[30];
 	if (rec_btn_fun(800, 10, 800 + 49, 10 + 34, 65370))//快速保存
 	{
-		if (msgbar("确定", "取消", "保存存档，确定吗", ""))
+		if (msgbar("确定", "取消", "保存存档，确定吗?", ""))
 		{
 			seek_savinfo(fp, save_num, 0, 0);
 			save_battle(fp, *batinfo, map);
@@ -454,8 +460,52 @@ int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
 	}
 	if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
 	{
-		fclose(fp);
-		return MAINMENU;
+		draw_opts();
+		flag = opts_fun(side);
+		switch (flag)
+		{
+		case BATTLE://关闭选项
+			return BATTLE;
+		case EXIT://保存并退出
+			if (msgbar("确定", "不了", "即将保存战斗并退出程序", "确定吗?"))
+			{
+				seek_savinfo(fp, save_num, 0, 0);
+				save_battle(fp, *batinfo, map);
+				fclose(fp);
+				exit(0);
+			}
+			else
+			{
+				Map_partial(262, 218, 262 + 500, 219 + 230);
+				Map_partial(837, 46, 976, 88 + 41 * 2);
+				initdraw(map);
+				return BATTLE;
+			}
+		case HOMEPAGE://注销
+			if (msgbar("确定", "不了", "即将注销", "确定吗?"))
+			{
+				return HOMEPAGE;
+			}
+			else
+			{
+				Map_partial(262, 218, 262 + 500, 219 + 230);
+				Map_partial(837, 46, 976, 88 + 41 * 2);
+				initdraw(map);
+				return BATTLE;
+			}
+		case 444://认输
+			s = side ? "红" : "蓝";
+			sprintf(msg, "%s方即将认输", s);
+			if (msgbar("不了", "坚持", msg, "真的不再坚持一下吗?"))
+			{
+				if(msgbar("是的", "嘻嘻", msg, "真的是本人操作吗？"))
+					side ? (map[3][10].health = 0) : (map[9][1].health = 0);
+			}
+			Map_partial(262, 218, 262 + 500, 219 + 230);
+			Map_partial(837, 46, 976, 88 + 41 * 2);
+			initdraw(map);
+			return BATTLE;
+		}
 	}
 	if (rec_btn_fun(960, 10, 960 + 49, 44, 65370))//叉叉
 	{

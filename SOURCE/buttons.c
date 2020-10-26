@@ -465,3 +465,59 @@ void exit_btn(int color)
 	Line45(985 + 9, 27 - 11, 985 - 11, 27 + 9, 0);
 	Line45(985 + 11, 27 - 9, 985 - 9, 27 + 11, 0);
 }
+
+void draw_opts()
+{
+	int dlay = 200;
+	Bar64k(838, 47, 975, 87, 65370);
+	rectangle64k(838, 47, 975, 87, 0);
+	rectangle64k(837, 46, 976, 88, 0);
+	Outtextxx(846, 54, 966, "注销", 24, 0);
+	delay(dlay);
+	Bar64k(838, 47+41, 975, 87+41, 65370);
+	rectangle64k(838, 47+41, 975, 87+41, 0);
+	rectangle64k(837, 46+41, 976, 88+41, 0);
+	Outtextxx(846, 54+41, 966, "保存并退出", 24, 0);
+	delay(dlay);
+	Bar64k(838, 47+41*2, 975, 87+41*2, 65370);
+	rectangle64k(838, 47+41*2, 975, 87+41*2, 0);
+	rectangle64k(837, 46+41*2, 976, 88+41*2, 0);
+	Outtextxx(846, 54+41*2, 966, "认输", 24, 0);
+}
+
+int opts_fun()
+{
+	while (1)
+	{
+		Newxy();
+		if (press == 1)
+		{
+			if (Mouse_above(838, 47, 975, 87 + 41 * 2))
+			{
+				if (MouseY <= 87)//注销
+				{
+					return HOMEPAGE;
+				}
+				else if (MouseY <= 87 + 41)//保存并退出
+				{
+					return EXIT;
+				}
+				else//认输
+				{
+					return 444;
+				}
+			}
+			else//点击外部关闭
+			{
+				Map_partial(837, 46, 976, 88 + 41 * 2);
+				return BATTLE;
+			}
+		}
+		else if (press == 2)
+		{
+			Map_partial(837, 46, 976, 88 + 41 * 2);
+			return BATTLE;
+		}//右键关闭
+		
+	}
+}

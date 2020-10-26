@@ -402,7 +402,7 @@ void buildarm(MAP map, unsigned* source, int side)
 		if (map[opos.y][opos.x].kind < 3)
 		{
 			show_msg("需要大本营等级：3", "建造失败，右键取消");
-			delay(1000);
+			delay(msg_sec);
 			return;
 		}
 		armkind = SUPER;
@@ -416,59 +416,68 @@ void buildarm(MAP map, unsigned* source, int side)
 	while (1)
 	{
 		Newxy();
-		if (mouse_press(745 + 65 * (armkind - 1) - 18, 705 - 18, 745 + 65 * (armkind - 1) + 18, 705 + 23) == MOUSE_IN_L)
+		if (press == 1)
 		{
-			arminfo = search_info(armkind);
-			if (*source < arminfo.cost) //资源不足无法建造
+			if (Mouse_above(745 + 65 * (armkind - 1) - 18, 705 - 18, 745 + 65 * (armkind - 1) + 18, 705 + 23))
 			{
-				show_msg("资源不足无法建造", "");
-				delay(1000);
+				arminfo = search_info(armkind);
+				if (*source < arminfo.cost) //资源不足无法建造
+				{
+					show_msg("资源不足无法建造", "");
+					delay(msg_sec);
+					return;
+				}
+				else if (side == 1) //蓝色方
+				{
+					if (map[2][10].kind != 0) //判断蓝方出兵点是否被占领
+					{
+						show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
+						delay(msg_sec);
+						return;
+					}
+					else //建造成功，更新出兵点信息
+					{
+						map[2][10].kind = armkind;
+						map[2][10].health = arminfo.health;
+						map[2][10].side = side;
+						map[2][10].stay = 0;
+						map[2][10].flag = 1;
+						center = center_xy(21, 3);
+						icon(center, side, armkind);
+					}
+				}
+				else //红色方
+				{
+					if (map[10][2].kind != 0) //判断红色方出兵点是否被占领
+					{
+						show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
+						delay(msg_sec);
+						return;
+					}
+					else //建造成功，更新出兵点信息
+					{
+						map[10][2].kind = armkind;
+						map[10][2].health = arminfo.health;
+						map[10][2].side = side;
+						map[10][2].stay = 0;
+						map[10][2].flag = 1;
+						center = center_xy(5, 11);
+						icon(center, side, armkind);
+					}
+				}
+				*source -= arminfo.cost;
+				show_msg("操作成功！", "");
+				delay(msg_sec);
 				return;
 			}
-			else if (side == 1) //蓝色方
+			else//别处点击
 			{
-				if (map[2][10].kind != 0) //判断蓝方出兵点是否被占领
-				{
-					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
-					delay(1000);
-					return;
-				}
-				else //建造成功，更新出兵点信息
-				{
-					map[2][10].kind = armkind;
-					map[2][10].health = arminfo.health;
-					map[2][10].side = side;
-					map[2][10].stay = 0;
-					map[2][10].flag = 1;
-					center = center_xy(21, 3);
-					icon(center, side, armkind);
-				}
+				show_msg("取消操作", "");
+				delay(500);
+				return;
 			}
-			else //红色方
-			{
-				if (map[10][2].kind != 0) //判断红色方出兵点是否被占领
-				{
-					show_msg("出兵点被占领", "请消灭敌军或先移动我方单位");
-					delay(1000);
-					return;
-				}
-				else //建造成功，更新出兵点信息
-				{
-					map[10][2].kind = armkind;
-					map[10][2].health = arminfo.health;
-					map[10][2].side = side;
-					map[10][2].stay = 0;
-					map[10][2].flag = 1;
-					center = center_xy(5, 11);
-					icon(center, side, armkind);
-				}
-			}
-			*source -= arminfo.cost;
-			show_msg("建造成功！", "");
-			delay(1000);
-			return;
 		}
-		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)	//右键取消
+		else if (press == 2)	//右键取消
 		{
 			show_msg("取消操作", "");
 			delay(500);
