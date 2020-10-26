@@ -87,7 +87,10 @@ int mainmenu(char *user, short *save_num, short *mode)
 			fclose(fp);
 			return BATTLE;
 		}
-		Sharp_button(225 + 330, "作战指导", "操作说明", 60361, 65535);
+		if (Sharp_button(225 + 330, "作战指导", "操作说明", 60361, 65535))
+		{
+			help_cartoon();
+		}
 		if (Sharp_button(225 + 440, "鸣金收兵", "注销账号", 60361, 65535))
 		{
 			fclose(fp);

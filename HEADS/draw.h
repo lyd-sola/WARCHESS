@@ -13,8 +13,8 @@ void Outwithint(int x, int y, char *former, int a, char *latter, int size, int p
 void Outwithint2(int x1, int y, int x2, char* former, int a, char* latter, int size, int color);
 char* textwithint(char* former, int a, char* latter);
 
-void GetBackground(int left, int top, int right, int bottom, short *buffer);
-void PutBackground(int left, int top, int right, int bottom, short *buffer);
+void GetBackground(int left, int top, int right, int bottom, unsigned *buffer);
+void PutBackground(int left, int top, int right, int bottom, unsigned *buffer);
 unsigned int Lightcolor(unsigned int colorbf, float drgb);
 void Lightpixel(int x, int y, float drgb);
 void Lightline(int x1, int y1, int x2, int y2, float drgb);
@@ -34,4 +34,6 @@ void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void draw_bomb(int x, int y, double i);
+
+int putbmp_partial(int x1, int y1, int x2, int y2, char* s);
 #endif

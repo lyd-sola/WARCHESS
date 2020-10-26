@@ -41,6 +41,8 @@ int main(void)
 				page = register_();
 				break;
 				
+			case GUEST:
+				strcpy(user, "GUEST");
 			case MAINMENU:			//Ö÷²Ëµ¥
 				page = mainmenu(user, &save_num, &mode);
 				break;

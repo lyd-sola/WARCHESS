@@ -77,9 +77,10 @@ int Outtextxx(int x1, int y, int x2, char *s,int flag, int color)
 Author£ºÁõÔÆµÑ
 bufferÎª´æ´¢µÄÊı×é
 *****************************************/
-void GetBackground(int left, int top, int right, int bottom, short *buffer)//»ñÈ¡±³¾°
+void GetBackground(int left, int top, int right, int bottom, unsigned *buffer)//»ñÈ¡±³¾°
 {
     int i, j;
+	unsigned co;
     int Width, Height;
 
     Width = right - left;
@@ -89,12 +90,13 @@ void GetBackground(int left, int top, int right, int bottom, short *buffer)//»ñÈ
     {
         for(j = 0;j <= Width;j++)         
         {                        
-            buffer[i*Width+j]=Getpixel64k(left + i, top + j);         
+            co=Getpixel64k(left + i, top + j);         
+			buffer[i * Width + j] = co;
         }     
     }     
 } 
 
-void PutBackground(int left, int top, int right, int bottom, short *buffer)//Ìù»Ø±³¾°
+void PutBackground(int left, int top, int right, int bottom, unsigned *buffer)//Ìù»Ø±³¾°
 {     
     int i, j;    
     int Width, Height;     
@@ -613,4 +615,74 @@ char* textwithint(char* former, int a, char* latter)
 	strcat(text, buffer);
 	strcat(text, latter);
 	return text;
+}
+int putbmp_partial(int x1, int y1, int x2, int y2, char *s)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾ØĞÎ·¶Î§£¬½öÄÜÌùÈ«ÆÁ´óÍ¼
+{
+	FILE* fpbmp = fopen(s, "rb");
+	/*ĞĞÏñËØ»º´æÖ¸Õë*/
+	COLORS24* buffer;
+
+	/*Í¼Æ¬µÄ¿í¶È¡¢¸ß¶È¡¢Ò»ĞĞÏñËØËùÕ¼×Ö½ÚÊı£¨º¬²¹Æë¿Õ×Ö½Ú£©*/
+	long int width, height, linebytes;
+
+	/*Ñ­»·±äÁ¿*/
+	int i, j;
+	long h = 3 * (x2 - x1 + 1);
+
+	if (!fpbmp)
+		show_error("ÌùÍ¼ÎÄ¼ş¶ªÊ§", 1);
+	/*¶ÁÈ¡¿í¶È¡¢¸ß¶È*/
+	fseek(fpbmp, 18L, 0);
+	fread(&width, 4, 1, fpbmp);
+	fread(&height, 4, 1, fpbmp);
+
+	/*¿í¶È³¬ÏŞÔòÍË³ö*/
+	if (width > SCR_WIDTH)
+	{
+		return 0;
+	}
+
+	/*¼ÆËãÒ»ĞĞÏñËØÕ¼×Ö½ÚÊı£¬°üÀ¨²¹ÆëµÄ¿Õ×Ö½Ú*/
+	linebytes = (3 * width) % 4;
+
+	if (!linebytes)
+	{
+		linebytes = 3 * width;
+	}
+	else
+	{
+		linebytes = 3 * width + 4 - linebytes;
+	}
+
+	if ((buffer = (COLORS24*)malloc(h)) == 0)
+	{
+		return 0;
+	}
+
+	/*ĞĞÉ¨ÃèĞÎÊ½¶ÁÈ¡Í¼Æ¬Êı¾İ²¢ÏÔÊ¾*/
+	fseek(fpbmp, 54L, 0);
+	fseek(fpbmp, (768 - y2) * linebytes, SEEK_CUR);
+	for (i = y2; i >= y1; i--)
+	{
+		fseek(fpbmp, (x1 - 1) * 3, SEEK_CUR);
+		fread(buffer, (x2 - x1 + 1) * 3, 1, fpbmp);	/*¶ÁÈ¡Ò»ĞĞÏñËØÊı¾İ*/
+
+		/*Ò»ĞĞÏñËØµÄÊı¾İ´¦ÀíºÍ»­³ö*/
+		for (j = 0; j <= x2 - x1; j++)
+		{
+			/*0x117Ä£Ê½ÏÂ£¬Ô­Í¼ºìÂÌÀ¶¸÷8Î»·Ö±ğ½üËÆÎª5Î»¡¢6Î»¡¢5Î»*/
+			buffer[j].R >>= 3;
+			buffer[j].G >>= 2;
+			buffer[j].B >>= 3;
+			Putpixel64k(j + x1, i + 0,
+				((((unsigned int)buffer[j].R) << 11)
+					| (((unsigned int)buffer[j].G) << 5)
+					| ((unsigned int)buffer[j].B)));	/*¼ÆËã×îÖÕÑÕÉ«£¬ºìÂÌÀ¶´Ó¸ßÎ»µ½µÍÎ»ÅÅÁĞ*/
+		}
+		fseek(fpbmp, linebytes - 3 * x2, SEEK_CUR);	//Á½¸öfseek+Ò»¸öfread¸ÕºÃlinebytes
+	}
+
+	free(buffer);
+	fclose(fpbmp);
+	return 1;
 }

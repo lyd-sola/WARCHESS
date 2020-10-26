@@ -43,9 +43,10 @@ Description: 头文件及定义结构、枚举
 #include "savpage.h"	//存档界面
 #include "buttons.h"	//按钮函数
 #include "judge.h"		//移动判断函数
+#include "help.h"		//教程函数
 enum MENU
 {
-	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT, BATTLE
+	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT, BATTLE, GUEST
 };//主界面功能选项
 /********************测试页面函数********************/
 int test(void);
