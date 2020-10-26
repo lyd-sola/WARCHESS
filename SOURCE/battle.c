@@ -297,7 +297,7 @@ Arminfo search_info(int kind)
 //显示当前位置地形信息
 void disp_geo_info(CELL cell)
 {
-	char text[20], text1[20], text2[20];
+	char text[20], text1[20], text2[20], text3[20];
 	sprintf(text, "所需行动力 %d", move_cost(cell.geo));
 	Bar64k(0, 0, 204, 100, 65370);
 	switch (cell.geo)
@@ -320,6 +320,7 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 20, "大本营", 32, 48, 0);
 		Outtext(20, 70, text1, 16, 20, 0);
 		Outtext(20, 100, text2, 16, 20, 0);
+		Outtext(20, 130, text3, 16, 20, 0);
 		return;
 	case SORC:
 		Outtext(20, 20, "资源点", 32, 48, 0);

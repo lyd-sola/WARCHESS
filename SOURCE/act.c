@@ -319,14 +319,16 @@ void base_func(MAP map, unsigned* source, int side)
 void levelup(DBL_POS dpos, MAP map, unsigned* source)
 {
 	OFF_POS opos;
+	int cost;
 	opos = D2O(dpos);
+	cost = map[opos.y][opos.x].kind == 1 ? 10 : 50;
 	if (map[opos.y][opos.x].kind == 3)
 	{
 		show_msg("大本营已满级", "升级失败");
 		delay(1000);
 		return;
 	}
-	else if (*source < (map[opos.y][opos.x].kind == 1 ? 10 : 50)) //一本升二本消耗10资源， 二本升三本消耗50资源
+	else if (*source < cost) //一本升二本消耗10资源， 二本升三本消耗50资源
 	{
 		show_msg("资源不足无法升级", "");
 		delay(1000);
@@ -336,6 +338,7 @@ void levelup(DBL_POS dpos, MAP map, unsigned* source)
 	{
 		show_msg("升级成功", "");
 		map[opos.y][opos.x].kind += 1;
+		*source -= cost;
 		delay(1000);
 		return;
 	}
@@ -430,6 +433,7 @@ void buildarm(MAP map, unsigned* source, int side)
 					map[2][10].flag = 1;
 					center = center_xy(21, 3);
 					icon(center, side, armkind);
+					*source -= arminfo.cost;
 				}
 			}
 			else //红色方
@@ -449,6 +453,7 @@ void buildarm(MAP map, unsigned* source, int side)
 					map[10][2].flag = 1;
 					center = center_xy(5, 11);
 					icon(center, side, armkind);
+					*source -= arminfo.cost;
 				}
 			}
 			//*source -= arminfo.cost;
