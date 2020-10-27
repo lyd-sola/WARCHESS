@@ -459,7 +459,7 @@ int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
 	if (rec_btn_fun(880, 10, 880 + 49, 44, 65370))//选项菜单
 	{
 		draw_opts();
-		flag = opts_fun(side);
+		flag = opts_fun();
 		switch (flag)
 		{
 		case BATTLE://关闭选项
