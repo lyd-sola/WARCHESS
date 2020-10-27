@@ -104,7 +104,14 @@ OFF_POS D2O(DBL_POS pos)
 DBL_POS O2D(OFF_POS pos)
 {
 	DBL_POS dpos;
-	dpos.x = 2 * pos.x + 1;
+	if (pos.y % 2)
+	{
+		dpos.x = 2 * pos.x + 2;
+	}
+	else
+	{
+		dpos.x = 2 * pos.x + 1;
+	}
 	dpos.y = pos.y + 1;
 	return dpos;
 }

@@ -168,8 +168,8 @@ short get_savmode(FILE* fp, short savnum)
 {
 	short mode;
 	seek_savinfo(fp, savnum, 0, 0);
-	fread(&mode, 1, 1, fp);
-	return mode;
+	mode = fgetc(fp);
+	return mode - '0';
 }
 
 /**********************************************************

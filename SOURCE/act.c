@@ -51,8 +51,6 @@ int move_(DBL_POS From, DBL_POS dbto, int able, MAP map)
 	{
 		if (moving(map, visit, From, dbto))
 		{
-			Clrmous();
-
 			map[To.y][To.x].stay = 0;//移动解除驻扎状态
 			map[To.y][To.x].flag = 1;//标记已移动
 			map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
@@ -143,7 +141,6 @@ int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
 		{
 			show_msg("不可以攻击友军！", "你怎么肥四");
 			delay(1000);
-			attack_button("攻击", 65370);
 			return 1;
 		}
 		else
@@ -156,7 +153,6 @@ int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
 				draw_bomb(center.x, center.y + 10, 0);
 				delay(1000);
 				Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);//还原此处地图
-				attack_button("攻击", 65370);
 				return 1;
 			}
 
@@ -169,7 +165,6 @@ int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
 				delay(1000);
 				draw_cell(dbto, map);
 				//icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
-				attack_button("攻击", 65370);
 				return 1;
 			}
 			return 1;

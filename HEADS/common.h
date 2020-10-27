@@ -44,6 +44,7 @@ Description: 头文件及定义结构、枚举
 #include "buttons.h"	//按钮函数
 #include "judge.h"		//移动判断函数
 #include "help.h"		//教程函数
+#include "aut.h"		//自动对战函数
 enum MENU
 {
 	EXIT, HOMEPAGE, LOGIN, REGIS, MAINMENU, ABOUT, BATTLE, GUEST

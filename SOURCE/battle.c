@@ -43,8 +43,12 @@ int battle(char *user, short save_num, short mode)
 			show_msg("请指挥官进行操作", "");
 			msgflag = 1;
 		}
-		if (nxt_btn_fun(65370, 65340))
+		if (mode && side == 1)
 		{
+			aut(map, &batinfo);goto nextr;
+		}
+		if (nxt_btn_fun(65370, 65340))
+		{nextr://为了缩减行数，不得不
 			nxt_round(map, &batinfo, &side);
 			disp_bat_info(batinfo);
 			next_r_banner(side);//画banner，自带delay
@@ -107,12 +111,10 @@ void draw_cell(DBL_POS pos, MAP map)
 	{
 	case BASE:
 		//Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
-	case SORC:
-	case HSORC:
+	//case SORC:
+	//case HSORC:
 	case OUT_MAP:
 		return;
-	default:
-		break;
 	}
 	switch (kind)
 	{
