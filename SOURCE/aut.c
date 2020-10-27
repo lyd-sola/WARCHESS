@@ -2,11 +2,12 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: aut.c
 Author: 刘云笛、陈旭桐
-Version:
+Version:1.0
 Description: 自动对战
 Date:
 
 更新日志
+10.28 2am	完成自动攻击和移动！！！
 
 ******************************************************************/
 #include "common.h"
