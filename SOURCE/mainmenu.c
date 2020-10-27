@@ -14,7 +14,7 @@ date:2020/9/9
 ******************************************************************/
 #include "common.h"
 
-int mainmenu(const char *user, short *save_num, short *mode)
+int mainmenu(char *user, short *save_num, short *mode)
 {
 	char s[25] = "SAVES//";
 	FILE* fp;

@@ -122,7 +122,7 @@ int homepg_btn_fun(int x1, int y1, int x2, int y2, char *s)//按钮功能函数
 	}
 }
 
-int guest_btn_fun()//游客登录按钮功能函数
+int guest_btn_fun(void)//游客登录按钮功能函数
 {
 	if (Mouse_above(846, 313, 978, 313 + 24))
 	{
