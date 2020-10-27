@@ -28,7 +28,7 @@ int battle(char *user, short save_num, short mode)
 	COLO co;
 	load_battle(user, save_num, &batinfo, map, &fp);//读取存档
 	battle_draw();//界面绘制
-	act_buttons(&co, 0, 1, 0);//行为按钮
+	act_buttons(&co, 0, 1, 0, 0);//行为按钮
 	disp_bat_info(batinfo);//对战信息（回合资源）
 	side = (batinfo.round - 1) % 2;
 	initdraw(map);//单位绘制
@@ -57,7 +57,7 @@ int battle(char *user, short save_num, short mode)
 			act_btn(map, &co, &clccell, pos, &arminfo);
 			if (!clccell)
 			{
-				act_buttons(&co, 0, 1, 0);
+				act_buttons(&co, 0, 1, 0, 0);
 				msgflag = 0;
 				delay(300);
 			}
@@ -321,7 +321,7 @@ void disp_bat_info(Battleinfo batinfo)
 }
 
 /*绘制行为按钮*/
-void act_buttons(COLO *co, int kind, int flag, int is_same_side)
+void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay)
 {
 	if (flag || !is_same_side)
 	{
@@ -334,7 +334,7 @@ void act_buttons(COLO *co, int kind, int flag, int is_same_side)
 	{
 		co->del = OK_co;
 		co->mov = OK_co;
-		co->stay = OK_co;
+		co->stay = is_stay ? CANT_co : OK_co;
 		co->atk = OK_co;
 	}
 	if (kind == BUILDER)
@@ -419,14 +419,14 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 		case 1:		//点空
 			*clccell = 0;
 			show_msg("该区域为空", "");
-			act_buttons(co, 0, 1, 0);
+			act_buttons(co, 0, 1, 0, 0);
 			break;
 		case 2:		//点击己方单位
 			*pos = ptmp;
 			*clccell = 1;
 			show_msg("已选择一个单位", "请选择行为");
 			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,
-				map[opos.y][opos.x].side == side);
+				map[opos.y][opos.x].side == side, map[opos.y][opos.x].stay);
 			break;
 		case 3:		//点击大本营
 			*clccell = 0;
@@ -434,7 +434,7 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 			delay(50);
 			base_func(map, side ? &(batinfo->r_source) : &(batinfo->b_source), side);
 			disp_bat_info(*batinfo);
-			act_buttons(co, 0, 1, 0);
+			act_buttons(co, 0, 1, 0, 0);
 			*msgflag = 0;
 			break;
 		}

@@ -29,7 +29,7 @@ Author：		刘云笛
 				虽然移动时节点间边权不同，但采用原地不动增加步数的方法保证了bfs正常进行（每一层步数相同），
 				同时可以计算出最短路径
 **********************************************************/
-void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
+int range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])//有可行点返回1，无返回0
 {
 	OFF_POS opos = D2O(pos), otop, onew;
 	int dx[] = { 2, 1, -1, -2, -1, 1 };
@@ -40,7 +40,7 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 		int abl;//可用消耗
 	}queue[35], top, neww;
 	int front = 0, rear = 0, i;//数组首尾，使用循环队列优化
-
+	int flag = 0;//标记有无点在范围内
 
 	POS p;//test
 
@@ -84,7 +84,7 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 						{
 							queue[rear++ % 25] = neww;
 							visit[ny][nx] = neww.abl;
-
+							flag = 1;
 							//test
 							/*p = center_xy(neww.pos.x, neww.pos.y);
 							Icon_draw(p, 1);*/
@@ -94,6 +94,7 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 					{
 						queue[rear++ % 25] = neww;
 						visit[ny][nx] = neww.abl;
+						flag = 1;
 						//test
 						/*p = center_xy(neww.pos.x, neww.pos.y);
 						Icon_draw(p, 1);*/
