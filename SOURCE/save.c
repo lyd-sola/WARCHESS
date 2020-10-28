@@ -87,8 +87,10 @@ void savefile_init(FILE* fp, short mode)
 	//初始化内容创建
 	i = 1;
 	fwrite(&i, 2, 1, fp);//回合数
-	/*i = 2;*/
-	i = 100;					//for test
+	i = 2;
+#ifdef INF_SOURCE
+	i = 666;
+#endif // 无限资源模式！！
 	fwrite(&i, 2, 1, fp);
 	fwrite(&i, 2, 1, fp);//双方资源数
 

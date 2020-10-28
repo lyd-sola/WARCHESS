@@ -25,8 +25,6 @@ int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);
 
-void draw_cell(DBL_POS pos, MAP map);
-
 void initdraw(MAP map);
 
 void disp_geo_info(CELL cell);
