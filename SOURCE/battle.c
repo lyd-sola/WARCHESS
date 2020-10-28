@@ -24,6 +24,7 @@ int battle(char *user, short save_num, short mode)
 	int clccell = 0;//点击过地图上的一个格子
 	int flag, msgflag = 0;
 	int side;//标记当前阵营
+	int vflag; //标记
 	FILE* fp;
 	COLO co;
 	load_battle(user, save_num, &batinfo, map, &fp);//读取存档
@@ -70,6 +71,10 @@ int battle(char *user, short save_num, short mode)
 		{
 			fclose(fp);
 			exit(0);
+		}
+		if (victory_judge(map))
+		{
+			return MAINMENU;
 		}
 	}
 }

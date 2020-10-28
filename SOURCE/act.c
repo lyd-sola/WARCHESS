@@ -178,6 +178,7 @@ int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
 	else
 		return 0;
 }
+
 void delarm(DBL_POS dpos, MAP map)
 {
 	POS center;

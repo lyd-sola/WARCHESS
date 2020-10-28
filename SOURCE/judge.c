@@ -217,18 +217,18 @@ int victory_judge(MAP map)
 	if (map[3][10].kind == 0)
 	{
 		delay(1000);
-		if (msgbar("确认", "取消", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
-			return MAINMENU;
+		if (msgbar("再战", "退出", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+			return 1;
 		else
-			return BATTLE;
+			exit(0);
 	}
 	if (map[9][1].kind == 0)
 	{
 		delay(1000);
 		if (msgbar("确认", "取消", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
-			return MAINMENU;
+			return 1;
 		else
-			return BATTLE;
+			exit(0);
 	}
 	return 0;
 }

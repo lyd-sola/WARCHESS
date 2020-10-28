@@ -10,7 +10,7 @@ Description: 教程函数，实际上为一段动画
 void help_cartoon()
 {
 	MAP map;
-	int step = 1;
+	int step = 5;
 	DBL_POS pos;
 	Battleinfo batinfo;
 	FILE* fp;
@@ -39,7 +39,9 @@ void help_cartoon()
 			step = step4(map);
 			break;
 		case 5:
-			step = step5();exit(0);
+			step = step5(map);exit(0);
+		case 6:
+			step = step6();
 		}
 	}
 }
@@ -248,7 +250,7 @@ void step4_2(int side, MAP map)
 	CELL cell;
 	int source = 100;
 	step421(side, &armkind);
-	step422(side, armkind);
+	step422(side, armkind, map);
 	step423();
 	step424(source, map);
 	return;
@@ -272,30 +274,22 @@ void step421(int side, int* armkind)
 	helpwanttosay("别点", "别点", "当你进入大本营之后", "你可以进行升级或者造兵", 0);
 	helpwanttosay("别点", "别点", "再次点击大本营升级", "或者点击右下角进行造兵", 0);
 	helpwanttosay("别点", "别点", "现在先试着造一个步兵", "点击右下角头盔图标", 0);
-	while (1)
-	{
-		Newxy();
-		if (mouse_press(745 + 65 - 18, 705 - 18, 745 + 65 + 18, 705 + 23) == MOUSE_IN_L)
-		{
-			*armkind = INFANTRY; //为第二次点选确定兵种值
-			show_msg("步兵，造价：2", "再次点选确定建造，右键取消");
-			helpwanttosay("别点", "别点", "麦斯基会给你提示信息", "跟着他做", 0);
-			break;
-		}
-	}
+	helpwanttosay("别点", "别点", "麦斯基会给你提示信息", "跟着他做", 0);
 }
 
-void step422(int side, int armkind)
+void step422(int side, int armkind, MAP map)
 {
 	POS pos;
 	CELL cell;
+	int source = 100;
 	while (1)
 	{
 		Newxy();
 		if (mouse_press(745 + 65 - 18, 705 - 18, 745 + 65 + 18, 705 + 23) == MOUSE_IN_L)
 		{
-			pos = center_xy(5, 11);
-			icon(pos, side, armkind);
+			//pos = center_xy(5, 11);
+			//icon(pos, side, armkind);
+			buildarm(map, &source, 0);
 			helpwanttosay("别点", "别点", "干得漂亮", "现在你有一个步兵了", 0);
 			helpwanttosay("别点", "别点", "你一共能指挥五个兵种", "具体信息可以看左边和下边", 0);
 			show_msg("", "");
@@ -322,6 +316,8 @@ void step422(int side, int armkind)
 			arrow(750, 705 - 18, "超级兵，图标是一柄刀", "超级兵拥有不合常理的", "高属性，但是攻击大本", 1);
 			arrow(750, 705 - 18, "营伤害很低，只有", "一点", "", 1);
 			Map_partial(750 - 310, 705 - 18 - 50, 750, 705 - 18 + 50);
+			cell.kind = 0;
+			disp_arm_info(cell);
 			pos.x = 745;
 			pos.y = 705;
 			icon(pos, side, BUILDER);
@@ -344,6 +340,7 @@ void step423()
 		if (mouse_press(745 + 65 * 2 - 18, 705 - 18, 745 + 65 * 2 + 18, 705 + 23) == MOUSE_IN_L)
 		{
 			show_msg("炮兵，造价：5", "再次点选确定建造，右键取消");
+			delay(50);
 			break;
 		}
 	}
@@ -354,10 +351,10 @@ void step423()
 		{
 			show_msg("需要大本营等级：2", "建造失败");
 			helpwanttosay("别点", "别点", "啊哦,建造失败了", "因为大本营等级不够", 0);
-			helpwanttosay("别点", "别点", "工兵和步兵一级就可以建造", "炮兵和坦克需要二级", 0);
+			helpwanttosay("别点", "别点", "工兵和步兵一级就可以建造", "炮兵和坦克需要二级大本营", 0);
 			helpwanttosay("别点", "别点", "而超级兵需要三级大本营", "", 0);
 			show_msg("再次点选进行升级！", "右键取消");
-			helpwanttosay("别点", "别点", "我已经帮你选中了大本营", "现在升级一次大本营", 0);
+			helpwanttosay("别点", "别点", "我已经帮你选中了大本营", "现在升级一次", 0);
 			break;
 		}
 	}
@@ -394,18 +391,129 @@ void step424(int source, MAP map)
 		}
 	}
 }
-int step5()
+int step5(MAP map)
 {
+	DBL_POS ptmp;
+	OFF_POS otmp;
+	POS center;
+	step422(0, INFANTRY, map);                                  //记得删除
+	step5_1(map);
+	step5_2(map);
+	step5_3(map);
+	return 6;
+}
+void step5_1(MAP map)
+{
+	DBL_POS ptmp;
+	OFF_POS otmp;
+	POS center;
 	helpwanttosay("别点", "别点", "现在让我教你如何移动", "首先点选步兵", 0);
+	while (map[10][2].kind != 0)
+	{
+		if (Clcmap(&ptmp, map) == 2)
+		{
+			disp_arm_info(map[10][2]);
+			helpwanttosay("别点", "别点", "然后点击移动键", "仔细想想你能走的位置", 0);
+			helpwanttosay("别点", "别点", "啊哦，我有点碍事", "看样子我得先离开一下", 0);
+			Map_partial(262, 218, 262 + 500, 219 + 230);
+			while (1)
+			{
+				Newxy();
+				if (move_btn_fun(65370, 65340))
+				{
+					move(ptmp, map, 2);
+					otmp = D2O(ptmp);
+					center = center_xy(ptmp.x, ptmp.y);   //这记得改
+					show_msg("", "");
+					move_button(OK_co);
+					break;
+				}
+			}
+			delay(500);
+			Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);
+			map[otmp.y][otmp.x].kind = 0;
+		}
+		else
+		{
+			helpwanttosay("别点", "别点", "学会走路还挺难的", "对吧", 0);
+			Map_partial(262, 218, 262 + 500, 219 + 230);
+		}
+	}
+}
+void step5_2(MAP map)
+{
+	POS center;
+	map[10][2].kind = ARTILLERY;
+	map[10][2].health = 2;
+	map[10][2].side = 0;
+	center = center_xy(5, 11);
+	icon(center, 0, ARTILLERY);
+	helpwanttosay("别点", "别点", "做的不错", "下面是攻击", 0);
+	helpwanttosay("别点", "别点", "攻击要注意攻击范围", "同时也要注意对象", 0);
+	helpwanttosay("别点", "别点", "我将在场上放置三支军队", "尝试着做出正确的攻击", 0);
+	helpwanttosay("别点", "别点", "点击一下你的炮兵", "开始吧", 0);
+	helpwanttosay("别点", "别点", "注意炮兵的攻击范围", "", 0);
+	Map_partial(262, 218, 262 + 500, 219 + 230);
+
+	map[8][2].kind = TANK;
+	map[8][2].health = 2;
+	map[8][2].side = 0;
+	center = center_xy(5, 9);
+	icon(center, 0, TANK);
+
+	map[8][3].kind = BUILDER;
+	map[8][3].health = 2;
+	map[8][3].side = 1;
+	center = center_xy(7, 9);
+	icon(center, 1, BUILDER);
+
+	map[7][2].kind = SUPER;
+	map[7][2].health = 2;
+	map[7][2].side = 1;
+	center = center_xy(6, 8);
+	icon(center, 1, SUPER);
+}
+void step5_3(MAP map)
+{
+	DBL_POS ptmp;
 	while (1)
 	{
 		Newxy();
+		ptmp = xy2cell(MouseX, MouseY);
+		if (ptmp.x == 5 && ptmp.y == 11 && press == 1)
 		{
-
+			disp_arm_info(map[10][2]);
+			break;
 		}
 	}
-	helpwanttosay("别点", "别点", "地图上出兵点是固定的", "那里不能有军队存在", 0);
-	return 6;
+	while (1)
+	{
+		Newxy();
+		if (atk_btn_fun("攻击", 65370, 65340))
+		{
+			attack(ptmp, map);
+			attack_button("攻击", 65370);
+			return 6;
+		}
+	}
+	helpwanttosay("别点", "别点", "怎么样，简单吧", "", 0);
+	helpwanttosay("别点", "别点", "完全不需要训练", "就可做到百发百中", 0);
+	helpwanttosay("别点", "别点", "驻扎和删除的功能很简单", "驻扎可以增加一点攻击力", 0);
+	helpwanttosay("别点", "别点", "而删除可以撤退你的军队", "", 0);
+	helpwanttosay("别点", "别点", "需要注意的是，所有行为", "都会消耗掉该部队的行动力", 0);
+}
+int Clcmap(DBL_POS* pos, MAP map)
+{
+	while (1)
+	{
+		Newxy();
+		if (clcmap(pos, map) == 1)
+			return 1;
+		if (clcmap(pos, map) == 2)
+			return 2;
+		if (clcmap(pos, map) == 3)
+			return 3;
+	}
 }
 void arrow(int x, int y, char* s1, char* s2, char *s3, int mode)
 {

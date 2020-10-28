@@ -17,11 +17,13 @@ int step4(MAP map);
 int step4_1(void);
 void step4_2(int side, MAP map);
 void step421(int side, int* armkind);
-void step422(int side, int armkind);
+void step422(int side, int armkind, MAP map);
 void step423(void);
 void step424(int source, MAP map);
 
-int step5();
+int step5(MAP map);
+
+int Clcmap(DBL_POS* pos, MAP map);
 void arrow(int x, int y, char* s1, char* s2, char* s3, int mode);
 short helpwanttosay(char* btn1, char* btn2, char* s1, char* s2, int mode);
 
