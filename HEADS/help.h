@@ -22,6 +22,9 @@ void step423(void);
 void step424(int source, MAP map);
 
 int step5(MAP map);
+void step5_1(MAP map);
+void step5_2(MAP map);
+void step5_3(MAP map);
 
 int Clcmap(DBL_POS* pos, MAP map);
 void arrow(int x, int y, char* s1, char* s2, char* s3, int mode);
