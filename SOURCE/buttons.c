@@ -468,7 +468,7 @@ void exit_btn(int color)
 
 void draw_opts()
 {
-	int dlay = 200;
+	int dlay = 140;
 	Bar64k(838, 47, 975, 87, 65370);
 	rectangle64k(838, 47, 975, 87, 0);
 	rectangle64k(837, 46, 976, 88, 0);

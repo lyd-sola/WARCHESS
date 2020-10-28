@@ -25,8 +25,6 @@ int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);
 
-void draw_cell(DBL_POS pos, MAP map);
-
 void initdraw(MAP map);
 
 void disp_geo_info(CELL cell);
@@ -41,7 +39,7 @@ typedef struct COLR {
 }COLO;
 #define OK_co 65370
 #define CANT_co 44373
-void act_buttons(COLO* co, int kind, int flag, int is_same_side);
+void act_buttons(COLO* co, int kind, int flag, int is_same_side, int is_stay);
 void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo);
 void first_click(MAP map, DBL_POS* pos, int* clccell, int* msgflag, Arminfo* arminfo, Battleinfo* batinfo, COLO *co);
 int opt_btn(FILE* fp, int save_num, MAP map, Battleinfo* batinfo);

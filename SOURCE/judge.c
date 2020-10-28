@@ -29,7 +29,7 @@ Author：		刘云笛
 				虽然移动时节点间边权不同，但采用原地不动增加步数的方法保证了bfs正常进行（每一层步数相同），
 				同时可以计算出最短路径
 **********************************************************/
-void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
+int range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])//有可行点返回1，无返回0
 {
 	OFF_POS opos = D2O(pos), otop, onew;
 	int dx[] = { 2, 1, -1, -2, -1, 1 };
@@ -40,7 +40,7 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 		int abl;//可用消耗
 	}queue[35], top, neww;
 	int front = 0, rear = 0, i;//数组首尾，使用循环队列优化
-
+	int flag = 0;//标记有无点在范围内
 
 	POS p;//test
 
@@ -80,11 +80,11 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 				{
 					if (mode == 0)
 					{
+						flag = 1;
 						if (map[onew.y][onew.x].kind == NOARMY)//没有单位才能走
 						{
 							queue[rear++ % 25] = neww;
 							visit[ny][nx] = neww.abl;
-
 							//test
 							/*p = center_xy(neww.pos.x, neww.pos.y);
 							Icon_draw(p, 1);*/
@@ -94,17 +94,15 @@ void range(MAP map, DBL_POS pos, int able, int mode, int visit[7][7])
 					{
 						queue[rear++ % 25] = neww;
 						visit[ny][nx] = neww.abl;
-						//test
-						/*p = center_xy(neww.pos.x, neww.pos.y);
-						Icon_draw(p, 1);*/
 					}//攻击不受遮挡（迫击炮）
-					if (rear - front == 35)
-						show_error("队列溢出", 1);
+					if (rear - front >= 35)
+						show_error("Queue Overflow", 1);
 				}
 			}
 		}
 	}
 	visit[3][3] = -1;//还原中心点，用于推路径
+	return flag;
 }
 /**********************************************************
 Function：		moving
@@ -156,6 +154,10 @@ int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO)//成功返回1，失败0
 			}
 		}
 		now = minpos;
+		if (top > 3)
+		{
+			show_error("路径计算栈溢出!", 1);
+		}
 		path[top++] = now;
 	}//路径计算
 	show_msg("行军中", "");

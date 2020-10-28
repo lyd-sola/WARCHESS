@@ -104,7 +104,14 @@ OFF_POS D2O(DBL_POS pos)
 DBL_POS O2D(OFF_POS pos)
 {
 	DBL_POS dpos;
-	dpos.x = 2 * pos.x + 1;
+	if (pos.y % 2)
+	{
+		dpos.x = 2 * pos.x + 2;
+	}
+	else
+	{
+		dpos.x = 2 * pos.x + 1;
+	}
 	dpos.y = pos.y + 1;
 	return dpos;
 }
@@ -179,4 +186,54 @@ int inside_map(MAP map, DBL_POS pos)//为了其他函数的美观，把丑陋的东西写在这里
 
 	return 1 <= pos.x && pos.x <= 26 && 1 <= pos.y && pos.y <= 13
 		&& map[opos.y][opos.x].geo != OUT_MAP;
+}
+
+/*画出一个格子上的兵种符号*/
+void draw_cell(DBL_POS pos, MAP map)
+{
+
+	int kind, side, geo;
+	POS offpos;
+
+	offpos = D2O(pos);
+
+	kind = map[offpos.y][offpos.x].kind;
+	side = map[offpos.y][offpos.x].side;
+	geo = map[offpos.y][offpos.x].geo;
+	pos = center_xy(pos.x, pos.y);
+	//防止初始化界面时因为kind不等于0把大本营和资源画错
+	switch (geo)
+	{
+	case BASE:
+		//Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
+	//case SORC:
+	//case HSORC:
+	case OUT_MAP:
+		return;
+	}
+	switch (kind)
+	{
+	case BUILDER:
+		Icon_builder(pos, side);
+		break;
+	case INFANTRY:
+		Icon_inf(pos, side);
+		break;
+	case ARTILLERY:
+		Icon_arti(pos, side);
+		break;
+	case TANK:
+		Icon_tank(pos, side);
+		break;
+	case SUPER:
+		Icon_super(pos, side);
+		break;
+	default:
+		break;
+	}
+}
+
+void recover_cell(DBL_POS pos, MAP map)//还原格子
+{
+
 }

@@ -29,7 +29,7 @@ int battle(char *user, short save_num, short mode)
 	COLO co;
 	load_battle(user, save_num, &batinfo, map, &fp);//读取存档
 	battle_draw();//界面绘制
-	act_buttons(&co, 0, 1, 0);//行为按钮
+	act_buttons(&co, 0, 1, 0, 0);//行为按钮
 	disp_bat_info(batinfo);//对战信息（回合资源）
 	side = (batinfo.round - 1) % 2;
 	initdraw(map);//单位绘制
@@ -44,8 +44,14 @@ int battle(char *user, short save_num, short mode)
 			show_msg("请指挥官进行操作", "");
 			msgflag = 1;
 		}
-		if (nxt_btn_fun(65370, 65340))
+		if (mode && side == 1)
 		{
+			aut(map, &batinfo);goto nextr;
+			msgflag = 0;
+			batinfo.r_source += 2;		//给电脑每回合多一点资源吧，数值需要后续设计
+		}
+		if (nxt_btn_fun(65370, 65340))
+		{nextr://为了缩减行数，不得不
 			nxt_round(map, &batinfo, &side);
 			disp_bat_info(batinfo);
 			next_r_banner(side);//画banner，自带delay
@@ -58,7 +64,7 @@ int battle(char *user, short save_num, short mode)
 			act_btn(map, &co, &clccell, pos, &arminfo);
 			if (!clccell)
 			{
-				act_buttons(&co, 0, 1, 0);
+				act_buttons(&co, 0, 1, 0, 0);
 				msgflag = 0;
 				delay(300);
 			}
@@ -93,52 +99,6 @@ void battle_draw()
 	save_btn(65370);
 	exit_btn(65370);
 	option_btn(65370);
-}
-/*画出一个格子上的兵种符号*/
-void draw_cell(DBL_POS pos, MAP map)
-{
-
-	int kind, side, geo;
-	POS offpos;
-
-	offpos = D2O(pos);
-
-	kind = map[offpos.y][offpos.x].kind;
-	side = map[offpos.y][offpos.x].side;
-	geo = map[offpos.y][offpos.x].geo;
-	pos = center_xy(pos.x, pos.y);
-	//防止初始化界面时因为kind不等于0把大本营和资源画错
-	switch (geo)
-	{
-	case BASE:
-		//Map_partial(pos.x - 18, pos.y - 18, pos.x + 18, pos.y + 23);
-	case SORC:
-	case HSORC:
-	case OUT_MAP:
-		return;
-	default:
-		break;
-	}
-	switch (kind)
-	{
-	case BUILDER:
-		Icon_builder(pos, side);
-		break;
-	case INFANTRY:
-		Icon_inf(pos, side);
-		break;
-	case ARTILLERY:
-		Icon_arti(pos, side);
-		break;
-	case TANK:
-		Icon_tank(pos, side);
-		break;
-	case SUPER:
-		Icon_super(pos, side);
-		break;
-	default:
-		break;
-	}
 }
 
 void initdraw(MAP map)
@@ -257,7 +217,7 @@ Arminfo disp_arm_info(CELL cell)
 	char buffer[20] = "\0";
 	info = search_info(cell.kind);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
-	if (cell.geo == BASE || cell.geo == SORC || cell.geo == HSORC)
+	if (cell.geo == BASE /*|| cell.geo == SORC || cell.geo == HSORC*/)
 		return info;
 
 	switch (cell.kind)
@@ -302,14 +262,11 @@ void disp_bat_info(Battleinfo batinfo)
 	int x = 25;
 	Map_partial(740+x, 670, 980+x, 700);//还原行动方
 	Map_partial(20 + 4 * 32, 715, 315+x, 747);//还原资源数
-	if (batinfo.round % 2)//回合数显示
-	{
-		Map_partial(740 + x, 700, 980 + x, 742);//还原回合数
-		sprintf(buffer, "回合数");
-		Outtext(740 + x, 710, buffer, 32, 40, 0);
-		sprintf(buffer, "%d", (batinfo.round + 1) / 2);
-		Outtext(740+32*4 + x, 710, buffer, 32, 32, 0);
-	}
+	Map_partial(740 + x, 700, 980 + x, 742);//还原回合数
+	sprintf(buffer, "回合数");
+	Outtext(740 + x, 710, buffer, 32, 40, 0);
+	sprintf(buffer, "%d", (batinfo.round + 1) / 2);
+	Outtext(740+32*4 + x, 710, buffer, 32, 32, 0);
 	Outtext(20, 715, "资源数", 32, 40, 0);
 	if ((batinfo.round + 1)% 2)//资源显示
 	{
@@ -326,7 +283,7 @@ void disp_bat_info(Battleinfo batinfo)
 }
 
 /*绘制行为按钮*/
-void act_buttons(COLO *co, int kind, int flag, int is_same_side)
+void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay)
 {
 	if (flag || !is_same_side)
 	{
@@ -339,7 +296,7 @@ void act_buttons(COLO *co, int kind, int flag, int is_same_side)
 	{
 		co->del = OK_co;
 		co->mov = OK_co;
-		co->stay = OK_co;
+		co->stay = is_stay ? CANT_co : OK_co;
 		co->atk = OK_co;
 	}
 	if (kind == BUILDER)
@@ -424,14 +381,14 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 		case 1:		//点空
 			*clccell = 0;
 			show_msg("该区域为空", "");
-			act_buttons(co, 0, 1, 0);
+			act_buttons(co, 0, 1, 0, 0);
 			break;
 		case 2:		//点击己方单位
 			*pos = ptmp;
 			*clccell = 1;
 			show_msg("已选择一个单位", "请选择行为");
 			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,
-				map[opos.y][opos.x].side == side);
+				map[opos.y][opos.x].side == side, map[opos.y][opos.x].stay);
 			break;
 		case 3:		//点击大本营
 			*clccell = 0;
@@ -439,7 +396,7 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 			delay(50);
 			base_func(map, side ? &(batinfo->r_source) : &(batinfo->b_source), side);
 			disp_bat_info(*batinfo);
-			act_buttons(co, 0, 1, 0);
+			act_buttons(co, 0, 1, 0, 0);
 			*msgflag = 0;
 			break;
 		}
