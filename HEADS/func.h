@@ -15,7 +15,6 @@ Function List£∫
 #ifndef	_FUNCITONS_H_
 #define	_FUNCITONS_H_
 
-extern FILE* FBMP;//∂Øª≠”√
 void show_error(char* msg, int mode);
 void show_msg(char* msg, char* msg2);
 short msgbar(char* btn1, char* btn2, char* s1, char* s2);

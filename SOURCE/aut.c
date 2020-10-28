@@ -8,6 +8,7 @@ Date:
 
 更新日志
 10.28 2am	完成自动攻击和移动！！！
+10.28 10am	增加自动造兵和升级大本营，增加自动移动随机性
 ******************************************************************/
 #include "common.h"
 /**********************************************************
@@ -55,6 +56,15 @@ void aut(MAP map, Battleinfo* batinfo)
 		}
 	}
 	aut_base(map, &(batinfo->r_source));
+	switch (map[3][10].kind)
+	{
+	case 3:
+		batinfo->r_source += 10;
+	case 2:
+		batinfo->r_source += 5;
+	case 1:
+		batinfo->r_source += 1;
+	}
 }
 void aut_move(MAP map, OFF_POS opos, int visit[7][7])
 {
@@ -75,7 +85,7 @@ void aut_move(MAP map, OFF_POS opos, int visit[7][7])
 				dbto.y = y;
 				dbto = O2D(dbto);
 				tmp = abs(dbto.y - 10) + abs(dbto.x - 4) / 2;
-				if (rand() % 20 == 0)//有一定概率乱走，增加变化性
+				if (rand() % 50 == 0)//有一定概率乱走，增加变化性
 					tmp = 0;
 				if (tmp < min || (min == tmp && rand() % 2))//随机选一个近似最近点
 				{
@@ -126,42 +136,40 @@ void ATTACK(OFF_POS to, Arminfo info, int Stay_pos, MAP map)
 {
 	DBL_POS dbto = O2D(to);
 	POS center = center_xy(dbto.x, dbto.y);
+	info.attack += Stay_pos;//驻扎增加攻击力
 	if (info.attack >= map[to.y][to.x].health) //目标扑街
 	{
 		Clrmous();
 		map[to.y][to.x].kind = NOARMY;
-		show_msg("已歼灭一个目标！", "");
+		show_msg("消灭一个目标！", "");
 		draw_bomb(center.x, center.y + 10, 0);
-		delay(1000);
+		delay(msg_sec);
+		Clrmous();
 		Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);//还原此处地图
-		attack_button("攻击", 65370);
-		return;
 	}
 	else
 	{
-		//计算驻扎增幅的公式，暂设为驻扎之后攻击力+2，防御力+1（即受到的伤害-1）
-		map[to.y][to.x].health -= (info.attack + Stay_pos * 2);
+		map[to.y][to.x].health -= info.attack;//减少生命值
 		show_msg("FIRE!", "");
 		draw_bomb(center.x, center.y + 10, 0);
-		delay(1000);
-		draw_cell(dbto, map);
-		//icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
-		attack_button("攻击", 65370);
-		return;
+		delay(msg_sec);
+		Clrmous();
+		recover_cell(dbto, map);
 	}
+	return;
 }
 void aut_base(MAP map, unsigned* source)//自动升级和造兵
 {
 	int cost;
 	if (map[3][10].kind < 3)//能升级当然升级啦
 	{
-		cost = map[3][10].kind == 1 ? 10 : 50;
+		cost = map[3][10].kind == 1 ? lev2_cost : lev3_cost;
 		if (*source > cost)
 		{
 			map[3][10].kind++;
 			*source -= cost;
 			show_msg("大本营升级！", "");
-			delay(msg_sec / 2);
+			delay(msg_sec);
 		}
 	}
 	aut_buildarm(map, source);
@@ -190,10 +198,10 @@ void aut_buildarm(MAP map, unsigned* source)//自动造兵，目前只会造步兵、炮兵、坦
 	{
 		if (*source > 10)
 		{
-			rd = rand() % 14;//生成随机数，按概率随机出兵 步跑坦空 2:4:5:3
-			if (rd <= 1)
+			rd = rand() % 14;//生成随机数，按概率随机出兵 步炮坦空 5:3:3:3
+			if (rd <= 4)
 				kind = INFANTRY;
-			else if (rd <= 5)
+			else if (rd <= 7)
 				kind = ARTILLERY;
 			else if (rd <= 10)
 				kind = TANK;

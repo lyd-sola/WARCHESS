@@ -92,15 +92,15 @@ float f(float x, float a, float b, int n1, int n2)
 	centpos.y -= 2;//根据图标位置微调
 	return centpos;
 }
-
+ //双倍宽度坐标转偏移坐标，和重水没有什么关系
 OFF_POS D2O(DBL_POS pos)
 {
 	OFF_POS opos;
-	opos.x = (pos.x - 1) / 2;
+	opos.x = (pos.x - 1) / 2;//int除法自动下取整，无需特判，O2D则需要特判
 	opos.y = pos.y - 1;
 	return opos;
 }
-
+//偏移坐标转双倍宽度坐标
 DBL_POS O2D(OFF_POS pos)
 {
 	DBL_POS dpos;
@@ -235,5 +235,40 @@ void draw_cell(DBL_POS pos, MAP map)
 
 void recover_cell(DBL_POS pos, MAP map)//还原格子
 {
+	int geo, kind;
+	POS offpos;
+	offpos = D2O(pos);
+	geo = map[offpos.y][offpos.x].geo;
+	kind = map[offpos.y][offpos.x].kind;
+	offpos = center_xy(pos.x, pos.y);
+	if (geo == BASE || kind == 0)
+	{
+		Map_partial(offpos.x - 18, offpos.y - 18, offpos.x + 18, offpos.y + 23);
+	}
+	else
+	{
+		draw_cell(pos, map);
+	}
+}
+/*显示visit数组中可行的点，第三个函数指针传lightbar标亮，map_partial还原*/
+void show_visit(DBL_POS pos, int visit[7][7], void (*lightfun)(int x1, int y1, int x2, int y2))
+{
+	OFF_POS opos = D2O(pos);
+	POS center;
+	int i, j;
+	for (i = 0; i < 7; i++)
+	{
+		for (j = 0; j < 7; j++)
+		{
+			if (visit[j][i] > 0)
+			{
+				center.y = opos.y + j - 3;
+				center.x = opos.x + i - 3;
+				center = O2D(center);
+				center = center_xy(center.x, center.y);
+				lightfun(center.x - 18, center.y - 18, center.x + 18, center.y + 18);
+			}
+		}
+	}
 
 }

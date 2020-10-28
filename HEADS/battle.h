@@ -20,7 +20,11 @@ Function List£º
 #define	_BATTLE_H_
 
 #include "struct.h"
+
 #define msg_sec 1000
+#define lev2_cost 20
+#define lev3_cost 100
+
 int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);

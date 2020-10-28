@@ -45,12 +45,16 @@ int battle(char *user, short save_num, short mode)
 		}
 		if (mode && side == 1)
 		{
-			aut(map, &batinfo);goto nextr;
+			aut(map, &batinfo);
 			msgflag = 0;
-			batinfo.r_source += 2;		//给电脑每回合多一点资源吧，数值需要后续设计
+			nxt_round(map, &batinfo, &side);
+			disp_bat_info(batinfo);
+			next_r_banner(side);//画banner，自带delay
+			Map_partial(512 - 240 - 75, 300, 512 + 240 + 75, 300 + 125);
+			initdraw(map);//还原
 		}
 		if (nxt_btn_fun(65370, 65340))
-		{nextr://为了缩减行数，不得不
+		{
 			nxt_round(map, &batinfo, &side);
 			disp_bat_info(batinfo);
 			next_r_banner(side);//画banner，自带delay
@@ -70,7 +74,8 @@ int battle(char *user, short save_num, short mode)
 		}
 		if ((flag = opt_btn(fp, save_num, map, &batinfo)) != BATTLE)//右上角选项菜单区
 		{
-			return flag;
+			fclose(fp);
+			return flag;//返回其他界面
 		}
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
@@ -139,7 +144,6 @@ void icon(POS world_pos, int side, int kind)
 }
 
 /*搜索兵种信息，仅在disp函数中调用*/
-
 Arminfo search_info(int kind)
 {
 	FILE* fp;
@@ -188,7 +192,7 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 100, text, 16, 20, 0);
 		if (cell.kind < 3)
 		{
-			sprintf(text, "升级花费 %d", cell.kind == 1 ? 10 : 50);
+			sprintf(text, "升级花费 %d", cell.kind == 1 ? lev2_cost : lev3_cost);
 			Outtext(20, 130, text, 16, 20, 0);
 		}
 		return;
@@ -266,13 +270,13 @@ void disp_bat_info(Battleinfo batinfo)
 	if ((batinfo.round + 1)% 2)//资源显示
 	{
 		sprintf(buffer, "%d", batinfo.r_source);
-		Outtext(740+x, 670, "红军行动", 32, 40, 0);
+		Outtext(740+x, 670, "蓝军行动", 32, 40, 0);
 		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 	else
 	{
 		sprintf(buffer, "%d", batinfo.b_source);
-		Outtext(740+x, 670, "蓝军行动", 32, 40, 0);
+		Outtext(740+x, 670, "红军行动", 32, 40, 0);
 		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 }

@@ -161,6 +161,8 @@ int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO)//成功返回1，失败0
 		path[top++] = now;
 	}//路径计算
 	show_msg("行军中", "");
+	Clrmous();
+	show_visit(FROM, visit, Map_partial);
 	anime_path(map, path, top);
 	return 1;
 }
@@ -185,7 +187,6 @@ void anime_path(MAP map, DBL_POS* path, int top)
 		lpos = pos;
 	}
 	pos = center_xy(path[top].x, path[top].y);
-	Clrmous();
 	Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23);//还原此处地图
 	icon(pos, side, kind);
 
