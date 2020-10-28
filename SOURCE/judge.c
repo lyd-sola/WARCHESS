@@ -226,8 +226,8 @@ int victory_judge(MAP map)
 	}
 	if (map[9][1].kind == 0)
 	{
-		delay(1000);
-		if (msgbar("确认", "取消", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+		delay(msg_sec);
+		if (msgbar("再战", "退出", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
 			return 1;
 		else
 			exit(0);

@@ -334,11 +334,23 @@ void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo)
 	}
 	if (co->atk == (int)OK_co)
 	{
-		if (atk_btn_fun("¹¥»÷", co->atk, 65340))//¹¥»÷
+		if (arminfo->attack == 0)
 		{
-			attack(pos, map);
-			*clccell = 0;
+			if (atk_btn_fun("½¨Ôì", co->atk, 65340));
+			{
+				builder_build(pos, map);
+				*clccell = 0;
+			}
 		}
+		else
+		{
+			if (atk_btn_fun("¹¥»÷", co->atk, 65340))//¹¥»÷
+			{
+				attack(pos, map);
+				*clccell = 0;
+			}
+		}
+		
 	}
 	if (co->del == (int)OK_co)
 	{

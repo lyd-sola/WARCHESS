@@ -34,6 +34,8 @@ void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void draw_bomb(int x, int y, double i);
+void collection_draw(POS center);
+void medical_draw(POS center);
 
 int putbmp_partial(int x1, int y1, int x2, int y2, char* s);
 #endif

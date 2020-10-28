@@ -219,17 +219,17 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			perround += 1;
 		if (map[3][10].kind > 2) //大本营3级
 			perround += 2;
-		if (map[3][1].faci == COLLECTION && map[3][1].side == 1) //普通资源点是否占领
+		if (map[3][1].faci == BCOLLECTION) //普通资源点是否占领
 			perround += 1;
-		if (map[9][10].faci == COLLECTION && map[9][10].side == 1) //同上
+		if (map[9][10].faci == BCOLLECTION) //同上
 			perround += 1;
-		if (map[6][6].health >= 5 && map[6][6].side == 1) //搞基资源点是否占领五回合以上
+		if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
 			perround += 3;
 		info->r_source += perround;
 
-		/*********以下的判断为真正的一回合，即红方结束行动后需要增加的信息**********/
+		/*********以下的判断为真正的一回合，即蓝方结束行动后需要增加的信息**********/
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
-		if (map[3][1].faci == COLLECTION ) //每个资源点只能开采20回合, 且只能开采一次
+		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
 			if(map[3][1].health <= 20)
 				map[3][1].health++;
@@ -239,7 +239,7 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 				map[3][1].flag = 1;
 			}
 		}
-		if (map[9][10].faci == COLLECTION) //每个资源点只能开采20回合, 且只能开采一次
+		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
 			if (map[9][10].health <= 20)
 				map[9][10].health++;
@@ -249,7 +249,7 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 				map[9][10].flag = 1;
 			}
 		}
-		if (map[6][6].faci == COLLECTION) //每个资源点只能开采20回合, 且只能开采一次
+		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
 			if (map[6][6].health <= 25)
 				map[6][6].health++;
@@ -267,11 +267,11 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			perround += 1;
 		if (map[9][1].kind > 2) //大本营3级
 			perround += 2;
-		if (map[3][1].faci == COLLECTION && map[3][1].side == 0) //普通资源点是否占领
+		if (map[3][1].faci == RCOLLECTION) //普通资源点是否占领
 			perround += 1;
-		if (map[9][10].faci == COLLECTION && map[9][10].side == 0) //同上
+		if (map[9][10].faci == RCOLLECTION) //同上
 			perround += 1;
-		if (map[6][6].health >= 5 && map[6][6].side == 0) //搞基资源点是否占领五回合以上
+		if (map[6][6].health >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
 			perround += 3;
 		info->b_source += perround;
 	}
@@ -501,20 +501,23 @@ void buildarm(MAP map, unsigned* source, int side)
 
 void builder_build(DBL_POS dpos, MAP map)
 {
-	OFF_POS opos;
-	opos = D2O(dpos);
-	if (map[opos.y][opos.x].faci != NOARMY)
+	OFF_POS opos = D2O(dpos);
+	POS center = center_xy(dpos.x, dpos.y);
+	
+	if (map[opos.y][opos.x].faci != NOFACI)
 	{
 		show_msg("此处已有设施！", "");
 	}
 	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
 	{
-		map[opos.y][opos.x].faci = COLLECTION;
+		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
+		collection_draw(center);
 		show_msg("采集站建造成功！", "已开始采集资源");
 	}
 	else
 	{
 		map[opos.y][opos.x].faci = MEDICAL;
+		medical_draw(center);
 		show_msg("医疗站建造成功！", "已可以进行治疗");
 	}
 	delay(1000);

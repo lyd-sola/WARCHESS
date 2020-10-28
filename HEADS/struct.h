@@ -49,6 +49,6 @@ enum _KIND
 
 enum _FACI
 {
-	NOFACI, COLLECTION/*采集站*/, MEDICAL/*医疗站*/
+	NOFACI, RCOLLECTION/*红方采集站*/, BCOLLECTION/*蓝方采集站*/, MEDICAL/*医疗站*/
 };//设施种类编号 虽然只有两个
 #endif

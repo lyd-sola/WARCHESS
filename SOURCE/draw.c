@@ -686,3 +686,14 @@ int putbmp_partial(int x1, int y1, int x2, int y2, char *s)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾
 	fclose(fpbmp);
 	return 1;
 }
+
+void collection_draw(POS center)
+{
+	
+}
+
+void medical_draw(POS center)
+{
+	DBL_POS dpos = xy2cell(center.x, center.y);
+	Icon_draw(dpos, 0);
+}
