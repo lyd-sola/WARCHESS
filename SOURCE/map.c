@@ -247,13 +247,14 @@ void draw_cell(DBL_POS pos, MAP map)
 
 void recover_cell(DBL_POS pos, MAP map)//还原格子
 {
-	int geo, kind;
+	int geo, kind, faci;
 	POS offpos;
 	offpos = D2O(pos);
 	geo = map[offpos.y][offpos.x].geo;
 	kind = map[offpos.y][offpos.x].kind;
+	faci = map[offpos.y][offpos.x].faci;
 	offpos = center_xy(pos.x, pos.y);
-	if (geo == BASE || kind == 0)
+	if (geo == BASE || (kind == 0 && faci == 0))
 	{
 		Map_partial(offpos.x - 18, offpos.y - 18, offpos.x + 18, offpos.y + 23);
 	}

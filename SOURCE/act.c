@@ -50,20 +50,7 @@ int move_(DBL_POS From, DBL_POS dbto, int able, MAP map, int visit[7][7])
 	OFF_POS ofrom = D2O(From);
 	if (map[To.y][To.x].kind == NOARMY)//为空可移动，以后还需设置移动能力，还需判断是否原地移动
 	{
-		if (moving(map, visit, From, dbto))
-		{
-			map[To.y][To.x].stay = 0;//移动解除驻扎状态
-			map[To.y][To.x].flag = 1;//标记已移动
-			map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
-			map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
-			map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
-			map[ofrom.y][ofrom.x].kind = NOARMY;//清除这个就行了
-			if (map[ofrom.y][ofrom.x].faci != NOFACI)
-				recover_cell(From, map);
-			return 1;
-		}
-		else 
-			return 0;
+		return moving(map, visit, From, dbto);
 	}
 	else
 	{

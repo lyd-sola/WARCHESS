@@ -55,15 +55,15 @@ void aut(MAP map, Battleinfo* batinfo)
 			}
 		}
 	}
-	aut_base(map, &(batinfo->r_source));
+	aut_base(map, &(batinfo->b_source));
 	switch (map[3][10].kind)
 	{
 	case 3:
-		batinfo->r_source += 10;
+		batinfo->b_source += 5;
 	case 2:
-		batinfo->r_source += 5;
+		batinfo->b_source += 5;
 	case 1:
-		batinfo->r_source += 1;
+		batinfo->b_source += 1;
 	}
 }
 void aut_move(MAP map, OFF_POS opos, int visit[7][7])
@@ -101,12 +101,6 @@ void aut_move(MAP map, OFF_POS opos, int visit[7][7])
 	dbto.y = miny;
 	dbto = O2D(dbto);
 	moving(map, visit, dbf, dbto);
-	map[miny][minx].stay = 0;//移动解除驻扎状态
-	map[miny][minx].flag = 1;//标记已移动
-	map[miny][minx].health = map[opos.y][opos.x].health;
-	map[miny][minx].kind = map[opos.y][opos.x].kind;
-	map[miny][minx].side = map[opos.y][opos.x].side;//移动
-	map[opos.y][opos.x].kind = NOARMY;//清除这个就行了
 }
 int aut_attack(MAP map, OFF_POS opos, int visit[7][7], Arminfo info)
 {
