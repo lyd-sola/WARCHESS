@@ -219,7 +219,7 @@ void draw_cell(DBL_POS pos, MAP map)
 		break;
 	case BCOLLECTION:
 	case RCOLLECTION:
-		collection_draw(pos, map);
+		collection_draw(pos, side);
 	default:
 		break;
 	}
