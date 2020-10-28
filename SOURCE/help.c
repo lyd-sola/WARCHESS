@@ -41,7 +41,7 @@ void help_cartoon()
 		case 5:
 			step = step5(map);exit(0);
 		case 6:
-			step = step6();
+			//step = step6();
 		}
 	}
 }
