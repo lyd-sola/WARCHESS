@@ -509,12 +509,14 @@ int opts_fun(void)
 			}
 			else//点击外部关闭
 			{
+				Clrmous();
 				Map_partial(837, 46, 976, 88 + 41 * 2);
 				return BATTLE;
 			}
 		}
 		else if (press == 2)
 		{
+			Clrmous();
 			Map_partial(837, 46, 976, 88 + 41 * 2);
 			return BATTLE;
 		}//右键关闭

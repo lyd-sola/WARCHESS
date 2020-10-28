@@ -10,21 +10,23 @@ Date:
 
 ******************************************************************/
 #include "common.h"
-extern FILE* FBMP;
-void move(DBL_POS From, MAP map, int able)//需要增加移动方判断和是否可以行动
+void move(DBL_POS From, MAP map, int able)
 {
 	OFF_POS To, ofrom;
 	DBL_POS dbto;
+	int visit[7][7];
 
 	move_button(600);
 	show_msg("请选择要移动的位置", "点击右键取消");
-	/*这里本来想法是标亮所有可以走的点，有待实现*/
+	memset(visit, 0, sizeof(visit));
+	range(map, From, able, 0, visit);
+	show_visit(From, visit, Lightbar);//标亮所有可行点
 	while (1)
 	{
 		Newxy();
 		if (clcmap(&dbto, map))//需要保证已有行动力
 		{
-			if (move_(From, dbto, able, map) == 1)
+			if (move_(From, dbto, able, map, visit) == 1)
 			{
 				return;
 			}
@@ -35,18 +37,17 @@ void move(DBL_POS From, MAP map, int able)//需要增加移动方判断和是否可以行动
 		}
 		else if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)//右键取消
 		{
+			Clrmous();
+			show_visit(From, visit, Map_partial);//去标亮，move_里里里（函数套娃）还有一个
 			move_button(65370);
 			return;
 		}
 	}
 }
-int move_(DBL_POS From, DBL_POS dbto, int able, MAP map)
+int move_(DBL_POS From, DBL_POS dbto, int able, MAP map, int visit[7][7])
 {
-	int visit[7][7];
 	OFF_POS To = D2O(dbto);//求出目标偏移坐标
 	OFF_POS ofrom = D2O(From);
-	memset(visit, 0, sizeof(visit));
-	range(map, From, able, 0, visit);
 	if (map[To.y][To.x].kind == NOARMY)//为空可移动，以后还需设置移动能力，还需判断是否原地移动
 	{
 		if (moving(map, visit, From, dbto))
@@ -57,6 +58,8 @@ int move_(DBL_POS From, DBL_POS dbto, int able, MAP map)
 			map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
 			map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
 			map[ofrom.y][ofrom.x].kind = NOARMY;//清除这个就行了
+			if (map[ofrom.y][ofrom.x].faci != NOFACI)
+				recover_cell(From, map);
 			return 1;
 		}
 		else 
@@ -92,18 +95,17 @@ void stay(DBL_POS dpos, MAP map)
 	return;
 }
 
-void attack(DBL_POS dpos, MAP map)
+void attack(DBL_POS dpos, MAP map)//攻击功能
 {
 	OFF_POS opos, to;
 	DBL_POS dbto;
 	POS center;
 	Arminfo info;
-	int Stay_pos;
 
 	opos = D2O(dpos);
 	info = search_info(map[opos.y][opos.x].kind); //读取当前位置兵种信息
 
-	attack_button("攻击", 600);
+	attack_button("攻击", 64032);
 	show_msg("请选择要攻击的位置", "右键取消");
 
 	while (1)
@@ -114,8 +116,11 @@ void attack(DBL_POS dpos, MAP map)
 			to = D2O(dbto);
 			if (map[to.y][to.x].kind) //目标不为空可以攻击
 			{
-				if(attack_(info, map, dpos, dbto, Stay_pos) == 1)
+				if (attack_(info, map, dpos, dbto) == 1)
+				{
+					map[opos.y][opos.x].flag = 1;
 					return;
+				}
 				else
 					show_msg("打不到 QAQ", "请重新选择目标");
 			}
@@ -128,19 +133,23 @@ void attack(DBL_POS dpos, MAP map)
 	}
 }
 
-int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
+int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto)//攻击数值相关函数
 {
-	POS center = center_xy(dbto.x, dbto.y);
-	OFF_POS to = D2O(dbto);
-	OFF_POS opos = D2O(dpos);
+	POS center = center_xy(dbto.x, dbto.y);//目标点中心坐标
+	OFF_POS to = D2O(dbto);//目标点坐标
+	OFF_POS opos = D2O(dpos);//攻击者坐标
 	if (attack_judge(map, info.distance, dpos, dbto))
 	{
-		Stay_pos = map[opos.y][opos.x].stay;
+		info.attack += map[opos.y][opos.x].stay;//驻扎增加攻击力
+		if (map[to.y][to.x].geo == BASE && info.attack > 5)//超级兵不能速推大本营
+		{
+			info.attack = 1;
+		}
 		center = center_xy(dbto.x, dbto.y);
 		if (map[to.y][to.x].side == map[opos.y][opos.x].side) //目标不可为同阵营
 		{
 			show_msg("不可以攻击友军！", "你怎么肥四");
-			delay(1000);
+			delay(msg_sec);
 			return 1;
 		}
 		else
@@ -151,21 +160,18 @@ int attack_(Arminfo info, MAP map, DBL_POS dpos, DBL_POS dbto, int Stay_pos)
 				map[to.y][to.x].kind = NOARMY;
 				show_msg("目标已被歼灭！", "");
 				draw_bomb(center.x, center.y + 10, 0);
-				delay(1000);
+				delay(msg_sec);
+				Clrmous();
 				Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);//还原此处地图
-				return 1;
 			}
-
 			else
 			{
-				//计算驻扎增幅的公式，暂设为驻扎之后攻击力+2，防御力+1（即受到的伤害-1）
-				map[to.y][to.x].health -= (info.attack + Stay_pos * 2);
+				map[to.y][to.x].health -= info.attack;//减少生命值
 				show_msg("FIRE!", "");
 				draw_bomb(center.x, center.y + 10, 0);
-				delay(1000);
-				draw_cell(dbto, map);
-				//icon(center, map[to.y][to.x].side, map[to.y][to.x].kind);
-				return 1;
+				delay(msg_sec);
+				Clrmous();
+				recover_cell(dbto, map);
 			}
 			return 1;
 		}
@@ -182,7 +188,7 @@ void delarm(DBL_POS dpos, MAP map)
 	opos = D2O(dpos);
 	map[opos.y][opos.x].kind = NOARMY;
 	show_msg("该部队已撤退！", "");
-	delay(1000);
+	delay(msg_sec);
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);
 	return;
 }
@@ -281,7 +287,7 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 
 void next_r_banner(int side)
 {
-	char* s = side ? "红方回合" : "蓝方回合";
+	char* s = side ? "蓝方回合" : "红方回合";
 	banner(512 - 240, 300, 480);
 	Outtextxx(312 + 40, 300 + 50 - 24, 712 - 40, s, 48, 0);
 	delay(msg_sec);
@@ -340,7 +346,7 @@ void base_func(MAP map, unsigned* source, int side)
 void levelup(DBL_POS dpos, MAP map, unsigned* source)
 {
 	OFF_POS opos = D2O(dpos);
-	int cost = (map[opos.y][opos.x].kind == 1 ? 10 : 50);
+	int cost = (map[opos.y][opos.x].kind == 1 ? lev2_cost : lev3_cost);
 	if (map[opos.y][opos.x].kind == 3)
 	{
 		show_msg("大本营已满级", "升级失败");
@@ -499,11 +505,11 @@ void buildarm(MAP map, unsigned* source, int side)
 	}
 }
 
-void builder_build(DBL_POS dpos, MAP map)
+void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 {
 	OFF_POS opos = D2O(dpos);
 	POS center = center_xy(dpos.x, dpos.y);
-	
+	int source = map[opos.y][opos.x].side == 0 ? (batinfo->r_source): (batinfo->b_source);
 	if (map[opos.y][opos.x].faci != NOFACI)
 	{
 		show_msg("此处已有设施！", "");
@@ -511,11 +517,18 @@ void builder_build(DBL_POS dpos, MAP map)
 	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
 	{
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
-		collection_draw(center);
+		collection_draw(center, map);
 		show_msg("采集站建造成功！", "已开始采集资源");
 	}
 	else
 	{
+		if (source < 10)
+		{
+			show_msg("所需资源：10", "资源不足，建造失败！");
+			delay(msg_sec);
+			return;
+		}
+		map[opos.y][opos.x].side == 0 ? (batinfo->r_source -= 10) : (batinfo->b_source -= 10);
 		map[opos.y][opos.x].faci = MEDICAL;
 		medical_draw(center);
 		show_msg("医疗站建造成功！", "已可以进行治疗");

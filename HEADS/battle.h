@@ -20,7 +20,11 @@ Function List£º
 #define	_BATTLE_H_
 
 #include "struct.h"
+
 #define msg_sec 1000
+#define lev2_cost 20
+#define lev3_cost 100
+
 int battle(char* user, short save_num, short mode);
 
 void battle_draw(void);
@@ -40,7 +44,7 @@ typedef struct COLR {
 #define OK_co 65370
 #define CANT_co 44373
 void act_buttons(COLO* co, int kind, int flag, int is_same_side, int is_stay);
-void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo);
+void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Battleinfo* batinfo);
 void first_click(MAP map, DBL_POS* pos, int* clccell, int* msgflag, Arminfo* arminfo, Battleinfo* batinfo, COLO *co);
 int opt_btn(FILE* fp, int save_num, MAP map, Battleinfo* batinfo);
 #endif

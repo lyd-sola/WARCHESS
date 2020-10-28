@@ -161,6 +161,8 @@ int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO)//成功返回1，失败0
 		path[top++] = now;
 	}//路径计算
 	show_msg("行军中", "");
+	Clrmous();
+	show_visit(FROM, visit, Map_partial);
 	anime_path(map, path, top);
 	return 1;
 }
@@ -185,7 +187,6 @@ void anime_path(MAP map, DBL_POS* path, int top)
 		lpos = pos;
 	}
 	pos = center_xy(path[top].x, path[top].y);
-	Clrmous();
 	Map_partial(lpos.x - 18, lpos.y - 18, lpos.x + 18, lpos.y + 23);//还原此处地图
 	icon(pos, side, kind);
 
@@ -219,7 +220,7 @@ int victory_judge(MAP map)
 	if (map[3][10].kind == 0)
 	{
 		delay(1000);
-		if (msgbar("再战", "退出", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+		if (msgbar("再战", "退出", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
 			return 1;
 		else
 			exit(0);
@@ -227,7 +228,7 @@ int victory_judge(MAP map)
 	if (map[9][1].kind == 0)
 	{
 		delay(msg_sec);
-		if (msgbar("再战", "退出", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+		if (msgbar("再战", "退出", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
 			return 1;
 		else
 			exit(0);

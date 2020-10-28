@@ -36,6 +36,7 @@ int battle(char *user, short save_num, short mode)
 	next_r_banner(side);//画banner，自带delay
 	Map_partial(512 - 240 - 75, 300, 512 + 240 + 75, 300 + 125);
 	initdraw(map);//单位绘制
+	batinfo.r_source = 100; //记得删除
 	while(1)
 	{
 		Newxy();
@@ -46,12 +47,16 @@ int battle(char *user, short save_num, short mode)
 		}
 		if (mode && side == 1)
 		{
-			aut(map, &batinfo);goto nextr;
+			aut(map, &batinfo);
 			msgflag = 0;
-			batinfo.r_source += 2;		//给电脑每回合多一点资源吧，数值需要后续设计
+			nxt_round(map, &batinfo, &side);
+			disp_bat_info(batinfo);
+			next_r_banner(side);//画banner，自带delay
+			Map_partial(512 - 240 - 75, 300, 512 + 240 + 75, 300 + 125);
+			initdraw(map);//还原
 		}
 		if (nxt_btn_fun(65370, 65340))
-		{nextr://为了缩减行数，不得不
+		{
 			nxt_round(map, &batinfo, &side);
 			disp_bat_info(batinfo);
 			next_r_banner(side);//画banner，自带delay
@@ -61,7 +66,7 @@ int battle(char *user, short save_num, short mode)
 		first_click(map, &pos, &clccell, &msgflag, &arminfo, &batinfo, &co);//点击地图上一个点
 		if (clccell)//所有行为按钮
 		{
-			act_btn(map, &co, &clccell, pos, &arminfo);
+			act_btn(map, &co, &clccell, pos, &arminfo, &batinfo);
 			if (!clccell)
 			{
 				act_buttons(&co, 0, 1, 0, 0);
@@ -71,7 +76,8 @@ int battle(char *user, short save_num, short mode)
 		}
 		if ((flag = opt_btn(fp, save_num, map, &batinfo)) != BATTLE)//右上角选项菜单区
 		{
-			return flag;
+			fclose(fp);
+			return flag;//返回其他界面
 		}
 		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
 		{
@@ -144,7 +150,6 @@ void icon(POS world_pos, int side, int kind)
 }
 
 /*搜索兵种信息，仅在disp函数中调用*/
-
 Arminfo search_info(int kind)
 {
 	FILE* fp;
@@ -193,7 +198,7 @@ void disp_geo_info(CELL cell)
 		Outtext(20, 100, text, 16, 20, 0);
 		if (cell.kind < 3)
 		{
-			sprintf(text, "升级花费 %d", cell.kind == 1 ? 10 : 50);
+			sprintf(text, "升级花费 %d", cell.kind == 1 ? lev2_cost : lev3_cost);
 			Outtext(20, 130, text, 16, 20, 0);
 		}
 		return;
@@ -270,14 +275,14 @@ void disp_bat_info(Battleinfo batinfo)
 	Outtext(20, 715, "资源数", 32, 40, 0);
 	if ((batinfo.round + 1)% 2)//资源显示
 	{
-		sprintf(buffer, "%d", batinfo.r_source);
-		Outtext(740+x, 670, "红军行动", 32, 40, 0);
+		sprintf(buffer, "%d", batinfo.b_source);
+		Outtext(740+x, 670, "蓝军行动", 32, 40, 0);
 		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 	else
 	{
-		sprintf(buffer, "%d", batinfo.b_source);
-		Outtext(740+x, 670, "蓝军行动", 32, 40, 0);
+		sprintf(buffer, "%d", batinfo.r_source);
+		Outtext(740+x, 670, "红军行动", 32, 40, 0);
 		Outtext(20+4*32, 715, buffer, 32, 40, 0);
 	}
 }
@@ -312,7 +317,7 @@ void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay)
 	del_button(co->del);
 }
 /*按钮整合函数，灰色状态不能点击*/
-void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo)
+void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Battleinfo* batinfo)
 {
 	if (co->mov == (int)OK_co)
 	{
@@ -336,9 +341,9 @@ void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo)
 	{
 		if (arminfo->attack == 0)
 		{
-			if (atk_btn_fun("建造", co->atk, 65340));
+			if (atk_btn_fun("建造", co->atk, 65340))
 			{
-				builder_build(pos, map);
+				builder_build(pos, map, batinfo);
 				*clccell = 0;
 			}
 		}
@@ -367,6 +372,7 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 	int flag, side = (batinfo->round - 1) % 2;
 	DBL_POS ptmp;
 	OFF_POS opos;
+	POS center;
 	if ((flag = clcmap(&ptmp, map)) != 0)
 	{
 		opos = D2O(ptmp);
@@ -398,6 +404,8 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 		case 2:		//点击己方单位
 			*pos = ptmp;
 			*clccell = 1;
+			center = center_xy(ptmp.x, ptmp.y);
+			Lightbar(center.x-20, center.y-18, center.x+20, center.y+20);
 			show_msg("已选择一个单位", "请选择行为");
 			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,
 				map[opos.y][opos.x].side == side, map[opos.y][opos.x].stay);
@@ -406,7 +414,7 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 			*clccell = 0;
 			show_msg("再次点选进行升级！", "右键取消");
 			delay(50);
-			base_func(map, side ? &(batinfo->r_source) : &(batinfo->b_source), side);
+			base_func(map, side == 0 ? &(batinfo->r_source) : &(batinfo->b_source), side);
 			disp_bat_info(*batinfo);
 			act_buttons(co, 0, 1, 0, 0);
 			*msgflag = 0;

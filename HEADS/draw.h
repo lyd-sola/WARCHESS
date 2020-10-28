@@ -18,7 +18,7 @@ void PutBackground(int left, int top, int right, int bottom, unsigned *buffer);
 unsigned int Lightcolor(unsigned int colorbf, float drgb);
 void Lightpixel(int x, int y, float drgb);
 void Lightline(int x1, int y1, int x2, int y2, float drgb);
-void Lightbar(int x1, int y1, int x2, int y2, float drgb);
+void Lightbar(int x1, int y1, int x2, int y2);
 void Bar64k_radial_re(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 void Bar64k_radial(int x1, int y1, int x2, int y2, unsigned int color, int fill_time);
 
@@ -34,7 +34,7 @@ void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 void banner(int x1, int y1, int length);
 void photo(int x1, int y1, int x2, int y2);
 void draw_bomb(int x, int y, double i);
-void collection_draw(POS center);
+void collection_draw(POS center, MAP map);
 void medical_draw(POS center);
 
 int putbmp_partial(int x1, int y1, int x2, int y2, char* s);

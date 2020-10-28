@@ -92,15 +92,15 @@ float f(float x, float a, float b, int n1, int n2)
 	centpos.y -= 2;//根据图标位置微调
 	return centpos;
 }
-
+ //双倍宽度坐标转偏移坐标，和重水没有什么关系
 OFF_POS D2O(DBL_POS pos)
 {
 	OFF_POS opos;
-	opos.x = (pos.x - 1) / 2;
+	opos.x = (pos.x - 1) / 2;//int除法自动下取整，无需特判，O2D则需要特判
 	opos.y = pos.y - 1;
 	return opos;
 }
-
+//偏移坐标转双倍宽度坐标
 DBL_POS O2D(OFF_POS pos)
 {
 	DBL_POS dpos;
@@ -192,7 +192,7 @@ int inside_map(MAP map, DBL_POS pos)//为了其他函数的美观，把丑陋的东西写在这里
 void draw_cell(DBL_POS pos, MAP map)
 {
 
-	int kind, side, geo;
+	int kind, side, geo, faci;
 	POS offpos;
 
 	offpos = D2O(pos);
@@ -200,6 +200,7 @@ void draw_cell(DBL_POS pos, MAP map)
 	kind = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
 	geo = map[offpos.y][offpos.x].geo;
+	faci = map[offpos.y][offpos.x].faci;
 	pos = center_xy(pos.x, pos.y);
 	//防止初始化界面时因为kind不等于0把大本营和资源画错
 	switch (geo)
@@ -210,6 +211,17 @@ void draw_cell(DBL_POS pos, MAP map)
 	//case HSORC:
 	case OUT_MAP:
 		return;
+	}
+	switch (faci)
+	{
+	case MEDICAL:
+		medical_draw(pos);
+		break;
+	case BCOLLECTION:
+	case RCOLLECTION:
+		collection_draw(pos, map);
+	default:
+		break;
 	}
 	switch (kind)
 	{
@@ -235,5 +247,40 @@ void draw_cell(DBL_POS pos, MAP map)
 
 void recover_cell(DBL_POS pos, MAP map)//还原格子
 {
+	int geo, kind;
+	POS offpos;
+	offpos = D2O(pos);
+	geo = map[offpos.y][offpos.x].geo;
+	kind = map[offpos.y][offpos.x].kind;
+	offpos = center_xy(pos.x, pos.y);
+	if (geo == BASE || kind == 0)
+	{
+		Map_partial(offpos.x - 18, offpos.y - 18, offpos.x + 18, offpos.y + 23);
+	}
+	else
+	{
+		draw_cell(pos, map);
+	}
+}
+/*显示visit数组中可行的点，第三个函数指针传lightbar标亮，map_partial还原*/
+void show_visit(DBL_POS pos, int visit[7][7], void (*lightfun)(int x1, int y1, int x2, int y2))
+{
+	OFF_POS opos = D2O(pos);
+	POS center;
+	int i, j;
+	for (i = 0; i < 7; i++)
+	{
+		for (j = 0; j < 7; j++)
+		{
+			if (visit[j][i] > 0)
+			{
+				center.y = opos.y + j - 3;
+				center.x = opos.x + i - 3;
+				center = O2D(center);
+				center = center_xy(center.x, center.y);
+				lightfun(center.x - 18, center.y - 18, center.x + 18, center.y + 18);
+			}
+		}
+	}
 
 }

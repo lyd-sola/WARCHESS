@@ -254,12 +254,13 @@ void Lightline(int x1, int y1, int x2, int y2, float drgb)
 	}
 }
 
-void Lightbar(int x1, int y1, int x2, int y2, float drgb)
+void Lightbar(int x1, int y1, int x2, int y2)
 {
 	/*tempÎªÁÙÊ±±äÁ¿ºÍÑ­»·±äÁ¿*/
 	/*widthÎª¾ØÐÎ³¤*/
 	int temp, width;
 	int i, j;
+	float drgb = 1.2;
 	/*x×ø±êÅÅÐò*/
 	if (x1 > x2)
 	{
@@ -441,15 +442,13 @@ Input:			pos¸ñ×ÓÖÐÐÄµã×ø±ê
 				sideÕóÓª
 Author£º		ÁõÔÆµÑ
 **********************************************************/
-#define bl_side 0
-#define rd_side 1
 void Icon_draw(POS pos, int side)
 {
-	unsigned int color1, color2, color2c;	//yellow 65385, red 49540, blue 8912
+	unsigned int color1, color2, color2c;	//yellow 65385, red 55618, blue 14797 ¹úÆìºìºÍÄ³¹ú¹úÆìÀ¶XD
 
-	color2 = 63207;
-	color2c = 50347;
-	color1 = (side == bl_side) ? 8912 : 49540;
+	color2 = (side == 0) ? 63207 : 50712;//×ó²àÌî³äÉ«
+	color2c = (side == 0) ? 50347 : 33808;//ÓÒ²àÌî³äÉ«
+	color1 = (side == 0) ? 55618 : 14797;//¿òÏßÑÕÉ«
 
 	Bar64k(-18 + pos.x, -15 + pos.y, -6 + pos.x, -14 + pos.y, color1);
 	Bar64k(18 + pos.x, -15 + pos.y, 6 + pos.x, -14 + pos.y, color1);
@@ -483,7 +482,7 @@ Author£º		ÁõÔÆµÑ
 void Icon_builder(POS pos, int side)
 {
 	unsigned int color1;
-	color1 = (side == bl_side) ? 8912 : 49540;
+	color1 = (side == 0) ? 55618 : 14797;//ÑÕÉ«
 
 	Icon_draw(pos, side);
 	Filltriangle(-7 + pos.x, -2 + pos.y, 1 + pos.x, -10 + pos.y, 1 + pos.x, -2 + pos.y, color1);
@@ -500,51 +499,56 @@ void Icon_builder(POS pos, int side)
 void Icon_inf(POS pos, int side)
 {	
 	int i = 0;
+	int color1 = (side == 0) ? 49540 : 14797;//ÑÕÉ«
 	Icon_draw(pos, side);
 	
-	Circlehalf64k(pos.x, pos.y, 8, 49540);
-	Bar64k(pos.x - 8, pos.y, pos.x + 8, pos.y + 2, 49540);
-	Bar64k(pos.x - 8, pos.y + 2, pos.x + 10, pos.y + 4, 49540);
+	Circlehalf64k(pos.x, pos.y, 8, color1);
+	Bar64k(pos.x - 8, pos.y, pos.x + 8, pos.y + 2, color1);
+	Bar64k(pos.x - 8, pos.y + 2, pos.x + 10, pos.y + 4, color1);
 	for (; i <= 4; i++)
 	{
-		Line64k(pos.x - 8 - i, pos.y + 4 + i, pos.x - i, pos.y + 4 + i, 49540);
+		Line64k(pos.x - 8 - i, pos.y + 4 + i, pos.x - i, pos.y + 4 + i, color1);
 	}
 }
 
 /*****»­¸öÌ¹¿Ë*******/
 void Icon_tank(POS pos, int side)
 {
+	int color1 = (side == 0) ? 49540 : 14797;
+	int color2 = (side == 0) ? 63488 : 15000;
+	int color3 = (side == 0) ? 64526 : 15200;
 	Icon_draw(pos, side);
-	
-	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, 63488); //³µÉí 
-	Bar64k(pos.x-3, pos.y-10, pos.x+3, pos.y+12, 64526); //ÅÚËþ
-	Bar64k(pos.x-1, pos.y, pos.x+1, pos.y+18, 49540);
-	Circlefill64k(pos.x, pos.y, 5, 49540); //ÅÚ¹Ü
+
+	Bar64k(pos.x-7, pos.y-10, pos.x+7, pos.y+12, color1); //³µÉí 
+	Bar64k(pos.x-3, pos.y-10, pos.x+3, pos.y+12, color3); //ÅÚËþ
+	Bar64k(pos.x-1, pos.y, pos.x+1, pos.y+18, color2);
+	Circlefill64k(pos.x, pos.y, 5, color2); //ÅÚ¹Ü
 }
 
 /**************»­¸öµ¶£¨³¬¼¶±øÍ¼±ê£©************/
 void Icon_super(POS pos, int side)
 {
 	int i;
+	int color1 = (side == 0) ? 49540 : 14797;
 	Icon_draw(pos, side);
 	
 	for (i = -3; i < 4; i++)
 	{
-		Liney(pos.x+i, pos.y-8-(3-i), pos.x+i, pos.y+8, 23468);
+		Liney(pos.x+i, pos.y-8-(3-i), pos.x+i, pos.y+8, color1);
 	}
 	for (i = 0; i < 3;i++)
 	{
-		Linex(pos.x-5-i, pos.y+8+i, pos.x+5+i, pos.y+8+i, 23468);
+		Linex(pos.x-5-i, pos.y+8+i, pos.x+5+i, pos.y+8+i, color1);
 	}
 	for (i = 0; i < 8; i++)
 	{
 		if (i % 4 == 3)
 		{
-			Linex(pos.x-3, pos.y+11+i, pos.x+3, pos.y+11+i, 23468);
+			Linex(pos.x-3, pos.y+11+i, pos.x+3, pos.y+11+i, color1);
 		}
 		else
 		{
-			Linex(pos.x-2, pos.y+11+i, pos.x+2, pos.y+11+i, 23468);
+			Linex(pos.x-2, pos.y+11+i, pos.x+2, pos.y+11+i, color1);
 		}
 	}
 }
@@ -552,14 +556,15 @@ void Icon_super(POS pos, int side)
 void Icon_arti(POS pos, int side)
 {
 	int i, ra;
+	int color1 = (side == 0) ? 49540 : 14797;//ÑÕÉ«
 	Icon_draw(pos, side);
 	
 	for (i = -2; i < 4; i++)      //»­Ð±45¶È¾ØÐÎ
 	{
-		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i-sqrt(0.5)*14, 49540);
-		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+1+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i+1-sqrt(0.5)*14, 49540);
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i-sqrt(0.5)*14, color1);
+		Line45(pos.x-i-sqrt(0.5)*8, pos.y-i+1+sqrt(0.5)*8, pos.x-i+sqrt(0.5)*14, pos.y-i+1-sqrt(0.5)*14, color1);
 	}
-	Bar64k(pos.x-10,pos.y,pos.x-5, pos.y+10, 49540);
+	Bar64k(pos.x-10,pos.y,pos.x-5, pos.y+10, color1);
 	Liney(pos.x+5, pos.y-2, pos.x+5, pos.y+10, 0);
 	Liney(pos.x+6, pos.y-2, pos.x+6, pos.y+10, 0);
 	Liney(pos.x+7, pos.y-2, pos.x+7, pos.y+10, 0);
@@ -687,7 +692,7 @@ int putbmp_partial(int x1, int y1, int x2, int y2, char *s)//Ç°ËÄ¸ö²ÎÊýÎªÌùÍ¼µÄ¾
 	return 1;
 }
 
-void collection_draw(POS center)
+void collection_draw(POS center, MAP map)
 {
 	
 }
@@ -695,5 +700,5 @@ void collection_draw(POS center)
 void medical_draw(POS center)
 {
 	DBL_POS dpos = xy2cell(center.x, center.y);
-	Icon_draw(dpos, 0);
+	Icon_draw(center, 0);
 }
