@@ -218,14 +218,14 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			perround += 1;
 		if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
 			perround += 3;
-		info->r_source += perround;
+		info->b_source += perround;
 
 		/*********以下的判断为真正的一回合，即蓝方结束行动后需要增加的信息**********/
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
 		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if(map[3][1].health <= 20)
-				map[3][1].health++;
+			if(map[3][1].src_rnd <= 20)
+				map[3][1].src_rnd++;
 			else
 			{
 				map[3][1].faci = NOARMY;
@@ -234,8 +234,8 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		}
 		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[9][10].health <= 20)
-				map[9][10].health++;
+			if (map[9][10].src_rnd <= 20)
+				map[9][10].src_rnd++;
 			else
 			{
 				map[9][10].faci = NOARMY;
@@ -244,8 +244,8 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		}
 		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[6][6].health <= 25)
-				map[6][6].health++;
+			if (map[6][6].src_rnd <= 25)
+				map[6][6].src_rnd++;
 			else
 			{
 				map[6][6].faci = NOARMY;
@@ -264,9 +264,9 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			perround += 1;
 		if (map[9][10].faci == RCOLLECTION) //同上
 			perround += 1;
-		if (map[6][6].health >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
+		if (map[6][6].src_rnd >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
 			perround += 3;
-		info->b_source += perround;
+		info->r_source += perround;
 	}
 	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
 	*pside = (*pside) ? 0 : 1; //切换阵营
@@ -504,7 +504,7 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
 	{
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
-		collection_draw(center, map);
+		collection_draw(center, map[opos.y][opos.x].side);
 		show_msg("采集站建造成功！", "已开始采集资源");
 	}
 	else

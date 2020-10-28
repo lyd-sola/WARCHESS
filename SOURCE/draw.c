@@ -686,19 +686,44 @@ int putbmp_partial(int x1, int y1, int x2, int y2, char *s)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾
 		}
 		fseek(fpbmp, linebytes - 3 * x2, SEEK_CUR);	//Á½¸öfseek+Ò»¸öfread¸ÕºÃlinebytes
 	}
-
 	free(buffer);
 	fclose(fpbmp);
 	return 1;
 }
 
-void collection_draw(POS center, MAP map)
+void collection_draw(POS center, int side)
 {
-	
+	int color1 = (side == 0) ? 55618 : 14797;
+	int color2 = (side == 0) ? 0 : 65535;
+	Filltriangle(center.x-17, center.y-16, center.x, center.y-25, center.x+17, center.y-16, color2);
+	Filltriangle(center.x-16, center.y-16, center.x, center.y-24, center.x+16, center.y-16, color1);
+	Line64k(center.x-17, center.y-16, center.x-17, center.y, color2);
+	Line64k(center.x+17, center.y-16, center.x+17, center.y, color2);
+	Bar64k(center.x-16, center.y-16, center.x+16, center.y, color1);
+	Filltriangle(center.x-17, center.y, center.x, center.y+9, center.x+17, center.y, color2);
+	Filltriangle(center.x-16, center.y, center.x, center.y+8, center.x+16, center.y, color1);
+	Line64k(center.x, center.y-24, center.x, center.y+24, color2);
+	Line64k(center.x-1, center.y-24, center.x-1, center.y+24, color2);
+	Line64k(center.x+1, center.y-24, center.x+1, center.y+24, color2);
+
+	Line64k(center.x-15, center.y+14, center.x-15, center.y+24, color2);
+	Line64k(center.x-16, center.y+14, center.x-16, center.y+24, color2);
+	Line64k(center.x-17, center.y+14, center.x-17, center.y+24, color2);
+
+	Line64k(center.x+15, center.y+14, center.x+15, center.y+24, color2);
+	Line64k(center.x+16, center.y+14, center.x+16, center.y+24, color2);
+	Line64k(center.x+17, center.y+14, center.x+17, center.y+24, color2);
+
+	Line64k(center.x-17, center.y+13, center.x+17, center.y+13, color2);
+	Line64k(center.x-17, center.y+14, center.x+17, center.y+14, color2);
 }
 
 void medical_draw(POS center)
 {
 	DBL_POS dpos = xy2cell(center.x, center.y);
-	Icon_draw(center, 0);
+	Filltriangle(center.x-24, center.y, center.x, center.y-16, center.x+16, center.y, 55587);
+	Filltriangle(center.x-16, center.y, center.x, center.y+16, center.x+16, center.y, 55587);
+	Bar64k(center.x-16, center.y-4, center.x+16, center.y+4, 65535);
+	Bar64k(center.x-4, center.y-16, center.x+4, center.y+16, 65535);
+	55587;
 }
