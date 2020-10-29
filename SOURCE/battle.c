@@ -29,14 +29,13 @@ int battle(char *user, short save_num, short mode)
 	COLO co;
 	load_battle(user, save_num, &batinfo, map, &fp);//读取存档
 	battle_draw();//界面绘制
-	act_buttons(&co, 0, 1, 0, 0);//行为按钮
+	act_buttons(&co, 0, 1, 0, 0, 0, 0);//行为按钮
 	disp_bat_info(batinfo);//对战信息（回合资源）
 	side = (batinfo.round - 1) % 2;
 	initdraw(map);//单位绘制
 	next_r_banner(side);//画banner，自带delay
 	Map_partial(512 - 240 - 75, 300, 512 + 240 + 75, 300 + 125);
 	initdraw(map);//单位绘制
-	batinfo.r_source = 100; //记得删除
 	while(1)
 	{
 		Newxy();
@@ -69,7 +68,7 @@ int battle(char *user, short save_num, short mode)
 			act_btn(map, &co, &clccell, pos, &arminfo, &batinfo);
 			if (!clccell)
 			{
-				act_buttons(&co, 0, 1, 0, 0);
+				act_buttons(&co, 0, 1, 0, 0, 0, 0);
 				msgflag = 0;
 				delay(300);
 			}
@@ -156,6 +155,9 @@ Arminfo search_info(int kind)
 	char buffer[20];
 	Arminfo info;
 	int i;
+	memset(&info, 0, sizeof(Arminfo));//初始化
+	if (!(kind >= 1 && kind <= 5))
+		return info;
 	if ((fp = fopen("DATA//info.txt", "r")) == NULL)
 	{
 		show_error("兵种信息文件丢失", 1);
@@ -288,13 +290,20 @@ void disp_bat_info(Battleinfo batinfo)
 }
 
 /*绘制行为按钮*/
-void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay)
+void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay, int is_base, int air_ok)
 {
 	if (flag || !is_same_side)
 	{
 		co->atk = CANT_co;
 		co->del = CANT_co;
 		co->mov = CANT_co;
+		co->stay = CANT_co;
+	}
+	else if (is_base)
+	{
+		co->atk = OK_co;
+		co->mov = air_ok ? OK_co : CANT_co;
+		co->del = CANT_co;
 		co->stay = CANT_co;
 	}
 	else
@@ -305,28 +314,29 @@ void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay)
 		co->atk = OK_co;
 	}
 	if (kind == BUILDER)
-	{
 		attack_button("建造", co->atk);
-	}
 	else
-	{
 		attack_button("攻击", co->atk);
-	}
+
+	if(is_base)
+		move_button("空袭", co->mov);
+	else
+		move_button("移动" ,co->mov);
+
 	stay_button("驻扎", co->stay);
-	move_button(co->mov);
 	del_button(co->del);
 }
 /*按钮整合函数，灰色状态不能点击*/
 void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Battleinfo* batinfo)
 {
+	int side = (batinfo->round - 1) % 2;
+	OFF_POS opos = D2O(pos);
 	if (co->mov == (int)OK_co)
 	{
-		if (move_btn_fun(co->mov, 65340))//移动
+		if (move_btn_fun(co->mov, 65340, "移动"))//移动
 		{
 			move(pos, map, arminfo->move);
 			*clccell = 0;
-			move_button(co->mov);
-			delay(50);//这个delay很重要，用于给用户时间抬起鼠标左键（move有动画后可以删除）
 		}
 	}
 	if (co->stay == (int)OK_co)
@@ -339,23 +349,16 @@ void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Bat
 	}
 	if (co->atk == (int)OK_co)
 	{
-		if (arminfo->attack == 0)
+		if (map[opos.y][opos.x].kind == BUILDER && atk_btn_fun("建造", co->atk, 65340))
 		{
-			if (atk_btn_fun("建造", co->atk, 65340))
-			{
-				builder_build(pos, map, batinfo);
-				*clccell = 0;
-			}
+			builder_build(pos, map, batinfo);
+			*clccell = 0;
 		}
-		else
+		else if (atk_btn_fun("攻击", co->atk, 65340))//攻击
 		{
-			if (atk_btn_fun("攻击", co->atk, 65340))//攻击
-			{
-				attack(pos, map);
-				*clccell = 0;
-			}
+			attack(pos, map);
+			*clccell = 0;
 		}
-		
 	}
 	if (co->del == (int)OK_co)
 	{
@@ -369,7 +372,8 @@ void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Bat
 /*点击地图上一点，会改变clccell状态，记录pos，调用大本营相关函数*/
 void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arminfo, Battleinfo *batinfo, COLO *co)
 {
-	int flag, side = (batinfo->round - 1) % 2;
+	int flag, side = (batinfo->round - 1) % 2, is_same_side;
+	int* src;
 	DBL_POS ptmp;
 	OFF_POS opos;
 	POS center;
@@ -386,7 +390,7 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 			*msgflag = 0;
 			return;
 		}
-		if (map[opos.y][opos.x].flag)
+		if (flag != 3 && map[opos.y][opos.x].flag && map[opos.y][opos.x].kind)
 		{
 			*clccell = 0;
 			show_msg("该单位无行动力", "下一回合再来操作吧");
@@ -399,25 +403,26 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 		case 1:		//点空
 			*clccell = 0;
 			show_msg("该区域为空", "");
-			act_buttons(co, 0, 1, 0, 0);
+			act_buttons(co, 0, 1, 0, 0, 0, 0);
 			break;
 		case 2:		//点击己方单位
 			*pos = ptmp;
 			*clccell = 1;
 			center = center_xy(ptmp.x, ptmp.y);
-			Lightbar(center.x-20, center.y-18, center.x+20, center.y+20);
+			//Lightbar(center.x-20, center.y-18, center.x+20, center.y+20);
 			show_msg("已选择一个单位", "请选择行为");
+			is_same_side = (map[opos.y][opos.x].side == side);
 			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,
-				map[opos.y][opos.x].side == side, map[opos.y][opos.x].stay);
+				is_same_side, map[opos.y][opos.x].stay, 0, 0);
 			break;
 		case 3:		//点击大本营
-			*clccell = 0;
 			show_msg("再次点选进行升级！", "右键取消");
 			delay(50);
-			base_func(map, side == 0 ? &(batinfo->r_source) : &(batinfo->b_source), side);
+			src = (side == 0) ? &(batinfo->r_source) : &(batinfo->b_source);
+			is_same_side = (map[opos.y][opos.x].side == side);
+			base_func(map, src, is_same_side, ptmp);
 			disp_bat_info(*batinfo);
-			act_buttons(co, 0, 1, 0, 0);
-			*msgflag = 0;
+			*msgflag = 0; *clccell = 0;
 			break;
 		}
 	}

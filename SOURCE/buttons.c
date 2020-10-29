@@ -197,21 +197,21 @@ int stay_btn_fun(char* s, int color, int color_c)
 	}
 }
 
-void move_button(int color)
+void move_button(char *s, int color)
 {
 	rectangle64k(20, 528, 141, 649, 0);
 	rectangle64k(20 + 1, 528 + 1, 141 - 1, 649 - 1, 0);
 	Bar64k_radial(20 + 2, 528 + 2, 141 - 2, 649 - 2, color, 0);
-	Outtext(20 + 27, 528 + 44, "移动", 32, 35, 0);
+	Outtext(20 + 27, 528 + 44, s, 32, 35, 0);
 }
 
-int move_btn_fun(int color, int color_c) //移动
+int move_btn_fun(int color, int color_c, char *s) //移动
 {
 	if (mouse_press(20+2, 528+2, 141-2, 649-2) == MOUSE_IN)
 	{
 		Clrmous();
 		MouseS = 1;
-		move_button(color_c);
+		move_button(s, color_c);
 		while (1)
 		{
 			Newxy();
@@ -221,7 +221,7 @@ int move_btn_fun(int color, int color_c) //移动
 				{
 					Clrmous();
 					MouseS = 0;
-					move_button(color);
+					move_button(s, color);
 					return 1;
 					//若点击返回1
 				}
@@ -230,7 +230,7 @@ int move_btn_fun(int color, int color_c) //移动
 			{
 				Clrmous();
 				MouseS = 0;
-				move_button(color);
+				move_button(s, color);
 				return 0;
 			}
 		}

@@ -72,7 +72,7 @@ void test_draw()
 	Putbmp64k(0, 0, "BMP//map.bmp");
 	attack_button("攻击", 65535);
 	stay_button("驻扎", 65535);
-	move_button(65535);
+	move_button("移动", 65535);
 	del_button(65535);
 	show_msg("欢迎使用战棋系统", "");
 	//Bar64k(400, 300, 500, 400, 65535);

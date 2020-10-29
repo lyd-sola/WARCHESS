@@ -172,7 +172,6 @@ int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto)//³É¹¦·µ»Ø1£¬Ê§°Ü0
 {
 	OFF_POS opos, oto;
 	int nx, ny;
-
 	int visit[7][7];
 
 	memset(visit, 0, sizeof(visit));

@@ -720,10 +720,8 @@ void collection_draw(POS center, int side)
 
 void medical_draw(POS center)
 {
-	DBL_POS dpos = xy2cell(center.x, center.y);
 	Filltriangle(center.x-24, center.y, center.x, center.y-16, center.x+16, center.y, 55587);
 	Filltriangle(center.x-16, center.y, center.x, center.y+16, center.x+16, center.y, 55587);
 	Bar64k(center.x-16, center.y-4, center.x+16, center.y+4, 65535);
 	Bar64k(center.x-4, center.y-16, center.x+4, center.y+16, 65535);
-	55587;
 }
