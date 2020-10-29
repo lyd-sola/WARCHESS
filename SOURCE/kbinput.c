@@ -53,14 +53,14 @@ void kbinput(int x1, int y1, int x2, int y2, char *s, int mode)
 			*ch = bioskey(0);
 			if(isalnum(*ch) && i < length)//输入
 			{
-				if (mode)
+				if (mode == 1)
 				{
 					*ch = toupper(*ch);
 				}//输入用户名时，只支持大写
 				
 				s[i] = *ch;
 				s[i+1] = 0;
-				*ch = mode * ch[0] + !mode * '*';		//两个函数合并为一个的核心语句
+				*ch = (mode == 2 ? 1 : mode) * ch[0] + !mode * '*';		//两个函数合并为一个的核心语句
 				clrmous(MouseX, MouseY);
 				Line64k(x1+5+i*KB_SIZE, y2-5-KB_SIZE, x1+5+i*KB_SIZE, y2-5, 65535);
 				Outtext(x1+5+i*KB_SIZE, y2-5-KB_SIZE, ch, KB_SIZE, 40, 44373);

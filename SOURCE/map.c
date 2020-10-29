@@ -218,6 +218,7 @@ void draw_cell(DBL_POS pos, MAP map)
 	case BCOLLECTION:
 	case RCOLLECTION:
 		collection_draw(pos, side);
+		break;
 	}
 	icon(pos, side, kind);
 	if (kind && stay)

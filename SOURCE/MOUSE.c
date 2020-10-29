@@ -295,7 +295,5 @@ void Clrmous(void)
 {
 	clrmous(MouseX, MouseY);
 	Mouse_savebk2();
-	//delay(50);
 	MouseS = 0;
-	press = 0;
 }

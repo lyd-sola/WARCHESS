@@ -22,8 +22,8 @@ Function List£º
 #include "struct.h"
 
 #define msg_sec 1000
-#define lev2_cost 20
-#define lev3_cost 100
+#define lev2_cost 12
+#define lev3_cost 80
 #define air_atk_cost 40
 
 int battle(char* user, short save_num, short mode);

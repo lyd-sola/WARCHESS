@@ -259,7 +259,7 @@ Arminfo disp_arm_info(CELL cell)
 	}
 	if (cell.stay == 1)
 	{
-		Outtextxx(15, 200, 75, "驻扎中", 16, 0);
+		Outtextxx(15, 210, 75, "驻扎中", 16, 0);
 	}
 	itoa(cell.health, buffer, 10);
 	Outtextxx(15, 130, 75, "生命值", 16, 0);
@@ -489,7 +489,7 @@ int opt_btn(FILE *fp, int save_num, MAP map, Battleinfo *batinfo)
 				return BATTLE;
 			}
 		case 444://认输
-			s = side ? "红" : "蓝";
+			s = !side ? "红" : "蓝";
 			sprintf(msg, "%s方即将认输", s);
 			if (msgbar("不了", "坚持", msg, "真的不再坚持一下吗?"))
 			{

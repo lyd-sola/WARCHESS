@@ -30,11 +30,8 @@ void move(DBL_POS From, MAP map, int able)
 		{
 			if (move_(From, dbto, map, visit) == 1)
 			{
+				Clrmous();
 				return;
-			}
-			else
-			{
-				show_msg("此处无法到达", "重新选择目的地");
 			}
 		}
 		else if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)//右键取消
@@ -42,6 +39,8 @@ void move(DBL_POS From, MAP map, int able)
 			Clrmous();
 			show_visit(From, visit, Map_partial);//去标亮，move_里里里（函数套娃）还有一个
 			move_button("移动", 65370);
+			show_msg("取消移动", "");
+			delay(msg_sec);
 			return;
 		}
 	}
@@ -51,14 +50,21 @@ int move_(DBL_POS From, DBL_POS dbto, MAP map, int visit[7][7])
 	OFF_POS To = D2O(dbto);//求出目标偏移坐标
 	if (map[To.y][To.x].kind == NOARMY)//为空可移动，以后还需设置移动能力，还需判断是否原地移动
 	{
-		return moving(map, visit, From, dbto);
+		if (moving(map, visit, From, dbto))
+		{
+			return 1;
+		}
+		else
+		{
+			show_msg("此处无法到达", "重新选择目的地");
+			return 0;
+		}
 	}
 	else
 	{
 		show_msg("此处已被占领", "");
 		move_button("移动", 65370);
-		delay(msg_sec);
-		return 1;
+		return 0;
 	}
 }
 
@@ -192,6 +198,8 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 {
 	int i, j, perround = 1;
 	Arminfo arminfo;
+	DBL_POS pos1;
+	POS center;
 	for (i = 0; i < 13; i++)
 	{
 		for (j = 0; j < 13; j++)
@@ -242,35 +250,42 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 	info->r_source += perround;
 		/*********以下的判断为真正的一回合，即蓝方结束行动后需要增加的信息**********/
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
-		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if(map[3][1].src_rnd < 15)
-				map[3][1].src_rnd++;
-			else
-			{
-				map[3][1].faci = NOFACI;
-				map[3][1].flag = 1;
-			}
-		}
-		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if (map[9][10].src_rnd < 15)
-				map[9][10].src_rnd++;
-			else
-			{
-				map[9][10].faci = NOFACI;
-				map[9][10].flag = 1;
-			}
-		}
-		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if (map[6][6].src_rnd < 15)
-				map[6][6].src_rnd++;
-			else
-			{
-				map[6][6].faci = NOFACI;
-			}
-		}
+	if (map[9][10].src_rnd < 15 && map[9][10].faci != NOFACI)
+	{
+		map[9][10].src_rnd++;
+	}
+	else
+	{
+		map[9][10].faci = NOFACI;
+		pos1.x = 22, pos1.y = 10;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
+	}
+	if (map[6][6].src_rnd < 15 && map[6][6].faci != NOFACI)
+	{
+		map[6][6].src_rnd++;
+	}
+	else
+	{
+		map[6][6].faci = NOFACI;
+		pos1.x = 13, pos1.y = 7;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
+	}
+	if (map[3][1].src_rnd < 15 && map[3][1].faci != NOFACI)
+	{
+		map[3][1].src_rnd++;
+	}
+	else
+	{
+		map[3][1].faci = NOFACI;
+		pos1.x = 4, pos1.y = 4;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
+	}
 }
 
 void next_r_banner(int side)
@@ -527,6 +542,7 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 	if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)//资源点上造采集器
 	{
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
+		map[opos.y][opos.x].src_rnd = 0;
 		collection_draw(center, map[opos.y][opos.x].side);
 		show_msg("采集站建造成功！", "已开始采集资源");
 		delay(msg_sec / 2);

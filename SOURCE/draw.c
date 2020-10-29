@@ -260,7 +260,7 @@ void Lightbar(int x1, int y1, int x2, int y2)
 	/*width为矩形长*/
 	int temp, width;
 	int i, j;
-	float drgb = 1.2;
+	float drgb = 1.4;
 	/*x坐标排序*/
 	if (x1 > x2)
 	{
