@@ -396,7 +396,7 @@ int step5(MAP map)
 	DBL_POS ptmp;
 	OFF_POS otmp;
 	POS center;
-	step422(0, map);                                  //记得删除
+	//step422(0, map);                                  //记得删除
 	step5_1(map);
 	step5_2(map);
 	step5_3(map);
