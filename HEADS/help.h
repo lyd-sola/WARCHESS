@@ -16,10 +16,10 @@ void step3_4(void);
 int step4(MAP map);
 int step4_1(void);
 void step4_2(int side, MAP map);
-void step421(int side, int* armkind);
-void step422(int side, int armkind, MAP map);
+void step421(int side);
+void step422(int side, MAP map);
 void step423(void);
-void step424(int source, MAP map);
+void step424(unsigned source, MAP map);
 
 int step5(MAP map);
 void step5_1(MAP map);

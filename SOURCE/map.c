@@ -192,15 +192,13 @@ int inside_map(MAP map, DBL_POS pos)//为了其他函数的美观，把丑陋的东西写在这里
 void draw_cell(DBL_POS pos, MAP map)
 {
 
-	int kind, side, geo, faci;
-	POS offpos;
-
-	offpos = D2O(pos);
-
+	int kind, side, geo, faci, stay;
+	OFF_POS offpos = D2O(pos);
 	kind = map[offpos.y][offpos.x].kind;
 	side = map[offpos.y][offpos.x].side;
 	geo = map[offpos.y][offpos.x].geo;
 	faci = map[offpos.y][offpos.x].faci;
+	stay = map[offpos.y][offpos.x].stay;
 	pos = center_xy(pos.x, pos.y);
 	//防止初始化界面时因为kind不等于0把大本营和资源画错
 	switch (geo)
@@ -242,6 +240,10 @@ void draw_cell(DBL_POS pos, MAP map)
 		break;
 	default:
 		break;
+	}
+	if (kind && stay)
+	{
+		stay_draw(pos);
 	}
 }
 
