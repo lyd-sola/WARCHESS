@@ -71,6 +71,8 @@ int login(char *username)
 		{
 			kbinput(610, 280 + 100, 610 + 370, 280 + 50 + 100, password, 0);
 		}
+
+		if(guest_btn_fun())
 		
 		if(mouse_press(686 - 15, 490 - 15, 814 + 15, 522 + 15) == MOUSE_IN_L)				//µã»÷µÇÂ¼¼ü
 		{
@@ -136,6 +138,7 @@ void drawlogin()
 	
 	shadow_l(686-15, 490-15, 814+15, 522+15, 65535);
 	Outtext(686, 480,"µÇÂ¼", 48, 80, 63488);
+	Outtextxx(846, 313, 610+370, "Íü¼ÇÃÜÂë", 24, 0);
 }
 
 int login_check(char *username, char *password)
@@ -168,6 +171,41 @@ int login_check(char *username, char *password)
 		shadow_l(512-200, 384-100, 512+200, 384+100, 5);
 		Outtextxx(512-200+30, 384-100+40, 512-200+340, "ÃÜÂë´íÎó", 32, 65535);
 		fclose(fp);
+		return 0;
+	}
+}
+
+int forget_fun(void)//ÓÎ¿ÍµÇÂ¼°´Å¥¹¦ÄÜº¯Êý
+{
+	if (Mouse_above(846, 313, 978, 313 + 24))
+	{
+		Clrmous();
+		MouseS = 1;
+		Bar64k(846, 313 + 26, 978, 313 + 27, 0);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(846, 313, 978, 313 + 24))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					return 1;
+					//Èôµã»÷·µ»Ø1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				putbmp_partial(846, 313 + 26, 978, 313 + 27, "BMP//homepage.bmp");
+				return 0;
+			}
+		}
+	}
+	else
+	{
 		return 0;
 	}
 }
