@@ -41,7 +41,7 @@ int battle(char *user, short save_num, short mode)
 		Newxy();
 		if (!msgflag)
 		{
-			show_msg("请指挥官进行操作", "");
+			show_msg("请指挥官进行操作", "点击一个单位或己方大本营");
 			msgflag = 1;
 		}
 		if (mode && side == 1)
@@ -141,9 +141,6 @@ void icon(POS world_pos, int side, int kind)
 		break;
 	case SUPER:
 		Icon_super(world_pos, side);
-		break;
-	default:
-		Icon_draw(world_pos, side);
 		break;
 	}
 }

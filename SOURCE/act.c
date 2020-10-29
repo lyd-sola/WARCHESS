@@ -187,7 +187,6 @@ void delarm(DBL_POS dpos, MAP map)
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);
 	return;
 }
-
 //下一回合函数
 void nxt_round(MAP map, Battleinfo* info, int *pside)
 {
@@ -209,74 +208,69 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			}
 		}
 	}
+	/*计算每回合增加资源数的公式，初始每回合一
+	* 大本营等级二级：+1 大本营等级三级：+3
+	* 普通资源：每占领一个每回合+1
+	* 高级资源：每占领一个每回合+3*/
+	//perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
+	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
+	*pside = (*pside) ? 0 : 1; //切换阵营
 	if (*pside)
-	{
-		/*计算每回合增加资源数的公式，初始每回合一
-		* 大本营等级二级：+1 大本营等级三级：+3
-		* 普通资源：每占领一个每回合+1
-		* 高级资源：每占领一个每回合+3*/
-		//perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
-		if (map[3][10].kind > 1) //大本营2级
-			perround += 1;
-		if (map[3][10].kind > 2) //大本营3级
-			perround += 2;
-		if (map[3][1].faci == BCOLLECTION) //普通资源点是否占领
-			perround += 1;
-		if (map[9][10].faci == BCOLLECTION) //同上
-			perround += 1;
-		if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
-			perround += 3;
-		info->b_source += perround;
-
+		return;
+	if (map[3][10].kind > 1) //大本营2级
+		perround += 1;
+	if (map[3][10].kind > 2) //大本营3级
+		perround += 2;
+	if (map[3][1].faci == BCOLLECTION) //普通资源点是否占领
+		perround += 1;
+	if (map[9][10].faci == BCOLLECTION) //同上
+		perround += 1;
+	if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
+		perround += 3;
+	info->b_source += perround;//加蓝方资源
+	perround = 1;
+	if (map[9][1].kind > 1) //大本营2级
+		perround += 1;
+	if (map[9][1].kind > 2) //大本营3级
+		perround += 2;
+	if (map[3][1].faci == RCOLLECTION) //普通资源点是否占领
+		perround += 1;
+	if (map[9][10].faci == RCOLLECTION) //同上
+		perround += 1;
+	if (map[6][6].src_rnd >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
+		perround += 3;
+	info->r_source += perround;
 		/*********以下的判断为真正的一回合，即蓝方结束行动后需要增加的信息**********/
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
 		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if(map[3][1].src_rnd < 20)
+			if(map[3][1].src_rnd < 15)
 				map[3][1].src_rnd++;
 			else
 			{
-				map[3][1].faci = NOARMY;
+				map[3][1].faci = NOFACI;
 				map[3][1].flag = 1;
 			}
 		}
 		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[9][10].src_rnd < 20)
+			if (map[9][10].src_rnd < 15)
 				map[9][10].src_rnd++;
 			else
 			{
-				map[9][10].faci = NOARMY;
+				map[9][10].faci = NOFACI;
 				map[9][10].flag = 1;
 			}
 		}
 		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[6][6].src_rnd < 25)
+			if (map[6][6].src_rnd < 15)
 				map[6][6].src_rnd++;
 			else
 			{
-				map[6][6].faci = NOARMY;
+				map[6][6].faci = NOFACI;
 			}
 		}
-	}
-	else
-	{
-		//没有意识到结构体里是uint型，只能分步计算
-		if (map[9][1].kind > 1) //大本营2级
-			perround += 1;
-		if (map[9][1].kind > 2) //大本营3级
-			perround += 2;
-		if (map[3][1].faci == RCOLLECTION) //普通资源点是否占领
-			perround += 1;
-		if (map[9][10].faci == RCOLLECTION) //同上
-			perround += 1;
-		if (map[6][6].src_rnd >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
-			perround += 3;
-		info->r_source += perround;
-	}
-	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
-	*pside = (*pside) ? 0 : 1; //切换阵营
 }
 
 void next_r_banner(int side)
@@ -529,17 +523,16 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 	OFF_POS opos = D2O(dpos);
 	POS center = center_xy(dpos.x, dpos.y);
 	int source = map[opos.y][opos.x].side == 0 ? (batinfo->r_source): (batinfo->b_source);
-	if (map[opos.y][opos.x].faci != NOFACI)
-	{
-		show_msg("此处已有设施！", "");
-	}
-	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
+	int i, j, medi_num = 0;
+	if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)//资源点上造采集器
 	{
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
 		collection_draw(center, map[opos.y][opos.x].side);
 		show_msg("采集站建造成功！", "已开始采集资源");
+		delay(msg_sec / 2);
+		recover_cell(dpos, map);
 	}
-	else
+	else//其他地方造医疗站
 	{
 		if (source < 10)
 		{
@@ -547,10 +540,27 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 			delay(msg_sec);
 			return;
 		}
+		if (map[opos.y][opos.x].faci == MEDICAL)
+		{
+			show_msg("此处已有医疗站", "建造失败！");
+			delay(msg_sec);
+			return;
+		}
+		for (i = 0; i < 13; i++)
+			for (j = 0; j < 13; j++)
+				if (map[i][j].faci == MEDICAL)	medi_num++;
+		if (medi_num > 4)
+		{
+			show_msg("建造失败", "一局对战只能存在四个医疗站");
+			delay(msg_sec);
+			return;
+		}
 		map[opos.y][opos.x].side == 0 ? (batinfo->r_source -= 10) : (batinfo->b_source -= 10);
 		map[opos.y][opos.x].faci = MEDICAL;
 		medical_draw(center);
 		show_msg("医疗站建造成功！", "已可以进行治疗");
+		delay(msg_sec / 2);
+		recover_cell(dpos, map);
 	}
 	map[opos.y][opos.x].flag = 1;
 	disp_bat_info(*batinfo);

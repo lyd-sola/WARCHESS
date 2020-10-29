@@ -218,29 +218,8 @@ void draw_cell(DBL_POS pos, MAP map)
 	case BCOLLECTION:
 	case RCOLLECTION:
 		collection_draw(pos, side);
-	default:
-		break;
 	}
-	switch (kind)
-	{
-	case BUILDER:
-		Icon_builder(pos, side);
-		break;
-	case INFANTRY:
-		Icon_inf(pos, side);
-		break;
-	case ARTILLERY:
-		Icon_arti(pos, side);
-		break;
-	case TANK:
-		Icon_tank(pos, side);
-		break;
-	case SUPER:
-		Icon_super(pos, side);
-		break;
-	default:
-		break;
-	}
+	icon(pos, side, kind);
 	if (kind && stay)
 	{
 		stay_draw(pos);
@@ -256,7 +235,7 @@ void recover_cell(DBL_POS pos, MAP map)//还原格子
 	kind = map[offpos.y][offpos.x].kind;
 	faci = map[offpos.y][offpos.x].faci;
 	offpos = center_xy(pos.x, pos.y);
-	if (geo == BASE || (kind == 0 && faci == 0))
+	if (geo == BASE || (kind == 0 && faci == 0))//大本营和空地直接还原地图
 	{
 		Map_partial(offpos.x - 18, offpos.y - 18, offpos.x + 18, offpos.y + 23);
 	}
