@@ -226,7 +226,20 @@ Arminfo disp_arm_info(CELL cell)
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
 	if (cell.geo == BASE /*|| cell.geo == SORC || cell.geo == HSORC*/)
 		return info;
-
+	switch (cell.faci)
+	{
+	case MEDICAL:
+		Outtext(30, 100, "医疗站", 24, 35, 0);
+		if (cell.kind != NOARMY)
+			Outtext(15, 130, "正在接受治疗", 16, 20, 0);
+		return info;
+	case BCOLLECTION:
+	case RCOLLECTION:
+		Outtext(30, 100, "采集站", 24, 35, 0);
+		sprintf(buffer, "已采集%d回合", cell.src_rnd);
+		Outtext(15, 130, buffer, 16, 20, 0);
+		return info;
+	}
 	switch (cell.kind)
 	{
 	case BUILDER:
@@ -247,7 +260,10 @@ Arminfo disp_arm_info(CELL cell)
 	default:
 		return info;
 	}
-
+	if (cell.stay == 1)
+	{
+		Outtextxx(15, 200, 75, "驻扎中", 16, 0);
+	}
 	itoa(cell.health, buffer, 10);
 	Outtextxx(15, 130, 75, "生命值", 16, 0);
 	Outtext(85, 130, buffer, 16, 16, 0);
@@ -376,7 +392,6 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 	int* src;
 	DBL_POS ptmp;
 	OFF_POS opos;
-	POS center;
 	if ((flag = clcmap(&ptmp, map)) != 0)
 	{
 		opos = D2O(ptmp);
@@ -408,8 +423,6 @@ void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arm
 		case 2:		//点击己方单位
 			*pos = ptmp;
 			*clccell = 1;
-			center = center_xy(ptmp.x, ptmp.y);
-			//Lightbar(center.x-20, center.y-18, center.x+20, center.y+20);
 			show_msg("已选择一个单位", "请选择行为");
 			is_same_side = (map[opos.y][opos.x].side == side);
 			act_buttons(co, map[opos.y][opos.x].kind, map[opos.y][opos.x].flag,

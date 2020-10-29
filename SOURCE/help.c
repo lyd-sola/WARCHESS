@@ -248,15 +248,15 @@ void step4_2(int side, MAP map)
 	POS pos;
 	int armkind;
 	CELL cell;
-	int source = 100;
-	step421(side, &armkind);
-	step422(side, armkind, map);
+	unsigned source = 100;
+	step421(side);
+	step422(side, map);
 	step423();
 	step424(source, map);
 	return;
 }
 
-void step421(int side, int* armkind)
+void step421(int side)
 {
 	POS pos;
 	pos.x = 745;
@@ -277,11 +277,11 @@ void step421(int side, int* armkind)
 	helpwanttosay("别点", "别点", "麦斯基会给你提示信息", "跟着他做", 0);
 }
 
-void step422(int side, int armkind, MAP map)
+void step422(int side, MAP map)
 {
 	POS pos;
 	CELL cell;
-	int source = 100;
+	unsigned source = 100;
 	while (1)
 	{
 		Newxy();
@@ -360,7 +360,7 @@ void step423()
 	}
 }
 
-void step424(int source, MAP map)
+void step424(unsigned source, MAP map)
 {
 	int flag = 0;
 	POS pos;
@@ -396,7 +396,7 @@ int step5(MAP map)
 	DBL_POS ptmp;
 	OFF_POS otmp;
 	POS center;
-	step422(0, INFANTRY, map);                                  //记得删除
+	step422(0, map);                                  //记得删除
 	step5_1(map);
 	step5_2(map);
 	step5_3(map);
@@ -493,7 +493,7 @@ void step5_3(MAP map)
 		{
 			attack(ptmp, map);
 			attack_button("攻击", 65370);
-			return 6;
+			break;
 		}
 	}
 	helpwanttosay("别点", "别点", "怎么样，简单吧", "", 0);
@@ -502,6 +502,11 @@ void step5_3(MAP map)
 	helpwanttosay("别点", "别点", "而删除可以撤退你的军队", "", 0);
 	helpwanttosay("别点", "别点", "需要注意的是，所有行为", "都会消耗掉该部队的行动力", 0);
 }
+//int step6(MAP map)
+//{
+//	helpwanttosay("别点", "别点", "", "", 0);
+//
+//}
 int Clcmap(DBL_POS* pos, MAP map)
 {
 	while (1)

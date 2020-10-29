@@ -66,7 +66,7 @@ void stay(DBL_POS dpos, MAP map)
 {
 	OFF_POS opos;
 	CELL cell;
-
+	POS center = center_xy(dpos.x, dpos.y);
 	opos = D2O(dpos);
 
 	if (map[opos.y][opos.x].stay)
@@ -78,6 +78,7 @@ void stay(DBL_POS dpos, MAP map)
 		map[opos.y][opos.x].stay = 1;
 		map[opos.y][opos.x].flag = 1;
 		show_msg("驻扎成功", "");
+		stay_draw(center);
 	}
 	delay(msg_sec);
 	return;
@@ -231,7 +232,7 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
 		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if(map[3][1].src_rnd <= 20)
+			if(map[3][1].src_rnd < 20)
 				map[3][1].src_rnd++;
 			else
 			{
@@ -241,7 +242,7 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		}
 		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[9][10].src_rnd <= 20)
+			if (map[9][10].src_rnd < 20)
 				map[9][10].src_rnd++;
 			else
 			{
@@ -251,12 +252,11 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 		}
 		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
 		{
-			if (map[6][6].src_rnd <= 25)
+			if (map[6][6].src_rnd < 25)
 				map[6][6].src_rnd++;
 			else
 			{
 				map[6][6].faci = NOARMY;
-				map[6][6].flag = 1;
 			}
 		}
 	}
@@ -552,6 +552,8 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 		medical_draw(center);
 		show_msg("医疗站建造成功！", "已可以进行治疗");
 	}
+	map[opos.y][opos.x].flag = 1;
+	disp_bat_info(*batinfo);
 	delay(1000);
 	return;
 }

@@ -695,6 +695,7 @@ void collection_draw(POS center, int side)
 {
 	int color1 = (side == 0) ? 55618 : 14797;
 	int color2 = (side == 0) ? 0 : 65535;
+	Map_partial(center.x-17, center.y-25, center.x+17, center.y+24);
 	Filltriangle(center.x-17, center.y-16, center.x, center.y-25, center.x+17, center.y-16, color2);
 	Filltriangle(center.x-16, center.y-16, center.x, center.y-24, center.x+16, center.y-16, color1);
 	Line64k(center.x-17, center.y-16, center.x-17, center.y, color2);
@@ -720,8 +721,32 @@ void collection_draw(POS center, int side)
 
 void medical_draw(POS center)
 {
-	Filltriangle(center.x-24, center.y, center.x, center.y-16, center.x+16, center.y, 55587);
-	Filltriangle(center.x-16, center.y, center.x, center.y+16, center.x+16, center.y, 55587);
+	Map_partial(center.x-24, center.y-24, center.x+24, center.y+24);
+	Filltriangle(center.x-24, center.y, center.x, center.y-24, center.x+24, center.y, 55587);
+	Filltriangle(center.x-24, center.y, center.x, center.y+24, center.x+24, center.y, 55587);
 	Bar64k(center.x-16, center.y-4, center.x+16, center.y+4, 65535);
 	Bar64k(center.x-4, center.y-16, center.x+4, center.y+16, 65535);
+}
+
+void stay_draw(POS center)
+{
+	//Icon_draw;
+	Clrmous();
+	Bar64k(center.x-14, center.y-2, center.x+14, center.y+2, 0);
+	Line64k(center.x - 14, center.y - 12, center.x - 14, center.y - 6, 0);
+	Line64k(center.x - 13, center.y - 12, center.x - 13, center.y - 6, 0);
+	Line64k(center.x - 13, center.y - 12, center.x - 6, center.y - 12, 0);
+	Line64k(center.x - 13, center.y - 11, center.x - 6, center.y - 11, 0);
+	Line64k(center.x + 14, center.y - 12, center.x + 14, center.y - 6, 0);
+	Line64k(center.x + 13, center.y - 12, center.x + 13, center.y - 6, 0);
+	Line64k(center.x + 6, center.y - 12, center.x + 13, center.y - 12, 0);
+	Line64k(center.x + 6, center.y - 11, center.x + 13, center.y - 11, 0);
+	Line64k(center.x - 14, center.y + 12, center.x - 14, center.y + 6, 0);
+	Line64k(center.x - 13, center.y + 12, center.x - 13, center.y + 6, 0);
+	Line64k(center.x - 13, center.y + 12, center.x - 6, center.y + 12, 0);
+	Line64k(center.x - 13, center.y + 11, center.x - 6, center.y + 11, 0);
+	Line64k(center.x + 14, center.y + 6, center.x + 14, center.y + 12, 0);
+	Line64k(center.x + 13, center.y + 6, center.x + 13, center.y + 12, 0);
+	Line64k(center.x + 6, center.y + 12, center.x + 13, center.y + 12, 0);
+	Line64k(center.x + 6, center.y + 11, center.x + 13, center.y + 11, 0);
 }

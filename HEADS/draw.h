@@ -29,6 +29,7 @@ void Icon_inf(POS pos, int side);
 void Icon_tank(POS pos, int side);
 void Icon_super(POS pos, int side);
 void Icon_arti(POS pos, int side);
+void stay_draw(POS center);
 void diamond(int x1, int y1, int x2, int y2, int x3, int y3, int color);
 
 void banner(int x1, int y1, int length);
