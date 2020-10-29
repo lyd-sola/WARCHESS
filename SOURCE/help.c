@@ -16,7 +16,7 @@ void help_cartoon()
 	FILE* fp;
 	load_battle("HELP", 1, &batinfo, map, &fp);
 	battle_draw();
-	move_button(OK_co);
+	move_button("移动", OK_co);
 	attack_button("攻击", OK_co);
 	stay_button("驻扎", OK_co);
 	del_button(OK_co);
@@ -133,7 +133,7 @@ void step3_1()
 	helpwanttosay("别点", "别点", "接下来是行动区", "你要通过这里进行指挥", 0);
 	arrow(150, 530, "行动区：", "选中兵种之后再次点击", "进行操作，右键取消", 0);
 
-	move_button(CANT_co);
+	move_button("移动", CANT_co);
 	attack_button("攻击", CANT_co);
 	stay_button("驻扎", CANT_co);
 	del_button(CANT_co);
@@ -151,10 +151,10 @@ void step3_2()
 	arrow(150, 530, "攻击：根据你所选兵种", "的攻击力扣除敌人血", "量，注意范围限制", 1);
 	attack_button("攻击", CANT_co);//以还原结束
 
-	move_button(OK_co);//以标亮开始
+	move_button("移动", OK_co);//以标亮开始
 	arrow(150, 530, "移动：兵种的移动力代", "表了你能最远抵达的格", "子数", 1);
 	arrow(150, 530, "需要注意的是，有些地", "形消耗移动力为2甚至", "完全不能通过", 1);
-	move_button(CANT_co);//以还原结束
+	move_button("移动", CANT_co);//以还原结束
 
 	stay_button("驻扎", OK_co);//以标亮开始
 	arrow(150, 530, "驻扎：驻扎可以增加一", "点你的攻击力，同时每", "回合可以回复一点血", 1);
@@ -165,7 +165,7 @@ void step3_2()
 	del_button(CANT_co); //
 	Map_partial(150, 530 - 50, 150 + 310, 530 + 50);
 
-	move_button(OK_co);
+	move_button("移动", OK_co);
 	attack_button("攻击", OK_co);
 	stay_button("驻扎", OK_co);
 	del_button(OK_co);
@@ -419,13 +419,13 @@ void step5_1(MAP map)
 			while (1)
 			{
 				Newxy();
-				if (move_btn_fun(65370, 65340))
+				if (move_btn_fun(65370, 65340, "移动"))
 				{
 					move(ptmp, map, 2);
 					otmp = D2O(ptmp);
 					center = center_xy(ptmp.x, ptmp.y);   //这记得改
 					show_msg("", "");
-					move_button(OK_co);
+					move_button("移动", OK_co);
 					break;
 				}
 			}

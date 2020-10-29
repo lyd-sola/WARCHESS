@@ -260,7 +260,7 @@ void Lightbar(int x1, int y1, int x2, int y2)
 	/*widthÎª¾ØĞÎ³¤*/
 	int temp, width;
 	int i, j;
-	float drgb = 1.2;
+	float drgb = 1.4;
 	/*x×ø±êÅÅĞò*/
 	if (x1 > x2)
 	{
@@ -693,7 +693,7 @@ int putbmp_partial(int x1, int y1, int x2, int y2, char *s)//Ç°ËÄ¸ö²ÎÊıÎªÌùÍ¼µÄ¾
 
 void collection_draw(POS center, int side)
 {
-	int color1 = (side == 0) ? 55618 : 14797;
+	int color1 = (side == 0) ? 55619 : 14798;
 	int color2 = (side == 0) ? 0 : 65535;
 	Map_partial(center.x-17, center.y-25, center.x+17, center.y+24);
 	Filltriangle(center.x-17, center.y-16, center.x, center.y-25, center.x+17, center.y-16, color2);
@@ -730,9 +730,9 @@ void medical_draw(POS center)
 
 void stay_draw(POS center)
 {
-	//Icon_draw;
+	//Icon_drawed;
 	Clrmous();
-	Bar64k(center.x-14, center.y-2, center.x+14, center.y+2, 0);
+	//Bar64k(center.x-14, center.y-2, center.x+14, center.y+2, 0);
 	Line64k(center.x - 14, center.y - 12, center.x - 14, center.y - 6, 0);
 	Line64k(center.x - 13, center.y - 12, center.x - 13, center.y - 6, 0);
 	Line64k(center.x - 13, center.y - 12, center.x - 6, center.y - 12, 0);

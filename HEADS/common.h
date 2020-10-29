@@ -7,6 +7,7 @@ Description: 头文件及定义结构、枚举
 ****************************************************/ 
 #ifndef	_COMMON_H_
 #define	_COMMON_H_
+#define INF_SOURCE
 
 #define SCR_WIDTH 1024
 #define SCR_HEIGHT 768

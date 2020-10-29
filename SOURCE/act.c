@@ -2,12 +2,14 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: battle.c
 Author: 刘云笛、陈旭桐
-Version:
+Version:1.3
 Description: 对战行为
 Date:
 
 更新日志
-
+10.27	完成自动版本行为函数
+10.28	攻击函数bug排除
+10.29	增加大本营攻击能力
 ******************************************************************/
 #include "common.h"
 void move(DBL_POS From, MAP map, int able)
@@ -16,7 +18,7 @@ void move(DBL_POS From, MAP map, int able)
 	DBL_POS dbto;
 	int visit[7][7];
 
-	move_button(600);
+	move_button("移动", 600);
 	show_msg("请选择要移动的位置", "点击右键取消");
 	memset(visit, 0, sizeof(visit));
 	range(map, From, able, 0, visit);
@@ -26,51 +28,43 @@ void move(DBL_POS From, MAP map, int able)
 		Newxy();
 		if (clcmap(&dbto, map))//需要保证已有行动力
 		{
-			if (move_(From, dbto, able, map, visit) == 1)
+			if (move_(From, dbto, map, visit) == 1)
 			{
+				Clrmous();
 				return;
-			}
-			else
-			{
-				show_msg("此处无法到达", "重新选择目的地");
 			}
 		}
 		else if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)//右键取消
 		{
 			Clrmous();
 			show_visit(From, visit, Map_partial);//去标亮，move_里里里（函数套娃）还有一个
-			move_button(65370);
+			move_button("移动", 65370);
+			show_msg("取消移动", "");
+			delay(msg_sec);
 			return;
 		}
 	}
 }
-int move_(DBL_POS From, DBL_POS dbto, int able, MAP map, int visit[7][7])
+int move_(DBL_POS From, DBL_POS dbto, MAP map, int visit[7][7])
 {
 	OFF_POS To = D2O(dbto);//求出目标偏移坐标
-	OFF_POS ofrom = D2O(From);
 	if (map[To.y][To.x].kind == NOARMY)//为空可移动，以后还需设置移动能力，还需判断是否原地移动
 	{
 		if (moving(map, visit, From, dbto))
 		{
-			map[To.y][To.x].stay = 0;//移动解除驻扎状态
-			map[To.y][To.x].flag = 1;//标记已移动
-			map[To.y][To.x].health = map[ofrom.y][ofrom.x].health;
-			map[To.y][To.x].kind = map[ofrom.y][ofrom.x].kind;
-			map[To.y][To.x].side = map[ofrom.y][ofrom.x].side;//移动
-			map[ofrom.y][ofrom.x].kind = NOARMY;//清除这个就行了
-			if (map[ofrom.y][ofrom.x].faci != NOFACI)
-				recover_cell(From, map);
 			return 1;
 		}
-		else 
+		else
+		{
+			show_msg("此处无法到达", "重新选择目的地");
 			return 0;
+		}
 	}
 	else
 	{
 		show_msg("此处已被占领", "");
-		move_button(65370);
-		delay(1000);
-		return 1;
+		move_button("移动", 65370);
+		return 0;
 	}
 }
 
@@ -92,7 +86,7 @@ void stay(DBL_POS dpos, MAP map)
 		show_msg("驻扎成功", "");
 		stay_draw(center);
 	}
-	delay(1000);
+	delay(msg_sec);
 	return;
 }
 
@@ -104,15 +98,21 @@ void attack(DBL_POS dpos, MAP map)//攻击功能
 	Arminfo info;
 
 	opos = D2O(dpos);
-	info = search_info(map[opos.y][opos.x].kind); //读取当前位置兵种信息
-
+	if (map[opos.y][opos.x].geo == BASE)//增加大本营攻击能力
+	{
+		info.distance = 1;
+		info.attack = 1;
+	}
+	else
+	{
+		info = search_info(map[opos.y][opos.x].kind); //读取当前位置兵种信息
+	}
 	attack_button("攻击", 64032);
 	show_msg("请选择要攻击的位置", "右键取消");
-
 	while (1)
 	{
 		Newxy();
-		if (clcmap(&dbto, map))//需要保证已有行动力
+		if (clcmap(&dbto, map))
 		{
 			to = D2O(dbto);
 			if (map[to.y][to.x].kind) //目标不为空可以攻击
@@ -193,12 +193,13 @@ void delarm(DBL_POS dpos, MAP map)
 	Map_partial(center.x - 18, center.y - 18, center.x + 18, center.y + 23);
 	return;
 }
-
 //下一回合函数
 void nxt_round(MAP map, Battleinfo* info, int *pside)
 {
 	int i, j, perround = 1;
 	Arminfo arminfo;
+	DBL_POS pos1;
+	POS center;
 	for (i = 0; i < 13; i++)
 	{
 		for (j = 0; j < 13; j++)
@@ -215,74 +216,76 @@ void nxt_round(MAP map, Battleinfo* info, int *pside)
 			}
 		}
 	}
+	/*计算每回合增加资源数的公式，初始每回合一
+	* 大本营等级二级：+1 大本营等级三级：+3
+	* 普通资源：每占领一个每回合+1
+	* 高级资源：每占领一个每回合+3*/
+	//perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
+	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
+	*pside = (*pside) ? 0 : 1; //切换阵营
 	if (*pside)
-	{
-		/*计算每回合增加资源数的公式，初始每回合一
-		* 大本营等级二级：+1 大本营等级三级：+3
-		* 普通资源：每占领一个每回合+1
-		* 高级资源：每占领一个每回合+3*/
-		//perround+=(2*map[9][1].kind-1)+(map[3][1].kind*map[3][1].side)+(map[9][10].kind*map[9][10].side)+(map[6][6].kind*map[6][6].side*3);
-		if (map[3][10].kind > 1) //大本营2级
-			perround += 1;
-		if (map[3][10].kind > 2) //大本营3级
-			perround += 2;
-		if (map[3][1].faci == BCOLLECTION) //普通资源点是否占领
-			perround += 1;
-		if (map[9][10].faci == BCOLLECTION) //同上
-			perround += 1;
-		if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
-			perround += 3;
-		info->b_source += perround;
-
+		return;
+	if (map[3][10].kind > 1) //大本营2级
+		perround += 1;
+	if (map[3][10].kind > 2) //大本营3级
+		perround += 2;
+	if (map[3][1].faci == BCOLLECTION) //普通资源点是否占领
+		perround += 1;
+	if (map[9][10].faci == BCOLLECTION) //同上
+		perround += 1;
+	if (map[6][6].health >= 5 && map[6][6].faci == BCOLLECTION) //搞基资源点是否占领五回合以上
+		perround += 3;
+	info->b_source += perround;//加蓝方资源
+	perround = 1;
+	if (map[9][1].kind > 1) //大本营2级
+		perround += 1;
+	if (map[9][1].kind > 2) //大本营3级
+		perround += 2;
+	if (map[3][1].faci == RCOLLECTION) //普通资源点是否占领
+		perround += 1;
+	if (map[9][10].faci == RCOLLECTION) //同上
+		perround += 1;
+	if (map[6][6].src_rnd >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
+		perround += 3;
+	info->r_source += perround;
 		/*********以下的判断为真正的一回合，即蓝方结束行动后需要增加的信息**********/
 		/**********包括：回合数，资源占领回合数，资源点是否采爆**************/
-		if (map[3][1].faci == BCOLLECTION || map[3][1].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if(map[3][1].src_rnd < 20)
-				map[3][1].src_rnd++;
-			else
-			{
-				map[3][1].faci = NOARMY;
-				map[3][1].flag = 1;
-			}
-		}
-		if (map[9][10].faci == BCOLLECTION || map[9][10].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if (map[9][10].src_rnd < 20)
-				map[9][10].src_rnd++;
-			else
-			{
-				map[9][10].faci = NOARMY;
-				map[9][10].flag = 1;
-			}
-		}
-		if (map[6][6].faci == BCOLLECTION || map[6][6].faci == RCOLLECTION) //每个资源点只能开采20回合, 且只能开采一次
-		{
-			if (map[6][6].src_rnd < 25)
-				map[6][6].src_rnd++;
-			else
-			{
-				map[6][6].faci = NOARMY;
-			}
-		}
+	if (map[9][10].src_rnd < 15 && map[9][10].faci != NOFACI)
+	{
+		map[9][10].src_rnd++;
 	}
 	else
 	{
-		//没有意识到结构体里是uint型，只能分步计算
-		if (map[9][1].kind > 1) //大本营2级
-			perround += 1;
-		if (map[9][1].kind > 2) //大本营3级
-			perround += 2;
-		if (map[3][1].faci == RCOLLECTION) //普通资源点是否占领
-			perround += 1;
-		if (map[9][10].faci == RCOLLECTION) //同上
-			perround += 1;
-		if (map[6][6].src_rnd >= 5 && map[6][6].faci == RCOLLECTION) //搞基资源点是否占领五回合以上
-			perround += 3;
-		info->r_source += perround;
+		map[9][10].faci = NOFACI;
+		pos1.x = 22, pos1.y = 10;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
 	}
-	info->round += 1; //每点一次下一回合增加一次，即此变量非真正的回合数，(round+1)/2才是真正的回合数
-	*pside = (*pside) ? 0 : 1; //切换阵营
+	if (map[6][6].src_rnd < 15 && map[6][6].faci != NOFACI)
+	{
+		map[6][6].src_rnd++;
+	}
+	else
+	{
+		map[6][6].faci = NOFACI;
+		pos1.x = 13, pos1.y = 7;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
+	}
+	if (map[3][1].src_rnd < 15 && map[3][1].faci != NOFACI)
+	{
+		map[3][1].src_rnd++;
+	}
+	else
+	{
+		map[3][1].faci = NOFACI;
+		pos1.x = 4, pos1.y = 4;
+		center = center_xy(pos1.x, pos1.y);
+		Map_partial(center.x - 20, center.y - 25, center.x + 20, center.y + 25);
+		recover_cell(pos1, map);
+	}
 }
 
 void next_r_banner(int side)
@@ -294,11 +297,68 @@ void next_r_banner(int side)
 }
 
 //大本营功能函数
-void base_func(MAP map, unsigned* source, int side)
+void base_func(MAP map, unsigned* source, int is_same_side, DBL_POS dbpos)
 {
 	POS pos, dpos;
+	OFF_POS opos = D2O(dbpos);
+	int side = map[opos.y][opos.x].side;
+	int flag = map[opos.y][opos.x].flag;
+	COLO co;
 	pos.x = 745;
 	pos.y = 705;
+	act_buttons(&co, 0, flag, is_same_side, 0, 1, *source >= air_atk_cost && map[opos.y][opos.x].kind == 3);
+	armbuild_draw(pos, side);
+	while (1)
+	{
+		Newxy();
+		//大本营的行为按钮
+		if (co.mov == (int)OK_co && move_btn_fun(co.mov, 65340, "空袭"))
+		{
+			air_attack(dbpos, map, source);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
+			act_buttons(&co, 0, 1, 0, 0, 0, 0);
+			delay(msg_sec / 2);
+			return;
+		}
+		else if (co.atk == (int)OK_co && atk_btn_fun("攻击", co.atk, 65340))
+		{
+			attack(dbpos, map);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
+			act_buttons(&co, 0, 1, 0, 0, 0, 0);
+			delay(msg_sec / 2);
+			return;
+		}
+		//再次点击大本营对大本营进行升级
+		else if (clcmap(&dpos, map) == 3 && map[D2O(dpos).y][D2O(dpos).x].side == side) //防止花资源给对面升级的投敌行为
+		{
+			levelup(dpos, map, source);
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
+			act_buttons(&co, 0, 1, 0, 0, 0, 0);
+			return;
+		}
+		//点击左下角兵种图标首先显示信息，再次点击进行造兵
+		else if (mouse_press(745-18, 705-18, 745+65*4+18, 705+23) == 1)
+		{
+			buildarm(map, source, side);
+			act_buttons(&co, 0, 1, 0, 0, 0, 0);
+			Clrmous();
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
+			return;
+		}
+		//右键或点击外侧取消操作
+		else if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R || mouse_press(45-18, 705-18, 745+65*4+18, 705+23) == MOUSE_OUT_L)	//右键取消
+		{
+			Clrmous();
+			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
+			act_buttons(&co, 0, 1, 0, 0, 0, 0);
+			show_msg("取消操作", "");
+			delay(msg_sec/2);
+			return;
+		}
+	}
+}
+void armbuild_draw(POS pos, int side)
+{
 	Map_partial(740, 670, 980, 742);
 	icon(pos, side, BUILDER);
 	pos.x = 745 + 65;
@@ -309,39 +369,7 @@ void base_func(MAP map, unsigned* source, int side)
 	icon(pos, side, TANK);
 	pos.x = 745 + 65 * 4;
 	icon(pos, side, SUPER);
-	while (1)
-	{
-		Newxy();
-		//再次点击大本营对大本营进行升级
-		if (clcmap(&dpos, map) == 3 && map[D2O(dpos).y][D2O(dpos).x].side == side) //防止花资源给对面升级的投敌行为，待改进
-		{
-			levelup(dpos, map, source);
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
-			return;
-		}
-		//点击左下角兵种图标首先显示信息，再次点击进行造兵
-		if (mouse_press(745-18, 705-18, 745+65*4+18, 705+23) == 1)
-		{
-			buildarm(map, source, side);
-			Clrmous();
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
-			return;
-		}
-		if (mouse_press(0, 0, 1024, 768) == MOUSE_IN_R)	//右键取消
-		{
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
-			show_msg("取消操作", "");
-			delay(500);
-			return;
-		}
-		if (mouse_press(45-18, 705-18, 745+65*4+18, 705+23) == MOUSE_OUT_L)
-		{
-			Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
-			return;
-		}
-	}
 }
-
 //大本营升级函数
 void levelup(DBL_POS dpos, MAP map, unsigned* source)
 {
@@ -350,13 +378,13 @@ void levelup(DBL_POS dpos, MAP map, unsigned* source)
 	if (map[opos.y][opos.x].kind == 3)
 	{
 		show_msg("大本营已满级", "升级失败");
-		delay(1000);
+		delay(msg_sec);
 		return;
 	}
 	else if (*source < cost) //一本升二本消耗10资源， 二本升三本消耗50资源
 	{
 		show_msg("资源不足无法升级", "");
-		delay(1000);
+		delay(msg_sec);
 		return;
 	}
 	else
@@ -510,17 +538,17 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 	OFF_POS opos = D2O(dpos);
 	POS center = center_xy(dpos.x, dpos.y);
 	int source = map[opos.y][opos.x].side == 0 ? (batinfo->r_source): (batinfo->b_source);
-	if (map[opos.y][opos.x].faci != NOFACI)
-	{
-		show_msg("此处已有设施！", "");
-	}
-	else if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)
+	int i, j, medi_num = 0;
+	if (map[opos.y][opos.x].geo == SORC || map[opos.y][opos.x].geo == HSORC)//资源点上造采集器
 	{
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
+		map[opos.y][opos.x].src_rnd = 0;
 		collection_draw(center, map[opos.y][opos.x].side);
 		show_msg("采集站建造成功！", "已开始采集资源");
+		delay(msg_sec / 2);
+		recover_cell(dpos, map);
 	}
-	else
+	else//其他地方造医疗站
 	{
 		if (source < 10)
 		{
@@ -528,13 +556,97 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 			delay(msg_sec);
 			return;
 		}
+		if (map[opos.y][opos.x].faci == MEDICAL)
+		{
+			show_msg("此处已有医疗站", "建造失败！");
+			delay(msg_sec);
+			return;
+		}
+		for (i = 0; i < 13; i++)
+			for (j = 0; j < 13; j++)
+				if (map[i][j].faci == MEDICAL)	medi_num++;
+		if (medi_num > 4)
+		{
+			show_msg("建造失败", "一局对战只能存在四个医疗站");
+			delay(msg_sec);
+			return;
+		}
 		map[opos.y][opos.x].side == 0 ? (batinfo->r_source -= 10) : (batinfo->b_source -= 10);
 		map[opos.y][opos.x].faci = MEDICAL;
 		medical_draw(center);
 		show_msg("医疗站建造成功！", "已可以进行治疗");
+		delay(msg_sec / 2);
+		recover_cell(dpos, map);
 	}
 	map[opos.y][opos.x].flag = 1;
 	disp_bat_info(*batinfo);
 	delay(1000);
 	return;
+}
+
+void air_attack(DBL_POS pos, MAP map, unsigned *source)
+{
+	OFF_POS opos = D2O(pos), oto;
+	DBL_POS dbto;
+	int side = map[opos.y][opos.x].side;
+	show_msg("花费40资源空袭一个位置", "右键取消");
+	move_button("空袭", 64032);
+	while (1)
+	{
+		Newxy();
+		if (clcmap(&dbto, map))
+		{
+			oto = D2O(dbto);
+			if (map[oto.y][oto.x].faci)
+			{
+				air_boom(map, oto, opos);
+				*source -= air_atk_cost;
+				return;
+			}
+			else if (map[oto.y][oto.x].kind)
+			{
+				if (map[oto.y][oto.x].side == side)
+				{
+					show_msg("喂，你打自己人干嘛", "重新选择一个空袭位置");
+					delay(msg_sec);
+				}
+				else
+				{
+					if (map[oto.y][oto.x].geo == BASE)
+					{
+						show_msg("好孩子是不可以炸别人家的", "重新选择一个空袭位置");
+						delay(msg_sec);
+					}
+					else
+					{
+						air_boom(map, oto, opos);
+						*source -= air_atk_cost;
+						return;
+					}
+				}
+			}
+			else
+			{
+				show_msg("喂，你打空地干嘛", "重新选择一个空袭位置");
+				delay(msg_sec);
+			}
+		}
+		if (press == 2)
+		{
+			show_msg("空袭取消", "");
+			delay(msg_sec);
+			return;
+		}
+	}
+}
+void air_boom(MAP map, OFF_POS oto, OFF_POS from)
+{
+	DBL_POS dbto = O2D(oto);
+	show_msg("轰轰火花，把这里全-都炸完！", "趁对面发现之前，开溜！");
+	map[oto.y][oto.x].kind = 0;
+	map[oto.y][oto.x].faci = 0;
+	map[from.y][from.x].flag = 1;
+	Clrmous();
+	recover_cell(dbto, map);
+	delay(msg_sec);
 }

@@ -106,6 +106,7 @@ void savefile_init(FILE* fp, short mode)
 	cell.faci = 0;
 	cell.stay = 0;
 	cell.flag = 0;
+	cell.src_rnd = 0;
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		fseek(map, 2, SEEK_CUR);
@@ -118,7 +119,7 @@ void savefile_init(FILE* fp, short mode)
 				cell.geo = BASE;
 				cell.kind = 1;//大本营初始化
 				cell.health = 30;
-				if (i == 3)//红方
+				if (i == 3)//蓝方
 					cell.side = 1;
 				fwrite(&cell, sizeof(CELL), 1, fp);
 				cell.kind = NOARMY;
