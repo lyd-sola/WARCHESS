@@ -86,6 +86,7 @@ int mainmenu(char *user, int *save_num, int *mode)
 		if (Sharp_button(225 + 330, "作战指导", "操作说明", 60361, 65535))
 		{
 			help_cartoon();
+			return MAINMENU;
 		}
 		if (Sharp_button(225 + 440, "鸣金收兵", "注销账号", 60361, 65535))
 		{

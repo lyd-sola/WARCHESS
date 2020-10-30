@@ -6,11 +6,11 @@ version: 2.0
 Description: 教程函数，实际上为一段动画
 ****************************************************/
 #include"common.h"
-#define SAY 50
+#define SAY 1000
 void help_cartoon()
 {
 	MAP map;
-	int step = 6;
+	int step = 1;
 	DBL_POS pos;
 	Battleinfo batinfo;
 	FILE* fp;
@@ -41,7 +41,7 @@ void help_cartoon()
 		case 5:
 			step = step5(map);
 		case 6:
-			step = step6(map);exit(0);
+			step = step6(map);
 		}
 	}
 }
@@ -410,6 +410,7 @@ void step5_1(MAP map)
 	DBL_POS ptmp;
 	OFF_POS otmp;
 	POS center;
+	Map_partial(745 - 18, 705 - 18, 745 + 65 * 4 + 18, 705 + 23);
 	helpwanttosay("别点", "别点", "现在让我教你如何移动", "首先点选步兵", 0);
 	while (map[10][2].kind != 0)
 	{
@@ -516,6 +517,7 @@ int step6(MAP map)
 	step6_2(map);
 	step6_3(map);
 	step6_4(map);
+	step6_5(map);
 	return 0;
 }
 void step6_1()
@@ -673,6 +675,10 @@ void step6_4(MAP map)
 	OFF_POS opos;
 	DBL_POS dpos;
 	int i = 0;
+	int flag = 0;
+	attack_button("攻击", 65370);
+	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
+	Bar64k(0, 0, 204, 100, 65370);
 	helpwanttosay("别点", "别点", "好", "现在只剩下最后一步了", 0);
 	helpwanttosay("别点", "别点", "摧毁敌方的大本营吧", "", 0);
 	opos.x = 10;
@@ -684,13 +690,13 @@ void step6_4(MAP map)
 	draw_cell(dpos, map);
 	opos.x = 9;
 	opos.y = 3;
-	dpos = O2D(dpos);
+	dpos = O2D(opos);
 	map[opos.y][opos.x].kind = TANK;
 	map[opos.y][opos.x].health = 10;
 	map[opos.y][opos.x].side = 0;
 	draw_cell(dpos, map);
 	helpwanttosay("别点", "别点", "选择合适的部队", "快速地消灭敌方大本营", 0);
-	while (map[10][3].kind != 0)
+	while (map[3][10].kind != 0)
 	{
 		Newxy();
 		if (clcmap(&dpos, map) == 2)
@@ -699,26 +705,25 @@ void step6_4(MAP map)
 			opos = D2O(dpos);
 			if (map[opos.y][opos.x].kind == SUPER)
 			{
-				helpwanttosay("别点", "别点", "超级兵打大本营只掉一血！", "为什么不听我说话", 0);
-				helpwanttosay("别点", "别点", "算了", "你开心就好", 0);
-				helpwanttosay("别点", "别点", "", "", 0);
+				if (flag == 0)
+				{
+					helpwanttosay("别点", "别点", "超级兵打大本营只掉一血！", "为什么不听我说话", 0);
+					helpwanttosay("别点", "别点", "算了", "你开心就好", 0);
+					helpwanttosay("别点", "别点", "", "", 0);
+					flag = 1;
+				}
 			}
 			else
 			{
-				helpwanttosay("别点", "别点", "唔，选择坦克是对的", "看来我说的话有点作用", 0);
-				helpwanttosay("别点", "别点", "还是说随便选的？", "算了无所谓了", 0);
-				helpwanttosay("别点", "别点", "", "", 0);
-			}
-			while (1)
-			{
-				Newxy();
-				dpos = xy2cell(MouseX, MouseY);
-				if (dpos.x == 5 && dpos.y == 11 && press == 1)
+				if (flag == 0)
 				{
-					disp_arm_info(map[10][2]);
-					break;
+					helpwanttosay("别点", "别点", "唔，选择坦克是对的", "看来我说的话有点作用", 0);
+					helpwanttosay("别点", "别点", "还是说随便选的？", "算了无所谓了", 0);
+					helpwanttosay("别点", "别点", "", "", 0);
+					flag = 1;
 				}
 			}
+			disp_geo_info(map[3][10]);
 			while (1)
 			{
 				Newxy();
@@ -726,11 +731,20 @@ void step6_4(MAP map)
 				{
 					attack(dpos, map);
 					attack_button("攻击", 65370);
+					disp_geo_info(map[3][10]);
 					break;
 				}
 			}
 		}
 	}
+}
+void step6_5()
+{
+	helpwanttosay("别点", "别点", "恭喜你已经完成了全部教程", "你可以离开这了", 0);
+	helpwanttosay("别点", "别点", "我还会一直在这", "希望再见到你的时..", 0);
+	helpwanttosay("别点", "别点", "哦对不起", "我们估计不会再见了", 0);
+	show_msg("再见", "");
+	helpwanttosay("别点", "别点", "再见", "", 0);
 }
 int Clcmap(DBL_POS* pos, MAP map)
 {

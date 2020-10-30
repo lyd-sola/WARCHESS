@@ -18,7 +18,7 @@ Function：		Button
 Description：	按钮绘制函数
 Calls：			Line64k
 Input:			y1按钮上沿y坐标，s按钮上汉字（四个字最佳）
-				color1底色，color2线颜色
+		   0		color1底色，color2线颜色
 
 Author：		刘云笛
 ps 灵感来自Riddle Joker，柚子社天下第一！
