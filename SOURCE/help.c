@@ -40,8 +40,10 @@ void help_cartoon()
 			break;
 		case 5:
 			step = step5(map);
+			break;
 		case 6:
 			step = step6(map);
+			break;
 		}
 	}
 }
@@ -492,13 +494,18 @@ void step5_3(MAP map)
 	}
 	while (1)
 	{
-		Newxy();
-		if (atk_btn_fun("攻击", 65370, 65340))
+		while (1)
 		{
-			attack(ptmp, map);
-			attack_button("攻击", 65370);
-			break;
+			Newxy();
+			if (atk_btn_fun("攻击", 65370, 65340))
+			{
+				attack(ptmp, map);
+				attack_button("攻击", 65370);
+				break;
+			}
 		}
+		if (map[8][3].kind == 0)
+			break;
 	}
 	map[10][2].kind = 0;
 	map[8][2].kind = 0;
@@ -674,7 +681,7 @@ void step6_4(MAP map)
 {
 	OFF_POS opos;
 	DBL_POS dpos;
-	int i = 0;
+	int i = 1;
 	int flag = 0;
 	attack_button("攻击", 65370);
 	Filltriangle(0, 100, 0, 350, 204, 100, 65370);
@@ -735,7 +742,31 @@ void step6_4(MAP map)
 					break;
 				}
 			}
+			step6_4_1(i);
+			i++;
 		}
+	}
+}
+void step6_4_1(int i)
+{
+	switch (i)
+	{
+	case 1:
+		helpwanttosay("别点", "别点", "。。。。", "", 0);break;
+	case 2:
+		helpwanttosay("别点", "别点", "啊", "大本营的血量还挺多的", 0);break;
+	case 3:
+		helpwanttosay("别点", "别点", "正常来说，你一回合", "是不能攻击这么多次的", 0);break;
+	case 4:
+		helpwanttosay("别点", "别点", "不过这只是让你体验一下", "无所谓了", 0);break;
+	case 5:
+		helpwanttosay("别点", "别点", "你觉得我教的怎么样", "有没有什么不明白的地方", 0);break;
+	case 6:
+		helpwanttosay("别点", "别点", "等你亲自指挥的时候", "一定要小心谨慎", 0);break;
+	case 7:
+		helpwanttosay("别点", "别点", "啊", "要结束了", 0);break;
+	case 8:
+		helpwanttosay("别点", "别点", "好的", "攻击八次，刚刚好", 0);break;
 	}
 }
 void step6_5()

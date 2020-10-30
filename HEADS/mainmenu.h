@@ -17,5 +17,6 @@ Function List：
 int mainmenu(char* user, int* save_num, int* mode);			//主菜单核心函数
 
 void mmenu_draw(char *user);		//绘制主菜单界面
+void file_text(char* user, char* rank, int count, long int round, int win, char* date);
 
 #endif
