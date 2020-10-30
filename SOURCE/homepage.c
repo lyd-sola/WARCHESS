@@ -23,7 +23,6 @@ int homepage()
 	while(1)
 	{
 		Newxy();
-	
 		if(mouse_press(974, 0, 1024, 50) == MOUSE_IN_L) //退出
 		{
 			return EXIT;
@@ -48,16 +47,6 @@ int homepage()
 		if (guest_btn_fun())
 		{
 			return GUEST;
-		}
-		/*************************测试用，右键右下角进入test页面****************************/
-		if(mouse_press(1024-100, 768-100, 1024, 768) == MOUSE_IN_R)
-		{
-			return 233;
-		}
-
-		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,主菜单左上角右键直接快速登录
-		{
-			return MAINMENU;
 		}
 	}
 }

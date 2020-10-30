@@ -31,7 +31,6 @@ int login(char *username)
 	while(1)
 	{
 		Newxy();
-		
 		if(bioskey(1))
 		{
 			getch();
@@ -99,19 +98,7 @@ int login(char *username)
 
 			else if(login_check(tmp, password) == 1)						//判断是否与文件匹配
 			{
-				rect_circle(512-250, 384-100, 512+250, 384+100, 65535);
-				delay(500);
-				Outtext(512-200+30, 384-24,"正", 48, 102, 2463);					//虚假的动画效果
-				delay(500);
-				Outtext(512 - 200 + 30, 384-24,"正在", 48, 102, 2463);
-				delay(500);
-				Outtext(512 - 200 + 30, 384-24,"正在登", 48, 102, 2463);
-				delay(500);
-				Outtext(512 - 200 + 30, 384-24,"正在登录", 48, 102, 2463);
-				delay(500);
-				rect_circle(512-250, 384-100, 512+250, 384+100, 65535);
-				Outtextxx(512-200+30, 384-24, 512-200+30+340, "登录成功！", 48, 2463);
-				delay(1000);
+				login_anime();
 				strcpy(username, tmp);
 				return MAINMENU;
 			}
@@ -132,7 +119,6 @@ int login(char *username)
 
 void drawlogin()
 {
-	//Bar64k(0, 0, 1024, 768, 25290);
 	Putbmp64k(0, 0, "BMP//lng.bmp");
 
 	Bar64k(0, 0, 50, 50, 65535); //退出
@@ -159,6 +145,23 @@ void drawlogin()
 	Outtext(846, 335, "新用户？", 24, 38, 0);
 }
 
+void login_anime(void)
+{
+	rect_circle(512 - 250, 384 - 100, 512 + 250, 384 + 100, 65535);
+	delay(500);
+	Outtext(512 - 200 + 30, 384 - 24, "正", 48, 102, 2463);					//虚假的动画效果
+	delay(500);
+	Outtext(512 - 200 + 30, 384 - 24, "正在", 48, 102, 2463);
+	delay(500);
+	Outtext(512 - 200 + 30, 384 - 24, "正在登", 48, 102, 2463);
+	delay(500);
+	Outtext(512 - 200 + 30, 384 - 24, "正在登录", 48, 102, 2463);
+	delay(500);
+	rect_circle(512 - 250, 384 - 100, 512 + 250, 384 + 100, 65535);
+	Outtextxx(512 - 200 + 30+5, 384 - 24, 512 - 200 + 30 + 340, "登录成功！", 48, 2463);
+	delay(1000);
+}
+
 int login_check(char *username, char *password)
 {
 	FILE *fp;
@@ -177,7 +180,6 @@ int login_check(char *username, char *password)
 	}
 
 	//密码判断
-	//fscanf(fp, "%llu%llu", &pw, &pwt);
 	fscanf(fp, "%llu", &pw);
 	fgetc(fp);
 	fscanf(fp, "%llu", &pwt);
@@ -268,27 +270,24 @@ int forget_fun(void)//忘记密码按钮功能函数
 
 void forget_draw(int q)
 {
-	putbmp_partial(312, 120, 610 + 370, 522 + 15, "BMP//lng.bmp");
-	frame(610, 165, 610 + 370, 165 + 50, 65535);   //问题
+	putbmp_partial(312, 120, 610 + 370, 522 + 15+10, "BMP//lng.bmp");
+	//frame(610, 165, 610 + 370, 165 + 50, 65535);   //问题
 	Outtext(610 - 168, 175, "问题", 32, 118, 63488);
-	//Outtext(610 + 20, 185, "八位以内，大写字母和数字", 16, 22, 27469);
 	switch (q)
-		{
-		case 1:
-			Outtext(610+10, 165+13, "您的生日是？", 24, 28, 44373);
-			break;
-		case 2:
-			Outtext(610+10, 165+13, "您身份证号六到十位是？", 24, 28, 44373);
-			break;
-		case 3:
-			Outtext(610+10, 165+13, "您宠物的名字是？", 24, 28, 44373);
-			break;
-		case 4:
-			Outtext(610+10, 165+13, "您第一位恋人的名字是？", 24, 28, 44373);
-			break;
-		default:
-			break;
-		}
+	{
+	case 1:
+		Outtext(610+10, 165+13, "您的生日是？", 24, 28, 0);
+		break;
+	case 2:
+		Outtext(610+10, 165+13, "您身份证号六到十位是？", 24, 28, 0);
+		break;
+	case 3:
+		Outtext(610+10, 165+13, "您宠物的名字是？", 24, 28, 0);
+		break;
+	case 4:
+		Outtext(610+10, 165+13, "您第一位恋人的名字是？", 24, 28, 0);
+		break;
+	}
 
 	frame(610, 165 + 100, 610 + 370, 165 + 50 + 100, 65535);  //答案
 	Outtext(610 - 168, 175 + 100, "答案", 32, 118, 63488);
@@ -340,7 +339,7 @@ void forget_password(char* username)
 			{
 				password_reset(username, password);
 				rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
-				Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "修改成功", 32, 65535);
+				Outtextxx(512 - 170 + 10, 384 - 20, 512 - 170 + 340, "修改成功！", 48, 65535);
 				delay(500);
 				return;
 			}
@@ -364,12 +363,19 @@ int reset_check(char* answer, char* password, unsigned long long answert)
 	}
 	else if (*password == '\0')//未输入密码
 	{
+		putbmp_partial(620, 420, 620 + 30 * 7 + 16, 420 + 16, "BMP\\lng.bmp");
 		Outtext(620, 420, "请输入新密码", 16, 30, 63488);
+	}
+	else if(strlen(password) < 4)
+	{
+		putbmp_partial(620, 420, 620 + 30 * 7 + 16, 420 + 16, "BMP\\lng.bmp");
+		Outtext(620, 420, "密码长度须大于三", 16, 30, 63488);
 	}
 	else if (password_classified(answer, 71) != answert)
 	{
 		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
-		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "答案错误！", 32, 65535);
+		Outtextxx(512 - 170+10, 384-20, 512 - 170 + 340, "答案错误！", 48, 65535);
+		*answer = 0;
 		delay(1000);
 		return 2;
 	}
