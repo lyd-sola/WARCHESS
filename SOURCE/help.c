@@ -504,6 +504,7 @@ void step5_3(MAP map)
 				break;
 			}
 		}
+		show_msg("", "");
 		if (map[8][3].kind == 0)
 			break;
 	}
@@ -766,7 +767,7 @@ void step6_4_1(int i)
 	case 7:
 		helpwanttosay("别点", "别点", "啊", "要结束了", 0);break;
 	case 8:
-		helpwanttosay("别点", "别点", "好的", "攻击八次，刚刚好", 0);break;
+		helpwanttosay("别点", "别点", "好的", "我会一直在这的", 0);break;
 	}
 }
 void step6_5()

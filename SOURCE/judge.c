@@ -192,7 +192,7 @@ int victory_judge(MAP map)
 	if (map[3][10].kind == 0)
 	{
 		delay(1000);
-		if (msgbar("再战", "退出", "红军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+		if (v_cartoon("再战", "退出", "红军胜利了！", "您的勇气和智慧令人惊叹", 0))
 			return 1;
 		else
 			exit(0);
@@ -200,7 +200,7 @@ int victory_judge(MAP map)
 	if (map[9][1].kind == 0)
 	{
 		delay(msg_sec);
-		if (msgbar("再战", "退出", "蓝军胜利了！", "您的勇气和智慧给人留下了深刻印象"))
+		if (v_cartoon("再战", "退出", "蓝军胜利了！", "您的勇气和智慧令人惊叹！", 1))
 			return 1;
 		else
 			exit(0);
@@ -208,7 +208,24 @@ int victory_judge(MAP map)
 	return 0;
 }
 
-//int v_cartoon()
-//{
-//	;
-//}
+int v_cartoon(char* btn1, char* btn2, char* s1, char* s2, int side)
+{
+	int color = side ? 34429 : 60361;
+	Bar64k_radial(262, 218, 262 + 500, 219 + 230, color, 2000);
+	rect_button(318, 384, 112 + 318, 45 + 384, btn1, 65535);
+	rect_button(581, 384, 112 + 581, 45 + 384, btn2, 65535);	
+	Outtextxx(512-100, 252, 512+100, s1, 32, 0);
+	Outtext(304, 314, s2, 32, 35, 0);
+	while (1)
+	{
+		Newxy();
+		if (rec_btn_fun(318, 384, 112 + 318, 45 + 384, 65535))
+		{
+			return 1;
+		}//点击确定返回1
+		if (rec_btn_fun(581, 384, 112 + 581, 45 + 384, 65535))
+		{
+			return 0;
+		}//点击取消返回0
+	}
+}
