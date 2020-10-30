@@ -1,3 +1,16 @@
+/********************************************************************
+Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
+file_name: help.h
+author: 陈旭桐
+version: 1.0
+Description: 教程动画
+date:
+
+更新日志
+
+Function List:
+	动画分步演出，不需函数目录
+******************************************************************/
 #ifndef	_HELP_H_
 #define	_HELP_H_
 #include "struct.h"

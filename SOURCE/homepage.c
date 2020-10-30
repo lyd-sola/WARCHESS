@@ -49,6 +49,10 @@ int homepage()
 void draw_h_page()
 {
 	Putbmp64k(0, 0, "BMP//homepage.bmp");
+	Bar64k(974, 0, 1024, 50,65535);
+	Outtext(984, 9, "ÍË", 32, 0, 0);
+	Outtext(85+2, 40+2, "WARCHESS", 48, 48, 65535);
+	Outtext(85, 40, "WARCHESS", 48, 48, 65184);
 	Outtext(85+2,90+2,"ºìÀ¶¾ü¶Ô¿¹ÑÝÁ·", 48, 70, 27469);
 	Outtext(85, 90, "ºìÀ¶¾ü¶Ô¿¹ÑÝÁ·", 48, 70, 0);
 
