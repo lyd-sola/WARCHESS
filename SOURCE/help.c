@@ -517,7 +517,7 @@ int step6(MAP map)
 	step6_2(map);
 	step6_3(map);
 	step6_4(map);
-	step6_5(map);
+	step6_5();
 	return 0;
 }
 void step6_1()
