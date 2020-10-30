@@ -208,3 +208,8 @@ int victory_judge(MAP map)
 	}
 	return 0;
 }
+
+int v_cartoon()
+{
+	;
+}

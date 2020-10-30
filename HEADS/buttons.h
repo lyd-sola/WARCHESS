@@ -28,6 +28,7 @@ int nxt_btn_fun(int color, int color_c);
 int move_btn_fun(int color, int color_c, char *s);
 int del_btn_fun(int color, int color_c);
 
+void rect_circle(int x1, int y1, int x2, int y2, int color);
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color); //·½ÐÎ°´Å¥
 void rect_btn_frame(int x1, int y1, int x2, int y2, int color);
 int rec_btn_fun(int x1, int y1, int x2, int y2, int color);

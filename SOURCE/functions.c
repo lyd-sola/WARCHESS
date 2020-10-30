@@ -105,7 +105,7 @@ void show_msg(char* msg, char *msg2)
 short msgbar(char *btn1, char *btn2, char *s1, char *s2)
 {
 	Clrmous();
-	Bar64k_radial(262, 218, 262 + 500, 219 + 230, 34429, 0);
+	rect_circle(262, 218, 262 + 500, 219 + 230, 34429);
 	rect_button(318, 384, 112+318, 45+384, btn1, 65535);
 	rect_button(581, 384, 112+581, 45+384, btn2, 65535);
 	Outtext(304, 252, s1, 32, 35, 0);

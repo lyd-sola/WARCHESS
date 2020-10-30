@@ -65,8 +65,10 @@ int register_()
 			if((rcheck = regis_check(user, password, password_r)) == 1)
 			{
 				//user_creat(user, password);
-				if(secret_question(user, password)==1)
+				if (secret_question(user, password) == 1)
 					return LOGIN;
+				else
+					return HOMEPAGE;
 			}
 			else if(rcheck == 0)
 			{
@@ -132,7 +134,7 @@ void user_creat(char *username, char *password, int q, char* answer)
 	{
 		show_error("无法创建用户存档", 1);
 	}
-	fprintf(fp, "%llu\n%llu", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
+	fprintf(fp, "%llu#%llu#", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
 	fprintf(fp, "\n%d\n%llu", q, password_classified(answer, 71));//这里涉及加密问题，不会给你注释的
 	fclose(fp);
 	
@@ -231,26 +233,26 @@ int regis_check(char *un, char *pw, char *pwr)
 	else if ((fp = fopen(filename, "rb")) != NULL)//用户名已存在
 	{
 		fclose(fp);
-		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
 		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "用户名已存在", 32, 65535);
 		return 0;
 	}
 	else if(strcmp(pw, pwr))//两次输入密码不一致
 	{
 		fclose(fp);
-		shadow_l(512-200, 384-100, 512+200, 384+100, 34429);
+		rect_circle(512-200, 384-100, 512+200, 384+100, 34429);
 		Outtextxx(512-170, 384-75, 512-170+340, "两次输入密码不一致", 32, 65535);
 		return 0;
 	}
 	else if (strlen(un) < 4)
 	{
-		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
 		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "用户名需长于三位", 32, 65535);
 		return 0;
 	}
 	else if (strlen(pw) < 4)
 	{
-		shadow_l(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
 		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "密码需长于三位", 32, 65535);
 		return 0;
 	}
@@ -306,9 +308,9 @@ int secret_question(char *user, char *password)
 				return 1;
 			}
 		}
-		if (mouse_press(0, 0, 50, 50) == MOUSE_IN_R)
+		if (mouse_press(0, 0, 50, 50) == MOUSE_IN_L)
 		{
-			exit(0);
+			return 0;
 		}
 	}
 }
@@ -332,7 +334,7 @@ int sq_check(int q, char* answer)
 /******y1，y2需相等，输入的坐标是水平两点坐标，num为向下展开的行数*******/
 void drop_down_list(int x1, int y1, int x2, int y2, int num)
 {
-	int result = 0, i;
+	int i;
 	if (y1 != y2)
 		return;
 	Clrmous();//更新鼠标状态，防止留痕
@@ -384,12 +386,13 @@ int list_func(int x1, int y1, int x2, int y2, int num, int *q)
 {
 	if (mouse_press(x2-50, y1, x2, y1+50) == MOUSE_IN_L)
 	{
+		delay(100);
 		if ((*q = list_choose(x1, y2, x2, y2, 4)) != 0)
 		{
 			Clrmous();
-			Bar64k(x1, y1, x2, y2, 65535);
-			rectangle64k(x1, y1, x2, y2, 0);
-			Bar64k(x2 - 50, y1, x2, y1 + 50, 33808);
+			frame(x1, y1, x2, y2, 65535);
+			Bar64k(x2-48, y1+2, x2-2, y1+48, 33808);
+			Filltriangle(x2-50+15, y1+15, x2-25, y1+30, x2-15, y1+15, 65535);
 			switch (*q)
 			{
 			case 1:
@@ -433,6 +436,8 @@ void regi_sq_draw()
 {
 	putbmp_partial(610-168, 165, 610+370, 165+50+200, "BMP//lng.bmp");
 	frame(610, 280, 610 + 370, 280 + 50, 65535);             //用户名
+	Bar64k(980 - 48, 282, 980-2, 280 + 48, 33808);
+	Filltriangle(980-50+15, 280+15, 980-25, 280+30, 980-15, 280+15, 65535);
 	Outtext(500, 290, "问题", 32, 62, 63488);
 	Outtext(610 + 20, 280 + 15, "选择一个密保问题", 16, 30, 0);
 

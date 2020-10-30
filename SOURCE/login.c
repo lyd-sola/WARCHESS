@@ -28,7 +28,6 @@ int login(char *username)
 	int flag = 0;				//防止重复高亮
 	Clrmous();
 	drawlogin();
-	
 	while(1)
 	{
 		Newxy();
@@ -72,22 +71,35 @@ int login(char *username)
 			kbinput(610, 280 + 100, 610 + 370, 280 + 50 + 100, password, 0);
 		}
 
-		if(guest_btn_fun())
-		
+		if (forget_fun())                                              //修改密码
+		{
+			if (*tmp) //已经输入用户名
+			{
+				forget_password(tmp);
+			}
+			else  //未输入用户名
+			{
+				rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 65535);
+				Outtext(512 - 200 + 30, 384 - 24, "请输入用户名", 48, 55, 2463);
+				delay(1000);
+			}
+			return LOGIN;
+		}
+
 		if(mouse_press(686 - 15, 490 - 15, 814 + 15, 522 + 15) == MOUSE_IN_L)				//点击登录键
 		{
 			if (*tmp == '\0')//未输入用户名
 			{
 				Outtext(620, 340, "请输入用户名", 16, 30, 63488);
 			}
-			else if (*tmp == '\0')//未输入密码
+			else if (*password == '\0')//未输入密码
 			{
 				Outtext(620, 440, "请输入密码", 16, 30, 63488);
 			}
 
 			else if(login_check(tmp, password) == 1)						//判断是否与文件匹配
 			{
-				Bar64k_radial(512-250, 384-100, 512+250, 384+100, 65535, 0);
+				rect_circle(512-250, 384-100, 512+250, 384+100, 65535);
 				delay(500);
 				Outtext(512-200+30, 384-24,"正", 48, 102, 2463);					//虚假的动画效果
 				delay(500);
@@ -97,7 +109,7 @@ int login(char *username)
 				delay(500);
 				Outtext(512 - 200 + 30, 384-24,"正在登录", 48, 102, 2463);
 				delay(500);
-				Bar64k_radial(512-200, 384-100, 512+200, 384+100, 33333, 0);
+				rect_circle(512-250, 384-100, 512+250, 384+100, 65535);
 				Outtextxx(512-200+30, 384-24, 512-200+30+340, "登录成功！", 48, 2463);
 				delay(1000);
 				strcpy(username, tmp);
@@ -109,6 +121,11 @@ int login(char *username)
 				delay(1000);
 				return LOGIN;
 			}
+		}
+
+		if (quick_regi())                                              //新用户
+		{
+			return REGIS;
 		}
 	}
 }
@@ -138,7 +155,8 @@ void drawlogin()
 	
 	shadow_l(686-15, 490-15, 814+15, 522+15, 65535);
 	Outtext(686, 480,"登录", 48, 80, 63488);
-	Outtextxx(846, 313, 610+370, "忘记密码", 24, 0);
+	Outtextxx(846, 435, 610+370, "忘记密码", 24, 0);
+	Outtext(846, 335, "新用户？", 24, 38, 0);
 }
 
 int login_check(char *username, char *password)
@@ -152,14 +170,17 @@ int login_check(char *username, char *password)
 	//用户名判断
 	if((fp = fopen(filename, "r")) == NULL)
 	{
-		shadow_l(512-200, 384-100, 512+200, 384+100, 5);
+		rect_circle(512-200, 384-100, 512+200, 384+100, 5);
 		Outtextxx(512-200+30, 384-100+40, 512-200+340, "未找到该用户", 32, 65535);
 		fclose(fp);
 		return 0;
 	}
-	
+
 	//密码判断
-	fscanf(fp, "%llu%llu", &pw, &pwt);
+	//fscanf(fp, "%llu%llu", &pw, &pwt);
+	fscanf(fp, "%llu", &pw);
+	fgetc(fp);
+	fscanf(fp, "%llu", &pwt);
 	if(pw == password_classified(password, 67) && pwt == password_classified(password, 71) )
 	{
 		fclose(fp);
@@ -168,24 +189,24 @@ int login_check(char *username, char *password)
 	else
 	{
 		*password = 0;
-		shadow_l(512-200, 384-100, 512+200, 384+100, 5);
+		rect_circle(512-200, 384-100, 512+200, 384+100, 5);
 		Outtextxx(512-200+30, 384-100+40, 512-200+340, "密码错误", 32, 65535);
 		fclose(fp);
 		return 0;
 	}
 }
 
-int forget_fun(void)//游客登录按钮功能函数
+int quick_regi(void)//跳转注册按钮功能函数
 {
-	if (Mouse_above(846, 313, 978, 313 + 24))
+	if (Mouse_above(846, 335, 978, 335 + 24))
 	{
 		Clrmous();
 		MouseS = 1;
-		Bar64k(846, 313 + 26, 978, 313 + 27, 0);
+		Bar64k(846, 335 + 26, 978, 335 + 27, 0);
 		while (1)
 		{
 			Newxy();
-			if (Mouse_above(846, 313, 978, 313 + 24))
+			if (Mouse_above(846, 335, 978, 335 + 24))
 			{
 				if (press == 1)
 				{
@@ -199,7 +220,7 @@ int forget_fun(void)//游客登录按钮功能函数
 			{
 				Clrmous();
 				MouseS = 0;
-				putbmp_partial(846, 313 + 26, 978, 313 + 27, "BMP//homepage.bmp");
+				putbmp_partial(846, 335 + 26, 978, 335 + 27, "BMP//lng.bmp");
 				return 0;
 			}
 		}
@@ -208,4 +229,171 @@ int forget_fun(void)//游客登录按钮功能函数
 	{
 		return 0;
 	}
+}
+
+int forget_fun(void)//忘记密码按钮功能函数
+{
+	if (Mouse_above(846, 435, 978, 435+24))
+	{
+		Clrmous();
+		MouseS = 1;
+		Bar64k(846, 435+26, 978, 435+27, 0);
+		while (1)
+		{
+			Newxy();
+			if (Mouse_above(846, 435, 978, 435+24))
+			{
+				if (press == 1)
+				{
+					Clrmous();
+					MouseS = 0;
+					return 1;
+					//若点击返回1
+				}
+			}
+			else
+			{
+				Clrmous();
+				MouseS = 0;
+				putbmp_partial(846, 435+26, 978, 435+27, "BMP//lng.bmp");
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void forget_draw(int q)
+{
+	putbmp_partial(312, 120, 610 + 370, 522 + 15, "BMP//lng.bmp");
+	frame(610, 165, 610 + 370, 165 + 50, 65535);   //问题
+	Outtext(610 - 168, 175, "问题", 32, 118, 63488);
+	//Outtext(610 + 20, 185, "八位以内，大写字母和数字", 16, 22, 27469);
+	switch (q)
+		{
+		case 1:
+			Outtext(610+10, 165+13, "您的生日是？", 24, 28, 44373);
+			break;
+		case 2:
+			Outtext(610+10, 165+13, "您身份证号六到十位是？", 24, 28, 44373);
+			break;
+		case 3:
+			Outtext(610+10, 165+13, "您宠物的名字是？", 24, 28, 44373);
+			break;
+		case 4:
+			Outtext(610+10, 165+13, "您第一位恋人的名字是？", 24, 28, 44373);
+			break;
+		default:
+			break;
+		}
+
+	frame(610, 165 + 100, 610 + 370, 165 + 50 + 100, 65535);  //答案
+	Outtext(610 - 168, 175 + 100, "答案", 32, 118, 63488);
+	Outtext(610 + 20, 185 + 100, "输入您密保问题的答案", 16, 30, 27469);
+	
+	frame(610, 165 + 200, 610 + 370, 165 + 50 + 200, 65535);  //新密码
+	Outtext(610 - 168, 175 + 200, "新密码", 32, 59, 63488);
+	Outtext(610 + 20, 185 + 200, "输入您的新密码", 16, 30, 27469);
+
+	shadow_l(686 - 15, 490 - 15, 814 + 15, 522 + 15, 65535);
+	Outtext(686, 480, "完成", 48, 80, 63488);
+}
+
+void forget_password(char* username)
+{
+	FILE* fp;
+	int q=0, check = 0;
+	unsigned long long answert;
+	char buffer[40], answer[40] = "\0", password[40] = "\0";
+	char filename[30] = "users\\";
+	strcat(filename, username);
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 5);
+		Outtextxx(512 - 200 + 30, 384 - 100 + 40, 512 - 200 + 340, "未找到该用户", 32, 65535);
+		fclose(fp);
+		return;
+	}
+
+	fgets(buffer, 40, fp);
+	fscanf(fp, "%d%llu", &q, &answert);
+	fclose(fp);
+	forget_draw(q);
+	while (1)
+	{
+		Newxy();
+		if (mouse_press(610, 165 + 100, 610 + 370, 165 + 50 + 100) == MOUSE_IN_L)					//输入答案
+		{
+			kbinput(610, 165 + 100, 610 + 370, 165 + 50 + 100, answer, 0);
+		}
+		if (mouse_press(610, 165 + 200, 610 + 370, 165 + 50 + 200) == MOUSE_IN_L)					//输入密码
+		{
+			kbinput(610, 165 + 200, 610 + 370, 165 + 50 + 200, password, 0);
+		}
+		if (mouse_press(686 - 15, 480 - 5, 686 + 128 + 15, 480 + 48 + 5) == MOUSE_IN_L)
+		{
+			if ((check = reset_check(answer, password, answert)) == 1)
+			{
+				password_reset(username, password);
+				rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+				Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "修改成功", 32, 65535);
+				delay(500);
+				return;
+			}
+			else if(check == 2)
+			{
+				forget_draw(q);
+			}
+		}
+		if (mouse_press(0, 0, 50, 50) == 1)
+		{
+			return;
+		}
+	}
+}
+
+int reset_check(char* answer, char* password, unsigned long long answert)
+{
+	if (*answer == '\0')//未输入用户名
+	{
+		Outtext(620, 320, "请输入答案", 16, 30, 63488);
+	}
+	else if (*password == '\0')//未输入密码
+	{
+		Outtext(620, 420, "请输入新密码", 16, 30, 63488);
+	}
+	else if (password_classified(answer, 71) != answert)
+	{
+		rect_circle(512 - 200, 384 - 100, 512 + 200, 384 + 100, 34429);
+		Outtextxx(512 - 170, 384 - 60, 512 - 170 + 340, "答案错误！", 32, 65535);
+		delay(1000);
+		return 2;
+	}
+	else
+	{
+		return 1;
+	}
+	return 0;
+}
+
+int password_reset(char* username, char* password)
+{
+	FILE* fp;
+	unsigned long long pw, pwt;
+	char filename[30] = "users\\";
+	char buffer[40];
+	strcat(filename, username);
+
+	if ((fp = fopen(filename, "r+")) == NULL)
+	{
+		show_error("打开文件发生错误", 1);
+	}
+	fprintf(fp, "%llu#%llu#", password_classified(password, 67), password_classified(password, 71));
+	//fprintf(fp, "%-20llu\n%-20llu", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
+	fclose(fp);
+	return 1;
 }

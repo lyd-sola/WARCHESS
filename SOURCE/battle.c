@@ -342,7 +342,6 @@ void act_buttons(COLO *co, int kind, int flag, int is_same_side, int is_stay, in
 /*按钮整合函数，灰色状态不能点击*/
 void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Battleinfo* batinfo)
 {
-	int side = (batinfo->round - 1) % 2;
 	OFF_POS opos = D2O(pos);
 	if (co->mov == (int)OK_co)
 	{
@@ -386,7 +385,7 @@ void act_btn(MAP map, COLO* co, int* clccell, DBL_POS pos, Arminfo* arminfo, Bat
 void first_click(MAP map, DBL_POS *pos, int *clccell, int *msgflag, Arminfo *arminfo, Battleinfo *batinfo, COLO *co)
 {
 	int flag, side = (batinfo->round - 1) % 2, is_same_side;
-	int* src;
+	unsigned* src;
 	DBL_POS ptmp;
 	OFF_POS opos;
 	if ((flag = clcmap(&ptmp, map)) != 0)

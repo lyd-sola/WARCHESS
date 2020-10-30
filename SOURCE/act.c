@@ -544,7 +544,7 @@ void builder_build(DBL_POS dpos, MAP map, Battleinfo *batinfo)
 		map[opos.y][opos.x].faci = (map[opos.y][opos.x].side == 0 ? RCOLLECTION : BCOLLECTION);
 		map[opos.y][opos.x].src_rnd = 0;
 		collection_draw(center, map[opos.y][opos.x].side);
-		show_msg("采集站建造成功！", "已开始采集资源");
+		map[opos.y][opos.x].geo == SORC ? show_msg("采集站建造成功！", "已开始采集资源") : show_msg("采集站建造成功！", "五回合后开始采集资源");
 		delay(msg_sec / 2);
 		recover_cell(dpos, map);
 	}

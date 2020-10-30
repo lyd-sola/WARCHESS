@@ -332,6 +332,20 @@ int nxt_btn_fun(int color, int color_c)
 		return 0;
 	}
 }
+/*********带圆角的方形框***********/
+void rect_circle(int x1, int y1, int x2, int y2, int color)
+{
+	int ra = (x2 - x1) / 10;
+	rect_btn_frame(x1-1, y1-1, x2+1, y2+1, 0);
+	rect_btn_frame(x1-2, y1-2, x2+2, y2+2, 0);
+	Bar64k(x1 + ra, y1, x2 - ra, y1 + ra, color);
+	Bar64k(x1, y1 + ra, x2, y2 - ra, color);
+	Bar64k(x1 + ra, y2 - ra, x2 - ra, y2, color);
+	Circlefill64k(x1 + ra, y1 + ra, ra, color);
+	Circlefill64k(x1 + ra, y2 - ra, ra, color);
+	Circlefill64k(x2 - ra, y1 + ra, ra, color);
+	Circlefill64k(x2 - ra, y2 - ra, ra, color);
+}
 
 /*********带圆角的方形按钮***********/
 void rect_button(int x1, int y1, int x2, int y2, char* s, int color)

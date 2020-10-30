@@ -26,6 +26,11 @@ void step5_1(MAP map);
 void step5_2(MAP map);
 void step5_3(MAP map);
 
+int step6(MAP map);
+void step6_1(void);
+void step6_2(MAP map);
+void step6_3(MAP map);
+void step6_4(MAP map);
 int Clcmap(DBL_POS* pos, MAP map);
 void arrow(int x, int y, char* s1, char* s2, char* s3, int mode);
 short helpwanttosay(char* btn1, char* btn2, char* s1, char* s2, int mode);

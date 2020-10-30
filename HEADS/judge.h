@@ -17,5 +17,6 @@ int moving(MAP map, int visit[7][7], DBL_POS FROM, DBL_POS TO);
 void anime_path(MAP map, DBL_POS* path, int top, int kind, int side);
 int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto);
 int victory_judge(MAP map);
+int v_cartoon(void);
 
 #endif
