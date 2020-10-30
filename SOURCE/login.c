@@ -132,11 +132,10 @@ int login(char *username)
 
 void drawlogin()
 {
-	//Bar64k(0, 0, 1024, 768, 25290);
 	Putbmp64k(0, 0, "BMP//lng.bmp");
 
 	Bar64k(0, 0, 50, 50, 65535); //退出
-
+	Outtext(9, 9, "返", 32, 0, 0);
 	Outtext(60, 70, "欢迎使用", 48, 70, 33808);
 	Outtext(60, 210, "战棋系统", 48, 70, 33808);
 
