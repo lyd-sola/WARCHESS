@@ -23,11 +23,6 @@ int homepage()
 	while(1)
 	{
 		Newxy();
-		if(mouse_press(974, 0, 1024, 50) == MOUSE_IN_L) //ÍË³ö
-		{
-			return EXIT;
-		}
-		
 		if (homepg_btn_fun(700, 230, 950, 300, "µÇÂ¼"))
 		{
 			return LOGIN;
@@ -53,10 +48,7 @@ int homepage()
 
 void draw_h_page()
 {
-	//Bar64k(0, 0, 1024, 768, 29186);
 	Putbmp64k(0, 0, "BMP//homepage.bmp");
-	Bar64k(974, 0, 1024, 50,65535);
-	Outtext(984, 9, "ÍË", 32, 0, 0);
 	Outtext(85+2,90+2,"ºìÀ¶¾ü¶Ô¿¹ÑÝÁ·", 48, 70, 27469);
 	Outtext(85, 90, "ºìÀ¶¾ü¶Ô¿¹ÑÝÁ·", 48, 70, 0);
 
