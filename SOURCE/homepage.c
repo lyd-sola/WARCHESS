@@ -23,12 +23,6 @@ int homepage()
 	while(1)
 	{
 		Newxy();
-	
-		if(mouse_press(974, 0, 1024, 50) == MOUSE_IN_L) //退出
-		{
-			return EXIT;
-		}
-		
 		if (homepg_btn_fun(700, 230, 950, 300, "登录"))
 		{
 			return LOGIN;
@@ -49,29 +43,19 @@ int homepage()
 		{
 			return GUEST;
 		}
-		/*************************测试用，右键右下角进入test页面****************************/
-		if(mouse_press(1024-100, 768-100, 1024, 768) == MOUSE_IN_R)
-		{
-			return 233;
-		}
-
-		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,主菜单左上角右键直接快速登录
-		{
-			return MAINMENU;
-		}
 	}
 }
 
 void draw_h_page()
 {
-	//Bar64k(0, 0, 1024, 768, 29186);
 	Putbmp64k(0, 0, "BMP//homepage.bmp");
 	Bar64k(974, 0, 1024, 50,65535);
 	Outtext(984, 9, "退", 32, 0, 0);
-	Outtext(85+2,160+2,"红蓝军对抗演练", 48, 70, 27469);
-	Outtext(85, 160, "红蓝军对抗演练", 48, 70, 0);
 	Outtext(85+2, 40+2, "WARCHESS", 48, 48, 65535);
 	Outtext(85, 40, "WARCHESS", 48, 48, 65184);
+	Outtext(85+2,90+2,"红蓝军对抗演练", 48, 70, 27469);
+	Outtext(85, 90, "红蓝军对抗演练", 48, 70, 0);
+
 	homepg_button(700, 230, 950, 300, "登录", 65336);
 	homepg_button(700, 350, 950, 420, "注册", 65336);
 	homepg_button(700, 470, 950, 540, "关于", 65336);

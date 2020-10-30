@@ -3,6 +3,7 @@
 
 int login(char *user);										//登录界面核心函数
 void drawlogin(void);										//登录界面绘制
+void login_anime(void);
 int login_check(char *username, char *password);			//能否登陆检查，包括是否填写判断和用户名密码比对
 int quick_regi(void); //跳转注册按钮功能
 void forget_password(char* username);

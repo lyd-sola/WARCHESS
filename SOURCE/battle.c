@@ -78,11 +78,6 @@ int battle(char *user, short save_num, short mode)
 			fclose(fp);
 			return flag;//返回其他界面
 		}
-		if (mouse_press(0, 0, 30, 30) == MOUSE_IN_R)	//为方便调试,左上角右键直接退出
-		{
-			fclose(fp);
-			exit(0);
-		}
 		if (victory_judge(map))
 		{
 			return MAINMENU;

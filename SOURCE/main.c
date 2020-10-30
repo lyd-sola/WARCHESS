@@ -10,7 +10,7 @@ Description: 主函数
 int main(void)
 {
 	int page = HOMEPAGE;
-	char user[16] = "A";				//初始化用户名数组，系统限制，用户名仅为大写字母和数字，8位以内
+	char user[16] = "GUEST";				//初始化用户名数组，系统限制，用户名仅为大写字母和数字，8位以内
 	FILE* fp;
 	short save_num = 1;
 	short mode = 0;//对战模式
