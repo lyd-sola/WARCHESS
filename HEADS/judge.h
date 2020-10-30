@@ -28,6 +28,6 @@ void anime_path(MAP map, DBL_POS* path, int top, int kind, int side);
 int attack_judge(MAP map, int able, DBL_POS dpos, DBL_POS dto);
 
 int victory_judge(MAP map);
-//int v_cartoon(void);
+int v_cartoon(char* btn1, char* btn2, char* s1, char* s2, int side);
 
 #endif
