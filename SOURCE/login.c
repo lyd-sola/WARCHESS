@@ -13,11 +13,8 @@ date:2020/9/8
 	增加了用户名与文件匹配的功能
 2020/10/25
 	解决了免密登录的bug
-
-函数目录
-1.login：		登录函数
-2.drawlogin：	绘制登录界面函数
-3.login_check：	检测输入信息函数
+2020/10/30
+	增加忘记密码和密保问题
 ******************************************************************/
 #include "common.h" 
 
@@ -317,7 +314,6 @@ void forget_password(char* username)
 		fclose(fp);
 		return;
 	}
-
 	fgets(buffer, 40, fp);
 	fscanf(fp, "%d%llu", &q, &answert);
 	fclose(fp);
@@ -399,7 +395,5 @@ int password_reset(char* username, char* password)
 		show_error("打开文件发生错误", 1);
 	}
 	fprintf(fp, "%llu#%llu#", password_classified(password, 67), password_classified(password, 71));
-	//fprintf(fp, "%-20llu\n%-20llu", password_classified(password, 67), password_classified(password, 71));//这里涉及加密问题，不会给你注释的
-	fclose(fp);
 	return 1;
 }

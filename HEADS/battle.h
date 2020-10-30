@@ -3,11 +3,10 @@ Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 file_name:battle.h
 Author:刘云笛、陈旭桐
 Version:
-Description:战斗界面
-				
+Description:战斗界面			
 
 Function List：
-	1.int battle(char* user, short save_num);
+	1.int battle(char* user, int save_num);
 		战斗界面主函数
 	2.void battle_draw(void);
 		战斗界面绘制函数
@@ -26,7 +25,7 @@ Function List：
 #define lev3_cost 80
 #define air_atk_cost 40
 
-int battle(char* user, short save_num, short mode);
+int battle(char* user, int save_num, int mode);
 
 void battle_draw(void);
 

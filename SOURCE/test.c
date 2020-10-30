@@ -53,7 +53,7 @@ int test(void)
 
 void test_draw()
 {
-	short s[101*101];
+	int s[101*101];
 	
 	//»­Ò³Ãæ
 	//Bar64k_radial(0, 0, 1024, 768, 65535, 0);

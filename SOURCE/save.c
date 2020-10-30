@@ -19,9 +19,9 @@ version 3.2 £º2020/10/18 Ôö¼ÓCELLµÄÈİÁ¿£¬Îª½«À´Ôö¼Ó¹¦ÄÜÔ¤Áô¿Õ¼ä
 /**************************************************************************************************
 saveÎÄ¼şÉè¼Æ£º											Î»Êı±í£º×Ô¿ªÍ·Æ«ÒÆÁ¿£¨×Ö½Ú£©
 	ÎÄ¼şÃû£ºusername
-	1£ºÎÄ¼şÖĞ´æµµ¸öÊı£¬short*1								¹²1
+	1£ºÎÄ¼şÖĞ´æµµ¸öÊı£¬int*1								¹²1
 	
-	ÒÔÏÂÖØ¸´¶à¸ö´æµµ¿éµÄÉè¼Æ£¨×¢£ºshort¾ùÎªunsigned£©
+	ÒÔÏÂÖØ¸´¶à¸ö´æµµ¿éµÄÉè¼Æ£¨×¢£ºint¾ùÎªunsigned£©
 	------------------------------------
 	Ä£Ê½char*1£¬0ÎªË«ÈË£¬1Îªµ¥ÈË							0
 	ÈÕÆÚ Äêunsigned*1£¬ÔÂÈÕunsigned*1£¬Ê±·Öunsigned*1		1
@@ -39,9 +39,9 @@ Function£ºsavefile_creat
 Author£ºÁõÔÆµÑ
 Description: ¿ìËÙ´´½¨µØÍ¼ÎÄ¼ş
 *******************************************/
-int savefile_creat(FILE *fp, short mode)//Èç¹û·µ»Ø1Ôò´æµµÂú£¬¿ìËÙ´´½¨Ê§°Ü£¬³É¹¦´´½¨·µ»Ø0
+int savefile_creat(FILE *fp, int mode)//Èç¹û·µ»Ø1Ôò´æµµÂú£¬¿ìËÙ´´½¨Ê§°Ü£¬³É¹¦´´½¨·µ»Ø0
 {
-	short n;
+	int n;
 
 	n = get_savenum(fp);//¶ÁÈ¡´æµµ¸öÊı
 	if(n >= MAX_SAVE_NUM)
@@ -65,8 +65,7 @@ Function£ºsavefile_init
 Author£ºÁõÔÆµÑ
 Description: ¶ÔÄ³Ò»¸ö´æµµ½øĞĞ¸²¸ÇÊ½³õÊ¼»¯
 *******************************************/
-
-void savefile_init(FILE* fp, short mode)
+void savefile_init(FILE* fp, int mode)
 {
 	unsigned int i = 3, j = 0, t[3];
 	time_t rawtime;
@@ -143,8 +142,7 @@ Description: ÔÚ¶ÔÕ½ĞÅÏ¢ÎÄ¼şÖĞ¶¨Î»
 	½«fp¶¨Î»Ö¸Ïò×ø±êxyµÄĞÅÏ¢£¬×¢£ºÊäÈë×ø±êÎªË«±¶¿í¶È
 	Èôx*y == 0£¬½«fp¶¨Î»µ½µÚn¸ö´æµµÊ×
 *******************************************/
-
-void seek_savinfo(FILE* fp, short n, int x, int y)//fp Ö¸ÏòÓÃ»§¶ÔÕ½ĞÅÏ¢ÎÄ¼şµÄÖ¸Õë
+void seek_savinfo(FILE* fp, int n, int x, int y)//fp Ö¸ÏòÓÃ»§¶ÔÕ½ĞÅÏ¢ÎÄ¼şµÄÖ¸Õë
 {
 	int size = sizeof(CELL);
 	fseek(fp, 1, SEEK_SET);//Ìø¹ı¿ªÊ¼Êı×Ö
@@ -159,22 +157,21 @@ void seek_savinfo(FILE* fp, short n, int x, int y)//fp Ö¸ÏòÓÃ»§¶ÔÕ½ĞÅÏ¢ÎÄ¼şµÄÖ¸Õ
 	fseek(fp, (x - 1) / size * size, SEEK_CUR);//Ìø¹ı(x - 1) / 2ÁĞ
 }
 
-short get_savenum(FILE* fp)
+int get_savenum(FILE* fp)
 {
-	short tot;
+	int tot;
 	fseek(fp, 0, SEEK_SET);
 	tot = fgetc(fp) - '0';
 	return tot;
 }
 
-short get_savmode(FILE* fp, short savnum)
+int get_savmode(FILE* fp, int savnum)
 {
-	short mode;
+	int mode;
 	seek_savinfo(fp, savnum, 0, 0);
 	mode = fgetc(fp);
 	return mode - '0';
 }
-
 /**********************************************************
 Function£º		Battle_init
 Description£º	Õ½¶·³õÊ¼»¯º¯Êı£¬¶ÁÈ¡´æµµ
@@ -205,7 +202,6 @@ Description£º	±£´æ´æµµ
 Input:			fpÓÃ»§´æµµÎÄ¼şÖ¸Õë£¬ĞèÒªÖ¸ÏòÕıÈ·´æµµ£¬ÆäËûÄãÒ»¿´¾Í¶®
 Author£º		ÁõÔÆµÑ
 **********************************************************/
-
 void save_battle(FILE* fp, Battleinfo batinfo, MAP map)
 {
 	unsigned t[3];

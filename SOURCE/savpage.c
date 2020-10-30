@@ -8,31 +8,25 @@ Description:存档界面！
 	写了一天，debug了半天（连带所有数据流相关函数）
 	我的孩子终于长大了QAQ
 	写到这里的时候lyd已经懒得缩减代码量了
-date:10.4
-
+	其实六个函数可以合成一个
+date:2020/10/4
 更新日志
-
 ******************************************************************/
 
 #include "common.h"
 /*存档管理页面，返回1可以进入对战界面，返回0回到原界面*/
-int savpage(char *user, short* save_num, short* mode)
+int savpage(char *user, int* save_num, int* mode)
 {
 	int flag = 1;//模式，1为读档，0为覆盖
-	short tot = 0;
+	int tot = 0;
 	char s[25] = "SAVES//";
 	FILE* fp;
 
 	strcat(s, user);
 	if ((fp = fopen(s, "rb+")) == NULL)
 		show_error("未找到用户存档文件", 1);
-
 	savpage_draw(fp);
 	tot = get_savenum(fp);
-	//fseek(fp, 0, SEEK_SET);
-	//fscanf(fp, "%d", &tot);
-	//fread(&tot, 1, 1, fp);//读取存档总数
-
 	while (1)
 	{
 		Newxy();
@@ -46,9 +40,7 @@ int savpage(char *user, short* save_num, short* mode)
 		{
 			flag = 1;
 			Clrmous();
-			rect_button(236, 511, 373, 561, "读取存档", 65340);
-			rect_button(443, 511, 580, 561, "新建存档", 65535);
-			rect_button(650, 511, 787, 561, "重置存档", 65535);
+			savpage_btns(1);
 		}
 		if (rec_btn_fun(443, 511, 580, 561, 65535))//点击新建存档
 		{
@@ -58,9 +50,7 @@ int savpage(char *user, short* save_num, short* mode)
 				{
 					flag = 0;
 					savpage_draw(fp);
-					rect_button(236, 511, 373, 561, "读取存档", 65535);
-					rect_button(443, 511, 580, 561, "新建存档", 65535);
-					rect_button(650, 511, 787, 561, "重置存档", 65340);
+					savpage_btns(3);
 				}
 				else
 				{
@@ -81,175 +71,210 @@ int savpage(char *user, short* save_num, short* mode)
 		{
 			flag = 0;
 			Clrmous();
-			rect_button(236, 511, 373, 561, "读取存档", 65535);
-			rect_button(443, 511, 580, 561, "新建存档", 65535);
-			rect_button(650, 511, 787, 561, "重置存档", 65340);
+			savpage_btns(3);
 		}//点击重置存档
 
-		if (mouse_press(287 - 15, 182, 287 - 15 + 205, 182 + 86) == MOUSE_IN_L)//存档1
+		if (save1(fp, &flag, tot, mode, save_num) || save2(fp, &flag, tot, mode, save_num)
+			|| save3(fp, &flag, tot, mode, save_num) || save4(fp, &flag, tot, mode, save_num)
+			|| save5(fp, &flag, tot, mode, save_num) || save6(fp, &flag, tot, mode, save_num))
 		{
-			if (flag && tot >= 1)
-			{
-				if (msgbar("确定", "取消", "读取存档1", "确定吗？"))
-				{
-					*save_num = 1;
-					*mode = get_savmode(fp, 1);
-					fclose(fp);
-					return 1;
-				}		
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if(tot >= 1)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 1, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
+			return 1;
 		}
-		if (mouse_press(532 + 15, 182, 532 + 15 + 205, 182 + 86) == MOUSE_IN_L)//存档2
-		{
-			if (flag && tot >= 2)
-			{
-				if (msgbar("确定", "取消", "读取存档2", "确定吗？"))
-				{
-					*save_num = 2;
-					*mode = get_savmode(fp, 2);
-					fclose(fp);
-					return 1;
-				}
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if (tot >= 2)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 2, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
-		}
-		if (mouse_press(287-15, 290, 287-15+205, 290 + 86) == MOUSE_IN_L)//存档3
-		{
-			if (flag && tot >= 3)
-			{
-				if (msgbar("确定", "取消", "读取存档3", "确定吗？"))
-				{
-					*save_num = 3;
-					*mode = get_savmode(fp, 3);
-					fclose(fp);
-					return 1;
-				}
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if (tot >= 3)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 3, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
-		}
-		if (mouse_press(532+15, 290, 532 + 15 + 205, 290 + 86) == MOUSE_IN_L)//存档4
-		{
-			if (flag && tot >= 4)
-			{
-				if (msgbar("确定", "取消", "读取存档4", "确定吗？"))
-				{
-					*save_num = 4;
-					*mode = get_savmode(fp, 4);
-					fclose(fp);
-					return 1;
-				}
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if (tot >= 4)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 4, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
-		}
-		if (mouse_press(287 - 15, 398, 287 - 15 + 205, 398 + 86) == MOUSE_IN_L)//存档5
-		{
-			if (flag && tot >= 5)
-			{
-				if (msgbar("确定", "取消", "读取存档5", "确定吗？"))
-				{
-					*save_num = 5;
-					*mode = get_savmode(fp, 5);
-					fclose(fp);
-					return 1;
-				}
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if (tot >= 5)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 5, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
-		}
-		if (mouse_press(532 + 15, 398, 532 + 15 + 205, 398 + 86) == MOUSE_IN_L)//存档6
-		{
-			if (flag && tot >= 6)
-			{
-				if (msgbar("确定", "取消", "读取存档6", "确定吗？"))
-				{
-					*save_num = 6;
-					*mode = get_savmode(fp, 6);
-					fclose(fp);
-					return 1;
-				}
-				else
-				{
-					savpage_draw(fp);
-				}
-			}//读档模式
-			else if (tot >= 6)
-			{
-				if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
-				{
-					seek_savinfo(fp, 6, 0, 0);
-					savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
-					flag = 1;
-				}
-				savpage_draw(fp);
-			}//重置模式
-		}
-
 	}
+}
+void savpage_btns(int i)
+{
+	int color[3] = { 65535 , 65535 , 65535 };
+	color[i-1] = 65340;
+	rect_button(236, 511, 373, 561, "读取存档", color[0]);
+	rect_button(443, 511, 580, 561, "新建存档", color[1]);
+	rect_button(650, 511, 787, 561, "重置存档", color[2]);
+}
+int save1(FILE* fp, int* flag, int tot, int* mode, int* save_num)
+{
+	if (mouse_press(287 - 15, 182, 287 - 15 + 205, 182 + 86) == MOUSE_IN_L)//存档1
+	{
+		if (*flag && tot >= 1)
+		{
+			if (msgbar("确定", "取消", "读取存档1", "确定吗？"))
+			{
+				*save_num = 1;
+				*mode = get_savmode(fp, 1);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 1)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 1, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
+}
+int save2(FILE* fp, int* flag, int tot, int* mode, int* save_num)
+{
+	if (mouse_press(532 + 15, 182, 532 + 15 + 205, 182 + 86) == MOUSE_IN_L)//存档2
+	{
+		if (*flag && tot >= 2)
+		{
+			if (msgbar("确定", "取消", "读取存档2", "确定吗？"))
+			{
+				*save_num = 2;
+				*mode = get_savmode(fp, 2);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 2)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 2, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
+}
+int save3(FILE* fp, int* flag, int tot, int* mode, int* save_num)
+{
+	if (mouse_press(287 - 15, 290, 287 - 15 + 205, 290 + 86) == MOUSE_IN_L)//存档3
+	{
+		if (*flag && tot >= 3)
+		{
+			if (msgbar("确定", "取消", "读取存档3", "确定吗？"))
+			{
+				*save_num = 3;
+				*mode = get_savmode(fp, 3);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 3)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 3, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
+}
+int save4(FILE* fp, int* flag, int tot, int* mode, int* save_num)
+{
+	if (mouse_press(532 + 15, 290, 532 + 15 + 205, 290 + 86) == MOUSE_IN_L)//存档4
+	{
+		if (*flag && tot >= 4)
+		{
+			if (msgbar("确定", "取消", "读取存档4", "确定吗？"))
+			{
+				*save_num = 4;
+				*mode = get_savmode(fp, 4);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 4)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 4, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
+}
+int save5(FILE* fp, int* flag, int tot, int* mode, int* save_num)
+{
+	if (mouse_press(287 - 15, 398, 287 - 15 + 205, 398 + 86) == MOUSE_IN_L)//存档5
+	{
+		if (*flag && tot >= 5)
+		{
+			if (msgbar("确定", "取消", "读取存档5", "确定吗？"))
+			{
+				*save_num = 5;
+				*mode = get_savmode(fp, 5);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 5)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 5, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
+}
+int save6(FILE *fp, int *flag, int tot, int *mode, int *save_num)
+{
+	if (mouse_press(532 + 15, 398, 532 + 15 + 205, 398 + 86) == MOUSE_IN_L)//存档6
+	{
+		if (*flag && tot >= 6)
+		{
+			if (msgbar("确定", "取消", "读取存档6", "确定吗？"))
+			{
+				*save_num = 6;
+				*mode = get_savmode(fp, 6);
+				fclose(fp);
+				return 1;
+			}
+			else
+			{
+				savpage_draw(fp);
+			}
+		}//读档模式
+		else if (tot >= 6)
+		{
+			if (msgbar("确定", "取消", "即将覆盖该存档", "确定吗？"))
+			{
+				seek_savinfo(fp, 6, 0, 0);
+				savefile_init(fp, msgbar("单人", "双人", "请选择模式", ""));
+				*flag = 1;
+			}
+			savpage_draw(fp);
+		}//重置模式
+	}
+	return 0;
 }
 
 void savpage_draw(FILE *fp)
@@ -270,11 +295,11 @@ void savpage_draw(FILE *fp)
 	Outtextxx(367, 125, 512*2-367, "存档管理", 32, 0);
 }
 
-void draw_saves(int x, int y, int color, FILE* fp, short save_num)
+void draw_saves(int x, int y, int color, FILE* fp, int save_num)
 {
 	char Buffer[20];
 	unsigned int t[3];//年 月日 时分
-	short mode, tot = 0;
+	int mode, tot = 0;
 
 	rectangle64k(x, y, x + 5 + 200, y + 25 + 40 + 16 + 5, 0);
 	rectangle64k(x - 1, y - 1, x + 5 + 200 + 1, y + 25 + 40 + 16 + 5 + 1, 0);

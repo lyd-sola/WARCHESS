@@ -127,7 +127,7 @@ void user_creat(char *username, char *password, int q, char* answer)
 {
 	FILE *fp;
 	char filename[30] = "USERS\\";
-	short tot = 0;
+	int tot = 0;
 	strcat(filename, username);
 	
 	//创建用户名及密码保存文件

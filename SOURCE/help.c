@@ -783,7 +783,7 @@ void arrow(int x, int y, char* s1, char* s2, char *s3, int mode)
 	return;
 }
 
-short helpwanttosay(char* btn1, char* btn2, char* s1, char* s2, int mode)
+int helpwanttosay(char* btn1, char* btn2, char* s1, char* s2, int mode)
 {
 	Clrmous();
 	Bar64k_radial(262, 218, 262 + 500, 219 + 230, 34429, 0);

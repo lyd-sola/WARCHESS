@@ -15,7 +15,7 @@ Date:
 
 #include "common.h"
 //战斗界面主函数
-int battle(char *user, short save_num, short mode)
+int battle(char *user, int save_num, int mode)
 {
 	CELL map[13][13];//地图
 	DBL_POS pos;

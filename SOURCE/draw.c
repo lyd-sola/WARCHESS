@@ -18,10 +18,10 @@ date:2020/9/8
 2.frame: 					绘制带边框的文本框
 3.filedraw:					绘制文档图形
 4.Bar64kc/linec/outtextxyc：	集成前景色设置函数与普通图形函数
-	5.void GetBackground(int left,int top,int right,int bottom,short *buffer);
+	5.void GetBackground(int left,int top,int right,int bottom,int *buffer);
 		存储某一范围背景图（用于动画制作），buffer图片存储地址，成功返回0。
 		
-	6.void GetBackground(int left,int top,int right,int bottom,short *buffer);
+	6.void GetBackground(int left,int top,int right,int bottom,int *buffer);
 		放回某一范围背景图（用于动画制作），buffer图片存储地址，成功返回0。
 		
 ******************************************************************/

@@ -1,10 +1,10 @@
 /********************************************************************
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS战棋
 File_name: aut.c
-Author: 刘云笛、陈旭桐
+Author: 刘云笛
 Version:1.0
 Description: 自动对战
-Date:
+Date:2020/10/28
 
 更新日志
 10.28 2am	完成自动攻击和移动！！！
@@ -66,6 +66,7 @@ void aut(MAP map, Battleinfo* batinfo)
 		batinfo->b_source += 1;
 	}
 }
+
 void aut_move(MAP map, OFF_POS opos, int visit[7][7])
 {
 	int x, y, i, j, tmp;
@@ -102,6 +103,7 @@ void aut_move(MAP map, OFF_POS opos, int visit[7][7])
 	dbto = O2D(dbto);
 	moving(map, visit, dbf, dbto);
 }
+
 int aut_attack(MAP map, OFF_POS opos, int visit[7][7], Arminfo info)
 {
 	int i, j;
@@ -152,6 +154,7 @@ void ATTACK(OFF_POS to, Arminfo info, int Stay_pos, MAP map)
 	}
 	return;
 }
+
 void aut_base(MAP map, unsigned* source)//自动升级和造兵
 {
 	int cost;
@@ -168,6 +171,7 @@ void aut_base(MAP map, unsigned* source)//自动升级和造兵
 	}
 	aut_buildarm(map, source);
 }
+
 void aut_buildarm(MAP map, unsigned* source)//自动造兵，目前只会造步兵、炮兵、坦克、超级兵
 {
 	Arminfo arminfo;

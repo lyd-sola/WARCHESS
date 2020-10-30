@@ -2,8 +2,8 @@
 Copyright(c)  2020 刘云笛、陈旭桐 	WARCHESS
 file_name: kbinput.c
 author: 刘云笛
-version: 2
-Description: 键盘输入
+version: 2.1
+Description: 键盘输入到屏幕
 date:2020/9/9
 
 更新日志
@@ -13,7 +13,7 @@ date:2020/9/9
 		两个函数合并为一个！！！
 
 9.10	mode==1时不再可以输入小写字母
-
+10.29	增加mode==2可以输入小写字母
 函数目录
 1.kbinput:	键盘输入并显示原文
 2.kbinput:	键盘输入并显示星号
