@@ -96,7 +96,8 @@ int register_()
 void drawregi()
 {
 	Putbmp64k(0, 0, "BMP//lng.bmp");
-	Bar64k(0,0,50,50, 64384);
+	Bar64k(0,0,50,50, 65535);
+	Outtext(9, 9, "返", 32, 0, 0);
 	Outtext(100, 70, "WARCHESS", 48, 48, 65535);
 	Outtext(100 + 2, 70 + 2, "WARCHESS", 48, 48, 65184);
 	Outtext(510, 70, "通行证注册", 48, 70, 0);
@@ -280,7 +281,7 @@ int secret_question(char *user, char *password)
 		Newxy();
 		if ((flag = list_func(610, 280, 610 + 370, 280 + 50, 5, &q)) == 0)
 		{
-			Outtext(610 + 5, 380 + 5, answer, 32, 40, 44373);
+			Outtext(610 + 5, 380+50-5-32, answer, 32, 40, 44373);
 		}
 		else if (flag == 1)
 		{
@@ -384,10 +385,11 @@ int list_choose(int x1, int y1, int x2, int y2, int num)
 /******y1,y2的差保持在50效果最好*******/
 int list_func(int x1, int y1, int x2, int y2, int num, int *q)
 {
+	int flag = 0;
 	if (mouse_press(x2-50, y1, x2, y1+50) == MOUSE_IN_L)
 	{
 		delay(100);
-		if ((*q = list_choose(x1, y2, x2, y2, 4)) != 0)
+		if ((flag = list_choose(x1, y2, x2, y2, 4)) != 0)
 		{
 			Clrmous();
 			frame(x1, y1, x2, y2, 65535);
@@ -416,16 +418,17 @@ int list_func(int x1, int y1, int x2, int y2, int num, int *q)
 			Outtext(610 + 20, 380 + 15, "只允许输入字母和数字", 16, 30, 0);
 			shadow_l(686 - 15, 490 - 15, 814 + 15, 522 + 15, 65535);
 			Outtext(686, 480, "注册", 48, 80, 63488);
+			*q = flag;
 			return 1;
 		}
 		else
 		{
+			Clrmous();
 			putbmp_partial(x1, y2, x2, y2 + num * 50, "BMP//lng.bmp");
 			frame(610, 280 + 100, 610 + 370, 280 + 50 + 100, 65535);  	//密码
 			Outtext(500, 390, "答案", 32, 62, 63488);
 			shadow_l(686 - 15, 490 - 15, 814 + 15, 522 + 15, 65535);
 			Outtext(686, 480, "注册", 48, 80, 63488);
-			//Outtext(610 + 20, 380 + 15, "只允许输入字母和数字", 16, 30, 0);
 			return 0;
 		}
 	}
