@@ -385,7 +385,7 @@ int list_choose(int x1, int y1, int x2, int y2, int num)
 /******y1,y2的差保持在50效果最好*******/
 int list_func(int x1, int y1, int x2, int y2, int num, int *q)
 {
-	int flag = 0;
+	int flag = *q;
 	if (mouse_press(x2-50, y1, x2, y1+50) == MOUSE_IN_L)
 	{
 		delay(100);
@@ -395,7 +395,7 @@ int list_func(int x1, int y1, int x2, int y2, int num, int *q)
 			frame(x1, y1, x2, y2, 65535);
 			Bar64k(x2-48, y1+2, x2-2, y1+48, 33808);
 			Filltriangle(x2-50+15, y1+15, x2-25, y1+30, x2-15, y1+15, 65535);
-			switch (*q)
+			switch (flag)
 			{
 			case 1:
 				Outtext(x1+10, y1+13, "您的生日是？", 24, 28, 44373);
